@@ -1,0 +1,46 @@
+name: Sync Prices Daily
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # Kl. 10:00 dansk tid (UTC+2 om sommeren)
+  workflow_dispatch:
+
+jobs:
+  sync-prices:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests pandas
+    
+    - name: Sync prices
+      run: |
+        python scripts/sync_prices.py
+    
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add output/price_updates.csv state/last_prices.csv
+        git commit -m "Price sync - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
+        git push
+    
+    - name: Notify on failure
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: 'Price sync failed',
+            body: 'The daily price sync workflow failed. Check the Actions tab for details.'
+          })
