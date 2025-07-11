@@ -1,0 +1,46 @@
+name: Sync Inventory Hourly
+
+on:
+  schedule:
+    - cron: '45 * * * *'  # 45 min efter hver time
+  workflow_dispatch:
+
+jobs:
+  sync-inventory:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests pandas
+    
+    - name: Sync inventory
+      run: |
+        python scripts/sync_inventory.py
+    
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add output/inventory_updates.csv state/last_inventory.csv
+        git commit -m "Inventory sync - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
+        git push
+    
+    - name: Notify on failure
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: 'Inventory sync failed',
+            body: 'The hourly inventory sync workflow failed. Check the Actions tab for details.'
+          })
