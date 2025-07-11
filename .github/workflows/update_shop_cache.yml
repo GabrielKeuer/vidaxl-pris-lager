@@ -1,0 +1,36 @@
+name: Update Shop Cache
+
+on:
+  schedule:
+    - cron: '0 2,14 * * *'  # Kl. 02:00 og 14:00 hver dag
+  workflow_dispatch:
+
+jobs:
+  update-cache:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests pandas
+    
+    - name: Update shop cache
+      env:
+        SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+      run: |
+        python scripts/update_shop_cache.py
+    
+    - name: Commit changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add output/shop_skus.json
+        git commit -m "Update shop cache - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
+        git push
