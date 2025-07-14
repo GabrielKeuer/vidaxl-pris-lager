@@ -29,3 +29,21 @@ Matrixify URLs:
 ## Logs
 
 Se GitHub Actions tab for kørselslogs og fejl.
+
+
+## 📦 Lager Sync Scripts
+
+### Fuld Webshop Sync
+- **Script**: `fuld_lager_sync_shopify_vidaxl.py`
+- **Formål**: Synkroniserer HELE webshoppens lager med VidaXL
+- **Output**: Matrixify CSV klar til import
+- **Kør**: Via GitHub Actions → "Fuld Webshop Lager Sync"
+
+### Daglig Pris/Lager Sync
+- **Script**: `sync_vidaxl_direct.py`
+- **Formål**: Daglig sync af ændringer
+- **Kør**: Automatisk hver nat kl. 3
+
+### Cache SKUs
+- **Script**: `cache_shop_skus.py`
+- **Formål**: Henter alle SKUs fra Shopify
