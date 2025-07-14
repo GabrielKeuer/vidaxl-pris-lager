@@ -88,7 +88,7 @@ def fetch_shopify_inventory() -> Dict[str, int]:
             node = edge['node']
             if node['item'] and node['item']['variant'] and node['item']['variant']['sku']:
                 sku = node['item']['variant']['sku']
-                inventory_by_sku[sku] = node['available']
+                inventory_by_sku[sku] = node['quantity']
                 total_fetched += 1
         
         print(f"   Fetched {total_fetched} inventory levels...")
@@ -137,12 +137,18 @@ def compare_inventory(shopify_inv: Dict[str, int], vidaxl_df: pd.DataFrame) -> L
     # Convert VidaXL data to dict for faster lookup
     vidaxl_inv = dict(zip(vidaxl_df['SKU'].astype(str), vidaxl_df['Stock']))
     
-    # Find all unique SKUs
-    all_skus = set(shopify_inv.keys()) | set(vidaxl_inv.keys())
+    # ONLY compare SKUs that exist in BOTH systems
+    shopify_skus = set(shopify_inv.keys())
+    vidaxl_skus = set(vidaxl_inv.keys())
+    common_skus = shopify_skus & vidaxl_skus  # Intersection - kun fælles SKUs
     
-    for sku in all_skus:
-        shopify_qty = shopify_inv.get(sku, 0)
-        vidaxl_qty = vidaxl_inv.get(sku, 0)
+    print(f"   Shopify SKUs: {len(shopify_skus)}")
+    print(f"   VidaXL SKUs: {len(vidaxl_skus)}")
+    print(f"   Common SKUs: {len(common_skus)}")
+    
+    for sku in common_skus:
+        shopify_qty = shopify_inv[sku]
+        vidaxl_qty = vidaxl_inv[sku]
         
         # Only include if quantities are different
         if shopify_qty != vidaxl_qty:
@@ -161,7 +167,7 @@ def compare_inventory(shopify_inv: Dict[str, int], vidaxl_df: pd.DataFrame) -> L
             print(f"   TEST MODE: Stopping at {TEST_LIMIT} differences")
             break
     
-    print(f"✅ Found {len(differences)} inventory differences")
+    print(f"✅ Found {len(differences)} inventory differences (out of {len(common_skus)} common SKUs)")
     return differences
 
 def generate_matrixify_csv(differences: List[Dict], output_file: str):
