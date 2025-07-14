@@ -32,7 +32,7 @@ def fetch_shopify_inventory() -> Dict[str, int]:
     total_fetched = 0
     
     while True:
-        # GraphQL query for inventory
+        # GraphQL query for inventory - RETTET VERSION
         query = """
         query getInventory($cursor: String, $locationId: ID!) {
             location(id: $locationId) {
@@ -43,8 +43,13 @@ def fetch_shopify_inventory() -> Dict[str, int]:
                     }
                     edges {
                         node {
-                            available
+                            id
+                            quantities(names: ["available"]) {
+                                name
+                                quantity
+                            }
                             item {
+                                sku
                                 variant {
                                     sku
                                     id
@@ -86,9 +91,25 @@ def fetch_shopify_inventory() -> Dict[str, int]:
         
         for edge in inventory_levels['edges']:
             node = edge['node']
-            if node['item'] and node['item']['variant'] and node['item']['variant']['sku']:
-                sku = node['item']['variant']['sku']
-                inventory_by_sku[sku] = node['quantity']
+            
+            # Få SKU fra enten item.sku eller item.variant.sku
+            sku = None
+            if node['item']:
+                if node['item']['sku']:
+                    sku = node['item']['sku']
+                elif node['item']['variant'] and node['item']['variant']['sku']:
+                    sku = node['item']['variant']['sku']
+            
+            # Få available quantity fra quantities array
+            available_qty = 0
+            if 'quantities' in node and node['quantities']:
+                for qty in node['quantities']:
+                    if qty['name'] == 'available':
+                        available_qty = qty['quantity']
+                        break
+            
+            if sku:
+                inventory_by_sku[sku] = available_qty
                 total_fetched += 1
         
         print(f"   Fetched {total_fetched} inventory levels...")
