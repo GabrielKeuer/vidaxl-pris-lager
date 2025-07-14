@@ -1,0 +1,94 @@
+name: Fuld Webshop Lager Sync - Shopify vs VidaXL
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Test mode - kun 10 produkter'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+      
+      upload_til_shopify:
+        description: 'Upload automatisk til Shopify via Matrixify'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  fuld-lager-sync:
+    name: Synkroniser hele webshoppens lager
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v3
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Installer dependencies
+        run: |
+          pip install pandas requests
+      
+      - name: Kør fuld lager sync
+        env:
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          TEST_MODE: ${{ github.event.inputs.test_mode }}
+        run: |
+          echo "🚀 Starter fuld webshop lager sync"
+          echo "📍 Test mode: $TEST_MODE"
+          
+          # Opdater TEST_MODE i scriptet
+          if [ "$TEST_MODE" = "false" ]; then
+            sed -i 's/TEST_MODE = True/TEST_MODE = False/g' fuld_lager_sync_shopify_vidaxl.py
+          fi
+          
+          # Kør sync
+          python fuld_lager_sync_shopify_vidaxl.py
+      
+      - name: Upload Matrixify CSV
+        uses: actions/upload-artifact@v3
+        with:
+          name: matrixify-lager-opdatering
+          path: output/matrixify_inventory_update_*.csv
+          retention-days: 7
+      
+      - name: Vis resultat
+        run: |
+          echo "📊 Sync resultat:"
+          if [ -f output/matrixify_inventory_update_*_report.csv ]; then
+            echo "Antal opdateringer: $(tail -n +2 output/matrixify_inventory_update_*_report.csv | wc -l)"
+            echo ""
+            echo "Top 10 største ændringer:"
+            head -20 output/matrixify_inventory_update_*_report.csv
+          fi
+
+  upload-til-shopify:
+    name: Upload til Shopify (hvis valgt)
+    needs: fuld-lager-sync
+    if: ${{ github.event.inputs.upload_til_shopify == 'true' }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Download Matrixify fil
+        uses: actions/download-artifact@v3
+        with:
+          name: matrixify-lager-opdatering
+      
+      - name: Info om upload
+        run: |
+          echo "⚠️ Automatisk upload ikke implementeret endnu"
+          echo "📥 Download CSV fra artifacts og upload manuelt via Matrixify"
+          echo ""
+          echo "Filer klar til upload:"
+          ls -la *.csv
