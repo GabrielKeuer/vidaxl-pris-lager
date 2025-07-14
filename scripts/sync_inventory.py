@@ -77,14 +77,14 @@ def main():
         for _, row in changes.iterrows():
             output_rows.append({
                 'Variant SKU': row['SKU'],
-                'Variant Inventory Qty': row.get('Stock_new', row.get('Stock')),
+                'Inventory Available: Shop location': row.get('Stock_new', row.get('Stock')),
                 'Variant Command': 'UPDATE'
             })
     
     # Write output (even if empty)
     with open('output/inventory_updates.csv', 'w', newline='') as f:
         writer = csv.DictWriter(f, fieldnames=[
-            'Variant SKU', 'Variant Inventory Qty', 'Variant Command'
+            'Variant SKU', 'Inventory Available: Shop location', 'Variant Command'
         ])
         writer.writeheader()
         writer.writerows(output_rows)
