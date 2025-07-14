@@ -50,11 +50,11 @@ jobs:
           
           # Opdater TEST_MODE i scriptet
           if [ "$TEST_MODE" = "false" ]; then
-            sed -i 's/TEST_MODE = True/TEST_MODE = False/g' fuld_lager_sync_shopify_vidaxl.py
+            sed -i 's/TEST_MODE = True/TEST_MODE = False/g' scripts/fuld_lager_sync_shopify_vidaxl.py
           fi
           
           # Kør sync
-          python fuld_lager_sync_shopify_vidaxl.py
+          python scripts/fuld_lager_sync_shopify_vidaxl.py
       
       - name: Upload Matrixify CSV
         uses: actions/upload-artifact@v4
