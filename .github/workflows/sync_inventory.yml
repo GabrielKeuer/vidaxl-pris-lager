@@ -23,21 +23,7 @@ jobs:
       run: |
         python scripts/sync_inventory.py
     
-    - name: Copy to docs folder for GitHub Pages
-      run: |
-        mkdir -p docs
-        cp output/inventory_updates.csv docs/
-        echo "Last updated: $(date)" > docs/inventory_status.txt
-    
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./docs
-        destination_dir: .  # Deploy til root af gh-pages
-        keep_files: true    # Behold eksisterende filer (price_updates.csv)
-    
-    - name: Commit changes to main branch
+    - name: Commit changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
