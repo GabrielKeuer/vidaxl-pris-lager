@@ -55,8 +55,6 @@ jobs:
               body: `Sollux inventory sync failed at ${new Date().toISOString()}\n\nCheck the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.`,
               labels: ['sollux', 'bug', 'automated']
             })
-```
-
 ---
 
 ## 📋 **Step 4: Test det manuelt**
