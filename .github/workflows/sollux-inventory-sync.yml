@@ -2,8 +2,8 @@ name: Sollux Inventory Sync
 
 on:
   # Kør hver 1. time
-  #schedule:
-   # - cron: '0 */1 * * *'
+  schedule:
+    - cron: '0 */1 * * *'
   
   # Manuel trigger
   workflow_dispatch:
