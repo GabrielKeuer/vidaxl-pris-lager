@@ -98,12 +98,12 @@ def execute_graphql(query, variables=None):
 
 
 def get_location_id():
-    """Get primary location ID"""
+    """Get Shop location ID"""
     log("📍 Getting location ID...")
     
     query = """
     query {
-      locations(first: 1) {
+      locations(first: 10) {
         edges {
           node {
             id
@@ -115,8 +115,16 @@ def get_location_id():
     """
     
     data = execute_graphql(query)
+    
+    # Find "Shop location"
+    for edge in data['locations']['edges']:
+        if edge['node']['name'] == 'Shop location':
+            log(f"✅ Using location: {edge['node']['name']}")
+            return edge['node']['id']
+    
+    # Fallback to first location if Shop location not found
     location = data['locations']['edges'][0]['node']
-    log(f"✅ Using location: {location['name']}")
+    log(f"⚠️  'Shop location' not found, using: {location['name']}")
     return location['id']
 
 
