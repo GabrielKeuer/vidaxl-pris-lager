@@ -129,11 +129,8 @@ def get_location_id():
 
 
 def get_inventory_item_ids(skus):
-    """Get inventory item IDs for SKUs"""
+    """Get inventory item IDs for SKUs in batches"""
     log(f"🔍 Fetching inventory IDs for {len(skus)} SKUs...")
-    
-    # Build query string
-    sku_queries = ' OR '.join([f'sku:"{sku}"' for sku in skus])
     
     query = """
     query getInventoryItems($query: String!) {
@@ -155,27 +152,38 @@ def get_inventory_item_ids(skus):
     """
     
     mapping = {}
-    has_next = True
-    cursor = None
+    batch_size = 250  # Process 250 SKUs per query to avoid too long query strings
+    total_batches = (len(skus) + batch_size - 1) // batch_size
     
-    while has_next:
-        variables = {'query': sku_queries}
-        if cursor:
-            query_with_cursor = query.replace('first: 250', f'first: 250, after: "{cursor}"')
-            data = execute_graphql(query_with_cursor, variables)
-        else:
-            data = execute_graphql(query, variables)
+    for i in range(0, len(skus), batch_size):
+        batch_skus = skus[i:i + batch_size]
+        batch_num = (i // batch_size) + 1
         
-        for edge in data['productVariants']['edges']:
-            node = edge['node']
-            if node['sku'] and node['inventoryItem']:
-                mapping[node['sku']] = node['inventoryItem']['id']
+        log(f"  Batch {batch_num}/{total_batches}: Searching {len(batch_skus)} SKUs...")
         
-        has_next = data['productVariants']['pageInfo']['hasNextPage']
-        cursor = data['productVariants']['pageInfo'].get('endCursor')
+        # Build query string for this batch
+        sku_queries = ' OR '.join([f'sku:"{sku}"' for sku in batch_skus])
         
-        if has_next:
-            log(f"  Fetching more... ({len(mapping)} found so far)")
+        # Fetch all pages for this batch
+        has_next = True
+        cursor = None
+        
+        while has_next:
+            variables = {'query': sku_queries}
+            
+            if cursor:
+                query_with_cursor = query.replace('first: 250', f'first: 250, after: "{cursor}"')
+                data = execute_graphql(query_with_cursor, variables)
+            else:
+                data = execute_graphql(query, variables)
+            
+            for edge in data['productVariants']['edges']:
+                node = edge['node']
+                if node['sku'] and node['inventoryItem']:
+                    mapping[node['sku']] = node['inventoryItem']['id']
+            
+            has_next = data['productVariants']['pageInfo']['hasNextPage']
+            cursor = data['productVariants']['pageInfo'].get('endCursor')
     
     log(f"✅ Found {len(mapping)} products in Shopify")
     return mapping
