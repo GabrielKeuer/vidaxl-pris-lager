@@ -1,0 +1,95 @@
+name: Benuta Inventory Sync
+
+on:
+  # Kør hver 1. time (10 minutter over)
+  schedule:
+    - cron: '10 */1 * * *'
+  
+  # Manuel trigger
+  workflow_dispatch:
+
+jobs:
+  sync-benuta:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: 📦 Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: 🔄 Sync Benuta inventory
+        env:
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+        run: |
+          python scripts/sync_benuta_inventory.py
+      
+      - name: 📊 Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: benuta-sync-logs-${{ github.run_number }}
+          path: |
+            *.log
+          retention-days: 7
+      
+      - name: 🔔 Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '❌ Benuta Inventory Sync Failed',
+              body: `Benuta inventory sync failed at ${new Date().toISOString()}\n\nCheck the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.`,
+              labels: ['benuta', 'bug', 'automated']
+            })
+
+---
+
+## 📋 **Step 4: Test det manuelt**
+1. Gå til **Actions** tab i GitHub
+2. Vælg **Benuta Inventory Sync** workflow
+3. Klik **Run workflow** → **Run workflow**
+4. Se logs i real-time
+
+---
+
+## 📊 **Fordele ved denne løsning:**
+✅ **Simpel:** Opdaterer bare alt hver gang (da det er ~8,300 produkter)  
+✅ **Hurtig:** ~2-3 minutter total  
+✅ **Automatisk:** Kører hver 1. time (10 minutter over)  
+✅ **Fejlhåndtering:** Logger alt og sender notifikationer  
+✅ **Samlet:** I samme repo som Sollux og VidaXL
+
+---
+
+## 🔧 **Workflow oversigt:**
+```
+Hver time (10 over):
+  ↓
+📥 Download CSV fra Benuta
+  ↓
+📋 Parse 8,300+ produkter
+  ↓
+📍 Find Shopify location
+  ↓
+🔍 Match SKUs → inventory IDs
+  ↓
+🔄 Opdater lager (100 per batch)
+  ↓
+📊 Log resultater
+  ↓
+✅ Done!
+```
