@@ -49,17 +49,25 @@ def download_benuta_csv():
 
 
 def parse_benuta_csv(csv_content):
-    """Parse pipe-delimited CSV"""
+    """Parse pipe-delimited CSV - only benuta Basic products"""
     log("📋 Parsing CSV...")
     
     products = []
+    skipped = 0
     csv_reader = csv.reader(StringIO(csv_content), delimiter='|')
     
     # Skip header
     next(csv_reader)
     
     for row in csv_reader:
-        if len(row) >= 15:
+        if len(row) >= 16:
+            brand = row[15].strip()  # Brand er kolonne 16 (index 15)
+            
+            # Kun benuta Basic produkter
+            if brand.lower() != 'benuta basic':
+                skipped += 1
+                continue
+            
             sku = row[14].strip()  # SKU er kolonne 15 (index 14)
             stock = row[6].strip()  # Stock er kolonne 7 (index 6)
             quantity = int(stock) if stock.isdigit() else 0
@@ -70,7 +78,7 @@ def parse_benuta_csv(csv_content):
                     'quantity': quantity
                 })
     
-    log(f"✅ Parsed {len(products)} products")
+    log(f"✅ Parsed {len(products)} benuta Basic products (skipped {skipped} other brands)")
     stats['total_products'] = len(products)
     return products
 
