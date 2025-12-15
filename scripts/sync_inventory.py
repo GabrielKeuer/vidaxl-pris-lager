@@ -6,7 +6,7 @@ from io import StringIO
 import os
 import json
 
-VIDAXL_URL = "https://transport.productsup.io/de8254c69e698a08e904/channel/188044/vidaXL_dk_dropshipping.csv"
+VIDAXL_URL = "https://feed.vidaxl.io/api/v1/feeds/download/f05d7105-88c0-45a4-a3a5-f1b48ba55d2a/DK/vidaXL_dk_dropshipping_offer.csv"
 
 def load_shop_skus():
     """Load SKUs fra cache"""
