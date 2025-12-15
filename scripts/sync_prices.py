@@ -7,13 +7,20 @@ import os
 import json
 
 VIDAXL_URL = "https://feed.vidaxl.io/api/v1/feeds/download/f05d7105-88c0-45a4-a3a5-f1b48ba55d2a/DK/vidaXL_dk_dropshipping_offer.csv"
-PRICE_MARKUP = 1.60
 
 def calculate_retail_price(b2b_price):
     """Beregn retail pris med markup og afrunding"""
     try:
         import math
-        price = float(b2b_price) * PRICE_MARKUP
+        price = float(b2b_price)
+        
+        # Tiered markup
+        if price < 700:
+            markup = 1.70
+        else:
+            markup = 1.60
+        
+        price = price * markup
         return int(10 * math.ceil(price / 10) - 1)
     except:
         return 0
