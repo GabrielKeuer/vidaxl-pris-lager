@@ -1,0 +1,83 @@
+name: Day 0 Pricing Migration (one-time)
+
+# Manual trigger only — this is a ONE-TIME migration that pushes ~161k
+# products to new tier-based pricing and activates group A's first sale.
+#
+# Recommended sequence:
+#   1. Run with dry_run=true, limit=100  → smoke test
+#   2. Run with dry_run=true, limit=0    → full plan, inspect CSV in artifact
+#   3. Run with dry_run=false, limit=0   → live migration (pushes to GitHub)
+#
+# After successful live run, rotate_groups will start its monthly cron
+# (need to enable manually after Day 0 succeeds).
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Compute and write CSV but DO NOT touch Supabase or rotation state"
+        type: boolean
+        default: true
+      limit:
+        description: "Process only first N matching SKUs (0 = all). Use 100 for smoke test."
+        type: number
+        default: 0
+      skip_activate:
+        description: "Populate state but skip activating group A (Day 0 in two stages)"
+        type: boolean
+        default: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run migration
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      run: |
+        ARGS=""
+        if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+        if [ "${{ inputs.skip_activate }}" = "true" ]; then ARGS="$ARGS --skip-activate"; fi
+        if [ "${{ inputs.limit }}" != "0" ]; then ARGS="$ARGS --limit ${{ inputs.limit }}"; fi
+        python scripts/migrate_to_new_pricing.py $ARGS
+
+    - name: Upload CSV as artifact (always)
+      uses: actions/upload-artifact@v4
+      with:
+        name: migration_updates
+        path: output/migration_updates.csv
+        retention-days: 90
+
+    - name: Commit migration CSV
+      if: ${{ inputs.dry_run != true }}
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add output/migration_updates.csv
+        git commit -m "Day 0 migration $(date +'%Y-%m-%d %H:%M UTC')" || echo "No changes"
+        git push
+
+    - name: Notify on failure
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: 'Day 0 migration failed',
+            body: 'The migrate_pricing workflow failed. Check the Actions tab for details.'
+          })
