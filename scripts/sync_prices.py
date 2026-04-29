@@ -1,161 +1,218 @@
+"""
+Daily VidaXL price sync.
+
+Reads tier-based pricing config from Supabase (hub_settings.product_automation_pricing).
+Reads per-SKU state from vidaxl_pricing_state.
+
+Per-SKU logic:
+  - SKU not in vidaxl_pricing_state    -> SKIP (waiting for migration; do not push old behaviour)
+  - status='on_sale'                    -> SKIP (FROZEN — Omnibus 30/60-day rule means we cannot
+                                                 change price or compare_at_price during sale)
+  - status='warmup' or 'normal'         -> recompute normal_price; emit UPDATE if it changed.
+                                           Variant Compare At Price always '' (empty).
+                                           For 'warmup', if normal_price changes, reset
+                                           warmup_complete_at — visible price change starts a
+                                           new reference period.
+
+Exits non-zero if Supabase config cannot be loaded — no silent fallback to flat 1.7x.
+"""
 import csv
+import os
+import sys
+import json
+from datetime import datetime, timedelta, timezone
+from io import StringIO
+
 import requests
 import pandas as pd
-from datetime import datetime
-from io import StringIO
-import os
-import json
-import math
-import random
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import pricing
 
 VIDAXL_URL = "https://feed.vidaxl.io/api/v1/feeds/download/f05d7105-88c0-45a4-a3a5-f1b48ba55d2a/DK/vidaXL_dk_dropshipping_offer.csv"
-CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config', 'Kategori_Config.xlsx')
+WARMUP_DAYS = 60
+SHOP_SKUS_PATH = "output/shop_skus.json"
+OUTPUT_PATH = "output/price_updates.csv"
 
 
-def load_pris_config():
-    """Load pristabel fra Pris_Config sheet"""
-    try:
-        pris_df = pd.read_excel(CONFIG_PATH, sheet_name='Pris_Config')
-        pris_df['Indkøb'] = pd.to_numeric(pris_df['Indkøb'], errors='coerce')
-        pris_df['Markup'] = pd.to_numeric(pris_df['Markup'], errors='coerce')
-        pris_df = pris_df.sort_values('Indkøb').reset_index(drop=True)
-        print(f"✅ Loaded {len(pris_df)} pristrin fra config")
-        return pris_df
-    except Exception as e:
-        print(f"⚠️ Kunne ikke loade Pris_Config: {e} — bruger fallback 1.7x")
-        return pd.DataFrame()
+def get_supabase_client():
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_SERVICE_KEY")
+    if not url or not key:
+        return None
+    from supabase import create_client
+    return create_client(url, key)
 
-
-def get_markup(b2b_price, pris_config):
-    """Slå markup-multiplikator op baseret på indkøbspris."""
-    if pris_config.empty:
-        return 1.7
-    b2b = float(b2b_price)
-    matching = pris_config[pris_config['Indkøb'] >= b2b]
-    if len(matching) > 0:
-        return float(matching.iloc[0]['Markup'])
-    return float(pris_config.iloc[-1]['Markup'])
-
-
-def calculate_retail_price(b2b_price, pris_config):
-    """Beregn retail pris: markup fra pristabel, afrund ceil(50)-1"""
-    try:
-        price = float(b2b_price)
-        markup = get_markup(price, pris_config)
-        raw = price * markup
-        return int(math.ceil(raw / 50) * 50 - 1)
-    except:
-        return 0
-
-
-def calculate_compare_price(selling_price):
-    """Sammenligningspris: random 15-35% rabat, ceil(50)-1, max 9999"""
-    discount_pct = random.uniform(0.15, 0.35)
-    raw = selling_price / (1 - discount_pct)
-    compare = int(math.ceil(raw / 50) * 50 - 1)
-    if selling_price <= 9800 and compare > 9999:
-        compare = 9999
-    return compare
 
 def load_shop_skus():
-    """Load SKUs fra cache"""
     try:
-        with open('output/shop_skus.json', 'r') as f:
+        with open(SHOP_SKUS_PATH, "r") as f:
             data = json.load(f)
-            return set(str(sku) for sku in data['skus'])
-    except:
-        print("❌ Could not load shop SKUs")
+        return set(str(s) for s in data["skus"])
+    except Exception as e:
+        print(f"❌ Could not load shop SKUs from {SHOP_SKUS_PATH}: {e}")
         return set()
 
+
+def load_pricing_state(sb):
+    """Fetch all rows from vidaxl_pricing_state. Returns dict keyed by sku.
+
+    Paginates by 1000-row batches because Supabase REST has a default cap.
+    """
+    all_rows = []
+    page = 0
+    page_size = 1000
+    while True:
+        res = (
+            sb.table("vidaxl_pricing_state")
+            .select("sku,pricing_group,status,b2b_cost,normal_price,sale_price,warmup_complete_at")
+            .range(page * page_size, (page + 1) * page_size - 1)
+            .execute()
+        )
+        if not res.data:
+            break
+        all_rows.extend(res.data)
+        if len(res.data) < page_size:
+            break
+        page += 1
+    return {r["sku"]: r for r in all_rows}
+
+
+def fetch_vidaxl_feed():
+    response = requests.get(VIDAXL_URL, timeout=120)
+    response.raise_for_status()
+    df = pd.read_csv(StringIO(response.text))
+    df["SKU"] = df["SKU"].astype(str)
+    df["B2B price"] = pd.to_numeric(df["B2B price"], errors="coerce")
+    return df
+
+
 def main():
-    print(f"🚀 Starting Price Sync - {datetime.now()}")
+    print(f"🚀 Price Sync started at {datetime.now(timezone.utc).isoformat()}")
 
-    # Load pricing config
-    pris_config = load_pris_config()
+    sb = get_supabase_client()
+    if sb is None:
+        print("❌ SUPABASE_URL or SUPABASE_SERVICE_KEY missing — cannot run.")
+        sys.exit(1)
 
-    # Load shop SKUs
+    pricing_cfg = pricing.load_pricing_config(sb)
+    if not pricing_cfg or not pricing_cfg.get("tiers"):
+        print("❌ Pricing tiers not loaded from Supabase — refusing to run with fallback.")
+        sys.exit(1)
+    print(f"✅ Loaded {len(pricing_cfg['tiers'])} pricing tiers")
+
+    state = load_pricing_state(sb)
+    status_counts = {"warmup": 0, "normal": 0, "on_sale": 0}
+    for r in state.values():
+        status_counts[r["status"]] = status_counts.get(r["status"], 0) + 1
+    print(f"✅ Loaded {len(state)} rows fra vidaxl_pricing_state — status: {status_counts}")
+
     shop_skus = load_shop_skus()
     if not shop_skus:
-        print("❌ No shop SKUs found - exiting")
-        exit(1)
+        print("❌ No shop SKUs found.")
+        sys.exit(1)
     print(f"✅ Loaded {len(shop_skus)} shop SKUs")
 
-    # Fetch VidaXL data
-    try:
-        response = requests.get(VIDAXL_URL)
-        response.raise_for_status()
-        vidaxl_data = pd.read_csv(StringIO(response.text))
-        print(f"✅ Loaded {len(vidaxl_data)} products from VidaXL")
-    except Exception as e:
-        print(f"❌ Failed to fetch VidaXL data: {e}")
-        exit(1)
+    feed_df = fetch_vidaxl_feed()
+    shop_products = feed_df[feed_df["SKU"].isin(shop_skus)].copy()
+    print(f"🎯 {len(shop_products)} feed-rows match shop SKUs")
 
-    # Filter to only shop products
-    vidaxl_data['SKU'] = vidaxl_data['SKU'].astype(str)
-    shop_products = vidaxl_data[vidaxl_data['SKU'].isin(shop_skus)].copy()
-    print(f"🎯 Filtered to {len(shop_products)} products in shop")
-
-    # Calculate retail prices
-    shop_products['Retail_Price'] = shop_products['B2B price'].apply(
-        lambda x: calculate_retail_price(x, pris_config)
-    )
-
-    # Load last state
-    os.makedirs('state', exist_ok=True)
-    state_file = 'state/last_prices.csv'
-
-    if os.path.exists(state_file):
-        last_state = pd.read_csv(state_file, dtype={'SKU': str})
-
-        # Find changes
-        merged = shop_products.merge(
-            last_state[['SKU', 'Retail_Price']],
-            on='SKU',
-            how='left',
-            suffixes=('_new', '_old')
-        )
-
-        # Products with price changes or new products
-        changes = merged[
-            (merged['Retail_Price_new'] != merged['Retail_Price_old']) |
-            (merged['Retail_Price_old'].isna())
-        ].copy()
-    else:
-        # First run - all products are "changes"
-        changes = shop_products.copy()
-        changes['Retail_Price_new'] = changes['Retail_Price']
-
-    # Create output
-    os.makedirs('output', exist_ok=True)
     output_rows = []
+    state_updates = []
+    counters = {
+        "skip_no_state": 0,
+        "skip_on_sale_frozen": 0,
+        "skip_unchanged": 0,
+        "skip_invalid_b2b": 0,
+        "update_normal": 0,
+        "update_warmup": 0,
+        "warmup_reset": 0,
+    }
 
-    if len(changes) > 0:
-        print(f"📝 Found {len(changes)} price changes")
-        for _, row in changes.iterrows():
-            retail = row.get('Retail_Price_new', row.get('Retail_Price'))
-            compare = calculate_compare_price(retail)
-            output_rows.append({
-                'Variant SKU': row['SKU'],
-                'Variant Price': retail,
-                'Variant Compare At Price': compare,
-                'Variant Cost': row['B2B price'],
-                'Variant Command': 'UPDATE'
-            })
+    now_iso = datetime.now(timezone.utc).isoformat()
+    new_warmup_at = (datetime.now(timezone.utc) + timedelta(days=WARMUP_DAYS)).isoformat()
 
-    # Write output (even if empty)
-    with open('output/price_updates.csv', 'w', newline='') as f:
+    for _, row in shop_products.iterrows():
+        sku = str(row["SKU"]).strip()
+        b2b = row["B2B price"]
+        if pd.isna(b2b) or b2b <= 0:
+            counters["skip_invalid_b2b"] += 1
+            continue
+        b2b = float(b2b)
+
+        product_state = state.get(sku)
+        if product_state is None:
+            counters["skip_no_state"] += 1
+            continue  # Wait for migration to populate vidaxl_pricing_state
+
+        status = product_state["status"]
+        if status == "on_sale":
+            counters["skip_on_sale_frozen"] += 1
+            continue  # Frozen — must not change price or compare_at_price during sale
+
+        new_normal = pricing.calculate_normal_price(b2b, pricing_cfg)
+        new_sale = pricing.calculate_sale_price(b2b, pricing_cfg)
+
+        old_normal = int(float(product_state.get("normal_price") or 0))
+        old_b2b = float(product_state.get("b2b_cost") or 0)
+
+        normal_unchanged = int(new_normal) == old_normal
+        b2b_unchanged = abs(b2b - old_b2b) < 0.01
+        if normal_unchanged and b2b_unchanged:
+            counters["skip_unchanged"] += 1
+            continue
+
+        output_rows.append({
+            "Variant SKU": sku,
+            "Variant Price": new_normal,
+            "Variant Compare At Price": "",
+            "Variant Cost": b2b,
+            "Variant Command": "UPDATE",
+        })
+
+        update = {
+            "sku": sku,
+            "b2b_cost": b2b,
+            "normal_price": new_normal,
+            "sale_price": new_sale,
+        }
+        if status == "warmup" and not normal_unchanged:
+            update["warmup_complete_at"] = new_warmup_at
+            counters["warmup_reset"] += 1
+
+        state_updates.append(update)
+        if status == "warmup":
+            counters["update_warmup"] += 1
+        else:
+            counters["update_normal"] += 1
+
+    print(f"📊 Counters: {counters}")
+    print(f"📝 {len(output_rows)} UPDATE-rows -> {OUTPUT_PATH}")
+
+    os.makedirs("output", exist_ok=True)
+    with open(OUTPUT_PATH, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=[
-            'Variant SKU', 'Variant Price', 'Variant Compare At Price',
-            'Variant Cost', 'Variant Command'
+            "Variant SKU", "Variant Price", "Variant Compare At Price",
+            "Variant Cost", "Variant Command",
         ])
         writer.writeheader()
         writer.writerows(output_rows)
+    print(f"✅ Wrote {len(output_rows)} updates")
 
-    print(f"✅ Written {len(output_rows)} updates to output/price_updates.csv")
+    if state_updates:
+        # Upsert in batches of 500 to stay within Supabase API limits
+        batch_size = 500
+        total_upserted = 0
+        for i in range(0, len(state_updates), batch_size):
+            batch = state_updates[i:i + batch_size]
+            res = sb.table("vidaxl_pricing_state").upsert(
+                batch, on_conflict="sku"
+            ).execute()
+            total_upserted += len(res.data) if res.data else 0
+        print(f"💾 Updated {total_upserted} rows in vidaxl_pricing_state")
+    else:
+        print("💾 No state updates needed")
 
-    # Save current state
-    shop_products[['SKU', 'Retail_Price']].to_csv(state_file, index=False)
-    print("💾 State saved")
 
 if __name__ == "__main__":
     main()

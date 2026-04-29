@@ -8,31 +8,34 @@ on:
 jobs:
   sync-prices:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-    
+
     - name: Install dependencies
       run: |
-        pip install requests pandas
-    
+        pip install -r requirements.txt
+
     - name: Sync prices
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
       run: |
         python scripts/sync_prices.py
-    
+
     - name: Commit changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add output/price_updates.csv state/last_prices.csv
+        git add output/price_updates.csv
         git commit -m "Price sync - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
         git push
-    
+
     - name: Notify on failure
       if: failure()
       uses: actions/github-script@v6
