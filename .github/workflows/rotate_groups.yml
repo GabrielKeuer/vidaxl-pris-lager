@@ -1,0 +1,77 @@
+name: Rotate VidaXL Sale Groups
+
+# MANUAL TRIGGER ONLY for now (Approval-Then-Auto policy).
+# When trust is established, uncomment the schedule and remove the "manual"
+# guard below.
+#
+# Recommended schedule once auto-enabled:
+#   - cron: '0 2 1 * *'      # 02:00 UTC on the 1st of each month
+#
+# Compliance gate inside rotate_groups.py refuses to run if last rotation
+# was less than 25 days ago (Omnibus 4.4-rule). Use force=true to override.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Compute and write CSV, but DO NOT update Supabase or save rotation state"
+        type: boolean
+        default: true
+      force:
+        description: "Override the 25-day rotation gate"
+        type: boolean
+        default: false
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Rotate groups
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      run: |
+        ARGS=""
+        if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+        if [ "${{ inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
+        python scripts/rotate_groups.py $ARGS
+
+    - name: Commit rotation CSV
+      if: ${{ inputs.dry_run != true }}
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add output/rotation_updates.csv
+        git commit -m "Rotation $(date +'%Y-%m-%d %H:%M UTC')" || echo "No changes"
+        git push
+
+    - name: Upload CSV as artifact (always)
+      uses: actions/upload-artifact@v4
+      with:
+        name: rotation_updates
+        path: output/rotation_updates.csv
+        retention-days: 90
+
+    - name: Notify on failure
+      if: failure()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: 'VidaXL rotation failed',
+            body: 'The rotate_groups workflow failed. Check the Actions tab for details.'
+          })
