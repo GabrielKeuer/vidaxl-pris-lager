@@ -78,13 +78,40 @@ def load_pricing_state(sb):
     return {r["sku"]: r for r in all_rows}
 
 
+FEED_HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Accept": "text/csv,application/octet-stream,*/*",
+    "Accept-Language": "da-DK,da;q=0.9,en;q=0.8",
+}
+
+
 def fetch_vidaxl_feed():
-    response = requests.get(VIDAXL_URL, timeout=120)
-    response.raise_for_status()
-    df = pd.read_csv(StringIO(response.text))
-    df["SKU"] = df["SKU"].astype(str)
-    df["B2B price"] = pd.to_numeric(df["B2B price"], errors="coerce")
-    return df
+    """Fetch the VidaXL B2B offer feed. Retries with backoff on 403/429/5xx."""
+    import time
+    last_err = None
+    for attempt in range(1, 5):
+        try:
+            response = requests.get(VIDAXL_URL, headers=FEED_HEADERS, timeout=180)
+            if response.status_code in (403, 429, 500, 502, 503, 504):
+                wait = 5 * attempt
+                print(f"   feed responded {response.status_code} (attempt {attempt}/4) — retrying in {wait}s")
+                time.sleep(wait)
+                last_err = response
+                continue
+            response.raise_for_status()
+            df = pd.read_csv(StringIO(response.text))
+            df["SKU"] = df["SKU"].astype(str)
+            df["B2B price"] = pd.to_numeric(df["B2B price"], errors="coerce")
+            return df
+        except requests.HTTPError as e:
+            last_err = e
+            wait = 5 * attempt
+            print(f"   feed fetch failed: {e} (attempt {attempt}/4) — retrying in {wait}s")
+            time.sleep(wait)
+    if hasattr(last_err, "raise_for_status"):
+        last_err.raise_for_status()
+    raise RuntimeError(f"Feed fetch failed after 4 attempts: {last_err}")
 
 
 def main():
