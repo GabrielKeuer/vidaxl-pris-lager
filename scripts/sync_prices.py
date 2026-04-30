@@ -199,6 +199,8 @@ def main():
 
         update = {
             "sku": sku,
+            "pricing_group": product_state["pricing_group"],
+            "status": status,
             "b2b_cost": b2b,
             "normal_price": new_normal,
             "sale_price": new_sale,

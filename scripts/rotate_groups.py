@@ -148,6 +148,7 @@ def main(argv=None):
             })
             state_updates.append({
                 "sku": r["sku"],
+                "pricing_group": r["pricing_group"],
                 "status": "normal",
                 "last_normal_period_started_at": now_iso,
                 "last_status_change_at": now_iso,
@@ -177,6 +178,7 @@ def main(argv=None):
         })
         state_updates.append({
             "sku": r["sku"],
+            "pricing_group": r["pricing_group"],
             "status": "on_sale",
             "last_status_change_at": now_iso,
         })

@@ -206,8 +206,12 @@ def main(argv=None):
                 # Preserve status; refresh prices ONLY if changed (and only outside frozen on_sale)
                 if status == "warmup" and (normal_changed or b2b_changed):
                     update_records.append({
-                        "sku": sku, "b2b_cost": b2b,
-                        "normal_price": normal, "sale_price": sale,
+                        "sku": sku,
+                        "pricing_group": prior["pricing_group"],
+                        "status": prior["status"],
+                        "b2b_cost": b2b,
+                        "normal_price": normal,
+                        "sale_price": sale,
                     })
                 if status == "warmup":
                     counters["preserved_warmup"] += 1
@@ -220,8 +224,12 @@ def main(argv=None):
                 # status='normal': refresh prices if changed
                 if normal_changed or b2b_changed:
                     update_records.append({
-                        "sku": sku, "b2b_cost": b2b,
-                        "normal_price": normal, "sale_price": sale,
+                        "sku": sku,
+                        "pricing_group": prior["pricing_group"],
+                        "status": prior["status"],
+                        "b2b_cost": b2b,
+                        "normal_price": normal,
+                        "sale_price": sale,
                     })
                     counters["preserved_normal_refreshed"] += 1
                 else:
@@ -283,6 +291,7 @@ def main(argv=None):
                 continue
             flip_records.append({
                 "sku": sku,
+                "pricing_group": st["pricing_group"],
                 "status": "on_sale",
                 "last_status_change_at": now_iso,
             })
