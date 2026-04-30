@@ -216,22 +216,40 @@ def main():
             counters["update_normal"] += 1
 
     print(f"📊 Counters: {counters}")
-    print(f"📝 {len(output_rows)} UPDATE-rows -> {OUTPUT_PATH}")
-
+    # MERGE strategy: read existing CSV, layer today's diffs on top, write back.
+    # This protects migration / rotation rows from being clobbered by a small
+    # daily diff before Matrixify has had time to import. Matrixify treats
+    # repeat UPDATE rows as idempotent no-ops, so a stable full-catalog snapshot
+    # in the CSV is safe.
+    fieldnames = [
+        "Variant SKU", "Variant Price", "Variant Compare At Price",
+        "Variant Cost", "Variant Command",
+    ]
+    existing_rows = {}
     os.makedirs("output", exist_ok=True)
-    if output_rows or not os.path.exists(OUTPUT_PATH):
-        with open(OUTPUT_PATH, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=[
-                "Variant SKU", "Variant Price", "Variant Compare At Price",
-                "Variant Cost", "Variant Command",
-            ])
-            writer.writeheader()
-            writer.writerows(output_rows)
-        print(f"✅ Wrote {len(output_rows)} updates")
-    else:
-        # Preserve existing CSV — migration / rotation may have written rows that
-        # Matrixify has not yet imported. Overwriting with 0 rows could lose data.
-        print(f"   (No changes — preserving existing {OUTPUT_PATH})")
+    if os.path.exists(OUTPUT_PATH):
+        with open(OUTPUT_PATH, "r", newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for r in reader:
+                sku = r.get("Variant SKU")
+                if sku:
+                    existing_rows[sku] = r
+    print(f"📂 Existing CSV: {len(existing_rows)} rows")
+
+    merged = dict(existing_rows)
+    for r in output_rows:
+        merged[r["Variant SKU"]] = r
+
+    # Prune SKUs that no longer exist in the shop (deleted products)
+    merged = {sku: row for sku, row in merged.items() if sku in shop_skus}
+
+    with open(OUTPUT_PATH, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        for sku in sorted(merged.keys()):
+            writer.writerow({k: merged[sku].get(k, "") for k in fieldnames})
+    print(f"✅ Wrote {len(merged)} rows ({len(existing_rows)} existing + {len(output_rows)} new diffs merged, "
+          f"after pruning to current shop_skus)")
 
     if state_updates:
         # Upsert in batches of 500 to stay within Supabase API limits
