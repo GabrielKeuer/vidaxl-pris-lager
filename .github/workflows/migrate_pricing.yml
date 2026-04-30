@@ -58,7 +58,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: migration_updates
-        path: output/migration_updates.csv
+        path: output/price_updates.csv
         retention-days: 90
 
     - name: Commit migration CSV
@@ -66,7 +66,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add output/migration_updates.csv
+        git add output/price_updates.csv
         git commit -m "Day 0 migration $(date +'%Y-%m-%d %H:%M UTC')" || echo "No changes"
         git push
 

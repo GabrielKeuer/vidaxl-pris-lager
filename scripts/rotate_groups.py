@@ -29,7 +29,7 @@ from datetime import datetime, timedelta, timezone
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pricing  # noqa: F401  (loaded for parity with other scripts and future use)
 
-OUTPUT_PATH = "output/rotation_updates.csv"
+OUTPUT_PATH = "output/price_updates.csv"  # Matrixify scheduled import URL
 ROTATION_STATE_KEY = "vidaxl_rotation_state"
 GROUP_CYCLE = ["A", "B", "C"]
 ROTATION_MIN_DAYS = 25  # Refuse to rotate again sooner than this without --force

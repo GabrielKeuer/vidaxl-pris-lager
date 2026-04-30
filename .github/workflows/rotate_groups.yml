@@ -1,22 +1,18 @@
 name: Rotate VidaXL Sale Groups
 
-# MANUAL TRIGGER ONLY for now (Approval-Then-Auto policy).
-# When trust is established, uncomment the schedule and remove the "manual"
-# guard below.
-#
-# Recommended schedule once auto-enabled:
-#   - cron: '0 2 1 * *'      # 02:00 UTC on the 1st of each month
-#
+# Runs automatically on the 1st of each month at 02:00 UTC.
 # Compliance gate inside rotate_groups.py refuses to run if last rotation
 # was less than 25 days ago (Omnibus 4.4-rule). Use force=true to override.
 
 on:
+  schedule:
+    - cron: '0 2 1 * *'  # 02:00 UTC, 1st of every month
   workflow_dispatch:
     inputs:
       dry_run:
         description: "Compute and write CSV, but DO NOT update Supabase or save rotation state"
         type: boolean
-        default: true
+        default: false
       force:
         description: "Override the 25-day rotation gate"
         type: boolean
@@ -39,6 +35,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Rotate groups
+      id: rotate
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
@@ -46,32 +43,38 @@ jobs:
         ARGS=""
         if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
         if [ "${{ inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
-        python scripts/rotate_groups.py $ARGS
+        python scripts/rotate_groups.py $ARGS | tee rotate_output.txt
+        # Capture summary for Slack
+        ENDED=$(grep -oE 'Ended sale on [0-9]+' rotate_output.txt | grep -oE '[0-9]+' | head -1 || echo "0")
+        STARTED=$(grep -oE 'Started sale on [0-9]+' rotate_output.txt | grep -oE '[0-9]+' | head -1 || echo "0")
+        ACTIVE=$(grep -oE 'active_group=[ABC]' rotate_output.txt | head -1 | cut -d= -f2 || echo "?")
+        echo "ended=$ENDED" >> $GITHUB_OUTPUT
+        echo "started=$STARTED" >> $GITHUB_OUTPUT
+        echo "active=$ACTIVE" >> $GITHUB_OUTPUT
 
     - name: Commit rotation CSV
       if: ${{ inputs.dry_run != true }}
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add output/rotation_updates.csv
+        git add output/price_updates.csv
         git commit -m "Rotation $(date +'%Y-%m-%d %H:%M UTC')" || echo "No changes"
         git push
 
-    - name: Upload CSV as artifact (always)
-      uses: actions/upload-artifact@v4
-      with:
-        name: rotation_updates
-        path: output/rotation_updates.csv
-        retention-days: 90
+    - name: Slack notify on success
+      if: ${{ success() && inputs.dry_run != true }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      run: |
+        curl -s -X POST -H 'Content-Type: application/json' \
+          --data "{\"text\": \":arrows_counterclockwise: *VidaXL rotation gennemført* — gruppe ${{ steps.rotate.outputs.active }} er nu aktiv. Endte salg på ${{ steps.rotate.outputs.ended }} produkter, startede salg på ${{ steps.rotate.outputs.started }} produkter. Matrixify importerer fra price_updates.csv på næste schedule.\"}" \
+          "$SLACK_WEBHOOK_URL"
 
-    - name: Notify on failure
+    - name: Slack notify on failure
       if: failure()
-      uses: actions/github-script@v6
-      with:
-        script: |
-          github.rest.issues.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            title: 'VidaXL rotation failed',
-            body: 'The rotate_groups workflow failed. Check the Actions tab for details.'
-          })
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      run: |
+        curl -s -X POST -H 'Content-Type: application/json' \
+          --data "{\"text\": \":x: *VidaXL rotation FEJLEDE* — kør ${{ github.run_id }}. Tjek logs: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+          "$SLACK_WEBHOOK_URL"

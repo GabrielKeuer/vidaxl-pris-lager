@@ -35,7 +35,7 @@ import pricing
 
 VIDAXL_URL = "https://feed.vidaxl.io/api/v1/feeds/download/f05d7105-88c0-45a4-a3a5-f1b48ba55d2a/DK/vidaXL_dk_dropshipping_offer.csv"
 SHOP_SKUS_PATH = "output/shop_skus.json"
-OUTPUT_PATH = "output/migration_updates.csv"
+OUTPUT_PATH = "output/price_updates.csv"  # Matrixify scheduled import URL
 ROTATION_STATE_KEY = "vidaxl_rotation_state"
 INITIAL_ACTIVE_GROUP = "A"
 

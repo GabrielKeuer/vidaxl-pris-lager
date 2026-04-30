@@ -219,14 +219,19 @@ def main():
     print(f"📝 {len(output_rows)} UPDATE-rows -> {OUTPUT_PATH}")
 
     os.makedirs("output", exist_ok=True)
-    with open(OUTPUT_PATH, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=[
-            "Variant SKU", "Variant Price", "Variant Compare At Price",
-            "Variant Cost", "Variant Command",
-        ])
-        writer.writeheader()
-        writer.writerows(output_rows)
-    print(f"✅ Wrote {len(output_rows)} updates")
+    if output_rows or not os.path.exists(OUTPUT_PATH):
+        with open(OUTPUT_PATH, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=[
+                "Variant SKU", "Variant Price", "Variant Compare At Price",
+                "Variant Cost", "Variant Command",
+            ])
+            writer.writeheader()
+            writer.writerows(output_rows)
+        print(f"✅ Wrote {len(output_rows)} updates")
+    else:
+        # Preserve existing CSV — migration / rotation may have written rows that
+        # Matrixify has not yet imported. Overwriting with 0 rows could lose data.
+        print(f"   (No changes — preserving existing {OUTPUT_PATH})")
 
     if state_updates:
         # Upsert in batches of 500 to stay within Supabase API limits
