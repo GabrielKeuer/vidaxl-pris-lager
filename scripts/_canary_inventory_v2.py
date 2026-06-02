@@ -121,24 +121,37 @@ def main():
     items = cache['inventory_items']
     print(f"📦 Cache: location={loc_id}, {len(items)} SKUs\n")
 
-    # Vaelg en tilfaeldig SKU (deterministisk seed for reproducerbarhed pr. dag)
-    random.seed(datetime.utcnow().strftime("%Y%m%d"))
-    samples = random.sample(list(items.items()), 20)
+    # Vaelg op til 200 tilfaeldige SKUs og find en med positiv stock.
+    # Mange SKUs i en dropship-shop er ikke aktiveret paa vores location
+    # eller har 0 stock. Vi skipper dem og finder en der virkelig har stock.
+    random.seed(datetime.utcnow().strftime("%Y%m%d%H%M"))
+    samples = random.sample(list(items.items()), min(200, len(items)))
 
-    # Find foerste SKU hvor on_hand > 0 (saa vi har plads til +1 / -1 uden negativ stock)
     chosen = None
+    skipped_none = 0
+    skipped_zero = 0
+    errors = 0
     for sku, inv_id in samples:
         try:
             current = query_on_hand(inv_id, loc_id)
         except Exception:
+            errors += 1
             continue
-        if current is None or current <= 0:
+        if current is None:
+            skipped_none += 1
+            continue
+        if current <= 0:
+            skipped_zero += 1
             continue
         chosen = {'sku': sku, 'inv_id': inv_id, 'original': current}
         break
 
     if not chosen:
-        sys.exit("❌ Kunne ikke finde testbar SKU (alle havde 0 stock eller fejlede)")
+        print(f"⚠ Scanned {len(samples)} SKUs:")
+        print(f"   {skipped_none} havde inventoryLevel=null (ikke aktiveret paa location)")
+        print(f"   {skipped_zero} havde on_hand <= 0")
+        print(f"   {errors} fejlede ved query")
+        sys.exit("❌ Kunne ikke finde testbar SKU med positiv stock i sample")
 
     sku = chosen['sku']; inv_id = chosen['inv_id']; orig = chosen['original']
     test_qty = orig + 1
