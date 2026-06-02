@@ -45,10 +45,13 @@ def gql(query, variables=None):
 
 
 def query_on_hand(inv_id: int, loc_id: str):
+    # 2024-01: inventoryLevel er NESTED under inventoryItem, ikke root query
     q = """
     query qty($inventoryItemId: ID!, $locationId: ID!) {
-      inventoryLevel(inventoryItemId: $inventoryItemId, locationId: $locationId) {
-        quantities(names: ["on_hand"]) { name quantity }
+      inventoryItem(id: $inventoryItemId) {
+        inventoryLevel(locationId: $locationId) {
+          quantities(names: ["on_hand"]) { name quantity }
+        }
       }
     }
     """
@@ -56,7 +59,10 @@ def query_on_hand(inv_id: int, loc_id: str):
         'inventoryItemId': f"gid://shopify/InventoryItem/{inv_id}",
         'locationId': f"gid://shopify/Location/{loc_id}",
     })
-    level = (d.get('data') or {}).get('inventoryLevel')
+    item = (d.get('data') or {}).get('inventoryItem')
+    if not item:
+        return None
+    level = item.get('inventoryLevel')
     if not level:
         return None
     return next((x['quantity'] for x in level['quantities'] if x['name'] == 'on_hand'), None)
