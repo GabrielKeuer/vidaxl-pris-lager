@@ -90,9 +90,14 @@ def fetch_state_paginated(sb, group, statuses):
 
 
 def parse_iso(s):
+    """Tolerant ISO-parser (patched 2026-06-02): Python's fromisoformat
+    kraver 0/3/6-cifret microseconds. En row har 5 cifre — pad til 6."""
     if not s:
         return None
-    return datetime.fromisoformat(s.replace("Z", "+00:00"))
+    import re
+    s = s.replace("Z", "+00:00")
+    s = re.sub(r'\.(\d{1,9})(?=[+\-T ])', lambda m: '.' + m.group(1).ljust(6, '0')[:6], s)
+    return datetime.fromisoformat(s)
 
 
 def main(argv=None):

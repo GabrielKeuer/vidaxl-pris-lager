@@ -115,8 +115,14 @@ def fetch_state_paginated(sb, group, statuses):
 
 
 def parse_iso(s):
+    """Tolerant ISO-parser. Python's fromisoformat kraver 0/3/6-cifret microseconds —
+    Supabase ROW i dag har en med 5 cifre. Normaliser til 6 cifre."""
     if not s: return None
-    return datetime.fromisoformat(s.replace("Z", "+00:00"))
+    import re
+    s = s.replace("Z", "+00:00")
+    # Pad/truncate fractional seconds til 6 cifre
+    s = re.sub(r'\.(\d{1,9})(?=[+\-T ])', lambda m: '.' + m.group(1).ljust(6, '0')[:6], s)
+    return datetime.fromisoformat(s)
 
 
 def upsert_state_batches(sb, state_updates):
