@@ -1,16 +1,19 @@
-"""Daily/twice-daily SKU + inventory_item_id cache for downstream sync scripts.
+"""Daily/twice-daily SKU + ID-mappings cache for downstream sync scripts.
 
 Output (output/shop_skus.json) — UDVIDET 2026-06-02 til at understøtte
 direct-API migration:
   - skus: list[str]                  — bagudkompatibelt (eksisterende læsere)
   - count: int
   - updated: ISO timestamp
-  - location_id: str (numerisk)      — NY: primary fulfillment location
-  - inventory_items: {sku: int}      — NY: mapping SKU → inventory_item_id
+  - location_id: str (numerisk)      — primary fulfillment location
+  - inventory_items: {sku: int}      — sku → inventory_item_id (for sync_inventory_v2)
+  - variants: {sku: [variant_id, product_id]}  — sku → (variant_id, product_id)
+                                                  for sync_prices_v2 + rotate_groups_v2
+                                                  (productVariantsBulkUpdate kraever begge)
 
 Eksisterende læsere bruger kun `skus` og bliver ikke påvirket. Nye
-direct-API scripts (sync_inventory_v2 og frem) bruger location_id +
-inventory_items til at konstruere mutations uden ekstra GraphQL-rundtur.
+direct-API scripts bruger de øvrige felter til at konstruere mutations
+uden ekstra GraphQL-rundtur pr. kørsel.
 """
 import json
 import os
@@ -71,15 +74,16 @@ def fetch_primary_location():
 
 
 def fetch_all_variants():
-    """Hent alle SKUs + inventory_item_ids paginating via cursor.
+    """Hent alle SKUs + inventory_item_id + variant_id + product_id.
 
     Cost-budgettet hos Shopify er rigeligt til at hente 165k varianter
     i én session. Vi henter pr. side med 250 varianter og pauser kun
     hvis throttle-bucket nærmer sig tom.
     """
-    print("🚀 Fetching SKUs + inventory_item_ids from Shopify...")
+    print("🚀 Fetching SKUs + inventory_item_ids + variant/product ids from Shopify...")
     skus = set()
-    items = {}                # sku -> numeric inventory_item_id
+    items = {}                # sku -> numeric inventory_item_id (for sync_inventory_v2)
+    variants_map = {}         # sku -> [variant_id, product_id] (for sync_prices_v2)
     cursor = None
     page = 0
     while True:
@@ -88,8 +92,10 @@ def fetch_all_variants():
           productVariants(first: 250, after: $cursor) {
             edges {
               node {
+                id
                 sku
                 inventoryItem { id }
+                product { id }
               }
             }
             pageInfo { hasNextPage endCursor }
@@ -101,37 +107,45 @@ def fetch_all_variants():
         for edge in variants['edges']:
             n = edge['node']
             sku = (n.get('sku') or '').strip()
-            inv = (n.get('inventoryItem') or {}).get('id') or ''
-            if not sku or not inv:
+            if not sku:
                 continue
             sku = str(sku)
-            # gid://shopify/InventoryItem/45678 → 45678 (numerisk for kompakt JSON)
+            inv = (n.get('inventoryItem') or {}).get('id') or ''
+            var_id = n.get('id') or ''
+            prod_id = (n.get('product') or {}).get('id') or ''
             try:
-                inv_num = int(inv.rsplit('/', 1)[-1])
+                inv_num = int(inv.rsplit('/', 1)[-1]) if inv else None
+                var_num = int(var_id.rsplit('/', 1)[-1]) if var_id else None
+                prod_num = int(prod_id.rsplit('/', 1)[-1]) if prod_id else None
             except ValueError:
                 continue
+            if not (var_num and prod_num):
+                continue
             skus.add(sku)
-            items[sku] = inv_num
+            if inv_num:
+                items[sku] = inv_num
+            variants_map[sku] = [var_num, prod_num]
         page += 1
         if page % 20 == 0:
             print(f"  Page {page}: {len(skus)} SKUs cached so far")
         if not variants['pageInfo']['hasNextPage']:
             break
         cursor = variants['pageInfo']['endCursor']
-    print(f"✅ Total: {len(skus)} SKUs, {len(items)} med inventory_item_id")
-    return sorted(skus), items
+    print(f"✅ Total: {len(skus)} SKUs, {len(items)} m. inventory_item_id, {len(variants_map)} m. variant+product")
+    return sorted(skus), items, variants_map
 
 
 def main():
     location_id = fetch_primary_location()
-    skus, items = fetch_all_variants()
+    skus, items, variants_map = fetch_all_variants()
 
     output = {
         'skus': skus,                   # bagudkompatibelt
         'count': len(skus),
         'updated': datetime.utcnow().isoformat() + 'Z',
-        'location_id': location_id,     # NY
-        'inventory_items': items,       # NY (sku -> int)
+        'location_id': location_id,     # primary fulfillment location
+        'inventory_items': items,       # sku -> inventory_item_id
+        'variants': variants_map,       # sku -> [variant_id, product_id]
     }
 
     os.makedirs('output', exist_ok=True)
