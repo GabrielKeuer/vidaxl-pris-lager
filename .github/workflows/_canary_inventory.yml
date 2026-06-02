@@ -1,0 +1,35 @@
+name: Canary - sync_inventory_v2 end-to-end
+
+# Kun manuel trigger — ad-hoc validering af at direct-API kaldet faktisk
+# rammer Shopify som forventet. Picker EN SKU fra dry-run-output, anvender
+# aendringen via inventorySetOnHandQuantities, verificerer Shopify reflekterer
+# det nye on-hand. Ingen business-risk (anvender en aendring som alligevel
+# ville ske via Matrixify senere).
+
+on:
+  workflow_dispatch:
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install requests pandas
+
+      # Genskab frisk dry-run CSV (i case git-versioneret er stale)
+      - name: Re-run dry-run (frisk dataset)
+        env:
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+        run: python scripts/sync_inventory_v2.py --skip-state-save
+
+      - name: Run canary (one SKU end-to-end)
+        env:
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+        run: python scripts/_canary_inventory_v2.py
