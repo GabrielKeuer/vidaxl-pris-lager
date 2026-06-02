@@ -6,6 +6,7 @@ Synkroniserer lager fra Sollux CSV til Shopify produkter
 
 import os
 import sys
+import time
 import requests
 import csv
 from datetime import datetime
@@ -35,17 +36,33 @@ def log(message):
 
 
 def download_sollux_csv():
-    """Download CSV fra Sollux"""
+    """Download CSV fra Sollux med retry-logik.
+
+    Sollux-serveren (apps.sollux-lighting.com) har historisk daglige
+    ConnectTimeoutErrors. Vi prøver 3 gange med exponential backoff
+    (60s, 120s) før vi giver op. Timeout sat op fra 30s til 60s.
+    """
     log("📥 Downloading Sollux CSV...")
-    
-    try:
-        response = requests.get(SOLLUX_CSV_URL, timeout=30)
-        response.raise_for_status()
-        log(f"✅ Downloaded CSV ({len(response.text)} bytes)")
-        return response.text
-    except Exception as e:
-        log(f"❌ Error downloading CSV: {e}")
-        sys.exit(1)
+    last_err = None
+    for attempt in range(1, 4):
+        try:
+            response = requests.get(SOLLUX_CSV_URL, timeout=60)
+            response.raise_for_status()
+            log(f"✅ Downloaded CSV ({len(response.text)} bytes, attempt {attempt}/3)")
+            return response.text
+        except (requests.exceptions.ConnectionError,
+                requests.exceptions.Timeout,
+                requests.exceptions.HTTPError) as e:
+            last_err = e
+            err_type = type(e).__name__
+            if attempt < 3:
+                wait = 60 * attempt   # 60s, 120s
+                log(f"⚠️  Attempt {attempt}/3 failed ({err_type}). Retrying in {wait}s...")
+                time.sleep(wait)
+            else:
+                log(f"❌ All 3 attempts failed. Last error ({err_type}): {str(e)[:160]}")
+    log(f"❌ Could not download Sollux CSV after 3 attempts")
+    sys.exit(1)
 
 
 def parse_sollux_csv(csv_content):

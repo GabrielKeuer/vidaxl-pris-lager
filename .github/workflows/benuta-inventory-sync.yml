@@ -4,14 +4,25 @@ on:
   # Kør hver 1. time (10 minutter over)
   schedule:
     - cron: '10 */1 * * *'
-  
+
   # Manuel trigger
   workflow_dispatch:
+
+# Cancel-in-progress: hvis et job er stuck (GitHub-runner allocation hænger),
+# bliver det automatisk dræbt når næste hourly-run starter — i stedet for
+# 15-min "cancelled at setup"-mønstret vi så historisk (alle Benuta-failures
+# april-maj 2026 var cancelled efter præcis 15 min med 0 steps gennemført).
+concurrency:
+  group: benuta-inventory-sync
+  cancel-in-progress: true
 
 jobs:
   sync-benuta:
     runs-on: ubuntu-latest
-    
+    # Normal kørsel tager 2-3 min; 10 min er rigeligt margin uden at vente på
+    # GitHub's standard 15-min cancel-timeout.
+    timeout-minutes: 10
+
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4

@@ -4,14 +4,24 @@ on:
   # Kør hver 1. time
   schedule:
     - cron: '0 */1 * * *'
-  
+
   # Manuel trigger
   workflow_dispatch:
+
+# Cancel-in-progress: hvis et job er stuck (GitHub-runner allocation hænger),
+# bliver det automatisk dræbt når næste hourly-run starter — i stedet for
+# 15-min "cancelled at setup"-mønstret vi så historisk.
+concurrency:
+  group: sollux-inventory-sync
+  cancel-in-progress: true
 
 jobs:
   sync-sollux:
     runs-on: ubuntu-latest
-    
+    # Bail-out efter 10 min så vi ikke hænger i GitHub's 15-min cancel-pattern.
+    # Normal kørsel tager 30-60 sek; 10 min er rigeligt margin.
+    timeout-minutes: 10
+
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
