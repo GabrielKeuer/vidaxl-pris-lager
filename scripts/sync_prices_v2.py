@@ -53,7 +53,7 @@ CONFIG = {
     "shop_cache_path": "output/shop_skus.json",
     "live_csv_path": "output/price_updates.csv",
     "dry_run_csv": "output/new_price_updates.csv",
-    "on_sale_diffs_csv": "output/on_sale_diffs.csv",   # NY: separat fil for on_sale ændringer
+    "on_sale_diffs_csv": "output/on_sale_diffs.csv",
     "csv_headers": [
         "Variant SKU", "Variant Price", "Variant Compare At Price",
         "Variant Cost", "Variant Command",
@@ -66,6 +66,15 @@ CONFIG = {
     "request_timeout": 180,
     "supabase_state_table": "vidaxl_pricing_state",
     "supabase_batch_size": 500,
+
+    # Niveau 2 vs Niveau 3 (Bulk Operations) threshold.
+    # < threshold: Niveau 2 (regular GraphQL) — hurtigere for små runs pga.
+    #              ingen submit/poll-overhead. Begrænset af 50 pts/s rate.
+    # >= threshold: Niveau 3 (bulkOperationRunMutation) — async server-side.
+    #              Skalerer til 100k+ mutations, ingen rate limit under run.
+    "bulk_threshold": 1000,
+    "bulk_poll_interval_seconds": 15,
+    "bulk_max_wait_minutes": 45,
 }
 
 
@@ -295,7 +304,7 @@ def gql(query, variables=None):
 
 
 PRICE_MUTATION = """
-mutation updPrices($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+mutation productVariantsBulkUpdate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
   productVariantsBulkUpdate(productId: $productId, variants: $variants) {
     userErrors { field message }
     productVariants { id }
@@ -303,78 +312,75 @@ mutation updPrices($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
 }
 """
 
-COST_MUTATION = """
-mutation updCost($id: ID!, $input: InventoryItemInput!) {
-  inventoryItemUpdate(id: $id, input: $input) {
-    userErrors { field message }
-    inventoryItem { id }
-  }
-}
-"""
 
+def _build_by_product(today_rows, on_sale_rows, variants_map, stats):
+    """Konvertér rows → {product_id: [variant_input, ...]} payload.
 
-def push_to_shopify(today_rows, on_sale_rows, variants_map, sku_to_inv):
-    """Push price+compareAt+cost til Shopify.
-
-    today_rows:    normal/warmup ændringer. compareAtPrice = "" (ryddes).
-    on_sale_rows:  on_sale ændringer. compareAtPrice afhænger af Action:
-                     - KEEP  : udelades fra mutation (Shopify bevarer låst værdi)
-                     - CLEAR : eksplicit null (edge case: new_sale >= compareAt)
+    Cost er nu inkluderet i variant-input via inventoryItem.cost — en
+    productVariantsBulkUpdate kan opdatere price + compareAt + cost i
+    EN mutation (vs. de gamle to mutations pr. variant).
     """
-    print(f"🚀 Pushing {len(today_rows)} normal-changes + {len(on_sale_rows)} on_sale-changes til Shopify")
-    stats = {"price_updated": 0, "cost_updated": 0,
-             "skipped_no_variant": 0, "errors": 0,
-             "on_sale_compare_at_cleared": 0}
+    by_product = defaultdict(list)
 
-    by_product = defaultdict(list)        # product_id -> [(variant_id, row_dict), ...]
-    cost_ops = []                         # [(inventory_item_id, b2b), ...]
+    def _add(sku, vm, vinput, cost):
+        variant_id, product_id = vm
+        v = {"id": f"gid://shopify/ProductVariant/{variant_id}"}
+        v.update(vinput)
+        if cost is not None:
+            v["inventoryItem"] = {"cost": str(cost)}
+        by_product[product_id].append(v)
 
-    # Forbered normal/warmup-rows: clear compareAt
+    # Normal/warmup: clear compareAt
     for row in today_rows:
         sku = row["Variant SKU"]
         vm = variants_map.get(sku)
         if not vm:
             stats["skipped_no_variant"] += 1
             continue
-        variant_id, product_id = vm
-        by_product[product_id].append((variant_id, {
+        cost = None
+        if row.get("Variant Cost") not in (None, "", "nan"):
+            try: cost = float(row["Variant Cost"])
+            except (ValueError, TypeError): pass
+        _add(sku, vm, {
             "price": str(row["Variant Price"]),
-            "compareAtPrice": None,                  # ryd compareAt for non-sale
-        }))
-        inv_id = sku_to_inv.get(sku)
-        if inv_id and row.get("Variant Cost") not in (None, "", "nan"):
-            cost_ops.append((inv_id, float(row["Variant Cost"])))
+            "compareAtPrice": None,
+        }, cost)
 
-    # Forbered on_sale-rows: behold compareAt (KEEP) eller ryd (CLEAR)
+    # On_sale: KEEP (omit compareAt) eller CLEAR (eksplicit null)
     for row in on_sale_rows:
         sku = row["Variant SKU"]
         vm = variants_map.get(sku)
         if not vm:
             stats["skipped_no_variant"] += 1
             continue
-        variant_id, product_id = vm
-        variant_input = {"price": str(row["Variant Price"])}
+        vinput = {"price": str(row["Variant Price"])}
         if row["Compare At Action"] == "CLEAR":
-            variant_input["compareAtPrice"] = None       # eksplicit null
+            vinput["compareAtPrice"] = None
             stats["on_sale_compare_at_cleared"] += 1
-        # ELSE: KEEP — vi UDELADER compareAtPrice helt så Shopify bevarer låst værdi
-        by_product[product_id].append((variant_id, variant_input))
-        inv_id = sku_to_inv.get(sku)
-        if inv_id and row.get("Variant Cost") not in (None, "", "nan"):
-            cost_ops.append((inv_id, float(row["Variant Cost"])))
+        cost = None
+        if row.get("Variant Cost") not in (None, "", "nan"):
+            try: cost = float(row["Variant Cost"])
+            except (ValueError, TypeError): pass
+        _add(sku, vm, vinput, cost)
 
+    return by_product
+
+
+def push_to_shopify_graphql(today_rows, on_sale_rows, variants_map):
+    """Niveau 2: regular GraphQL Admin API. En productVariantsBulkUpdate
+    mutation pr. produkt. Hurtig for små batches (<1000 changes).
+    """
+    print(f"🚀 NIVEAU 2 (GraphQL): {len(today_rows)} normal + {len(on_sale_rows)} on_sale changes")
+    stats = {"variants_updated": 0, "products_processed": 0,
+             "skipped_no_variant": 0, "errors": 0,
+             "on_sale_compare_at_cleared": 0}
+
+    by_product = _build_by_product(today_rows, on_sale_rows, variants_map, stats)
     print(f"  {len(by_product)} unikke produkter at opdatere")
-    print(f"  {len(cost_ops)} cost-opdateringer")
-    if stats["on_sale_compare_at_cleared"] > 0:
-        print(f"  ⚠ {stats['on_sale_compare_at_cleared']} on_sale-produkter får ryddet compareAt (edge case)")
+    if stats["on_sale_compare_at_cleared"]:
+        print(f"  ⚠ {stats['on_sale_compare_at_cleared']} on_sale ryddes compareAt (edge case)")
 
-    # 1. Price + compareAtPrice mutations (gruppé pr. produkt)
-    for n, (product_id, items) in enumerate(by_product.items(), 1):
-        variants_payload = []
-        for variant_id, vinput in items:
-            v = {"id": f"gid://shopify/ProductVariant/{variant_id}"}
-            v.update(vinput)
-            variants_payload.append(v)
+    for n, (product_id, variants_payload) in enumerate(by_product.items(), 1):
         try:
             d = gql(PRICE_MUTATION, {
                 "productId": f"gid://shopify/Product/{product_id}",
@@ -385,33 +391,217 @@ def push_to_shopify(today_rows, on_sale_rows, variants_map, sku_to_inv):
                 stats["errors"] += len(errs)
                 print(f"  ⚠ product {product_id}: userErrors {errs[:2]}")
             else:
-                stats["price_updated"] += len(items)
+                stats["variants_updated"] += len(variants_payload)
+                stats["products_processed"] += 1
                 if n % 50 == 0 or n == len(by_product):
-                    print(f"  Price progress: {n}/{len(by_product)} products ({stats['price_updated']} variants)")
+                    print(f"  Progress: {n}/{len(by_product)} products ({stats['variants_updated']} variants)")
         except Exception as e:
-            stats["errors"] += len(items)
+            stats["errors"] += len(variants_payload)
             print(f"  ❌ product {product_id} fejlede: {str(e)[:150]}")
 
-    # 2. Cost — én mutation pr. SKU
-    for n, (inv_id, cost) in enumerate(cost_ops, 1):
+    return stats
+
+
+# === NIVEAU 3: Bulk Operations =====================================
+
+BULK_MUTATION_TEMPLATE = '''
+mutation call($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+  productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+    userErrors { field message }
+    productVariants { id }
+  }
+}
+'''
+
+STAGED_UPLOAD_MUTATION = """
+mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
+  stagedUploadsCreate(input: $input) {
+    userErrors { field message }
+    stagedTargets {
+      url
+      resourceUrl
+      parameters { name value }
+    }
+  }
+}
+"""
+
+BULK_RUN_MUTATION = """
+mutation bulkOperationRunMutation($mutation: String!, $stagedUploadPath: String!) {
+  bulkOperationRunMutation(mutation: $mutation, stagedUploadPath: $stagedUploadPath) {
+    bulkOperation { id status }
+    userErrors { field message }
+  }
+}
+"""
+
+BULK_STATUS_QUERY = """
+query {
+  currentBulkOperation(type: MUTATION) {
+    id status errorCode createdAt completedAt objectCount rootObjectCount
+    fileSize url partialDataUrl
+  }
+}
+"""
+
+
+def push_to_shopify_bulk(today_rows, on_sale_rows, variants_map):
+    """Niveau 3: bulkOperationRunMutation. Skalérer til 100k+ mutations.
+    Submit JSONL → server-side async processing → poll → resultater.
+
+    Flow:
+      1. Build by_product dict
+      2. Skriv lokal JSONL fil
+      3. stagedUploadsCreate → få signed S3-URL
+      4. Upload JSONL til S3
+      5. bulkOperationRunMutation(template, stagedUploadPath)
+      6. Poll currentBulkOperation hvert N sek til status=COMPLETED|FAILED
+      7. Parse resultat (download fra url-feltet hvis success)
+    """
+    import tempfile
+
+    print(f"🚀 NIVEAU 3 (Bulk Operations): {len(today_rows)} normal + {len(on_sale_rows)} on_sale changes")
+    stats = {"variants_updated": 0, "products_processed": 0,
+             "skipped_no_variant": 0, "errors": 0,
+             "on_sale_compare_at_cleared": 0,
+             "bulk_operation_id": None, "object_count": 0}
+
+    by_product = _build_by_product(today_rows, on_sale_rows, variants_map, stats)
+    if not by_product:
+        print("  Ingen mutations at sende. Færdig.")
+        return stats
+    print(f"  {len(by_product)} unikke produkter i bulk")
+    if stats["on_sale_compare_at_cleared"]:
+        print(f"  ⚠ {stats['on_sale_compare_at_cleared']} on_sale ryddes compareAt (edge case)")
+
+    # ---- Step 1: skriv JSONL fil ----
+    jsonl_path = tempfile.mktemp(suffix='.jsonl')
+    with open(jsonl_path, 'w', encoding='utf-8') as f:
+        for product_id, variants_payload in by_product.items():
+            line = json.dumps({
+                "productId": f"gid://shopify/Product/{product_id}",
+                "variants": variants_payload,
+            }, separators=(',', ':'))
+            f.write(line + '\n')
+    file_size = os.path.getsize(jsonl_path)
+    print(f"  📄 JSONL fil: {file_size:,} bytes, {len(by_product)} lines → {jsonl_path}")
+
+    # ---- Step 2: stagedUploadsCreate (få signed S3-URL) ----
+    print(f"  ⬆ Anmoder om upload-URL...")
+    d = gql(STAGED_UPLOAD_MUTATION, {
+        "input": [{
+            "filename": "bulk_price_updates.jsonl",
+            "mimeType": "text/jsonl",
+            "httpMethod": "POST",
+            "resource": "BULK_MUTATION_VARIABLES",
+        }]
+    })
+    errs = d['data']['stagedUploadsCreate'].get('userErrors') or []
+    if errs:
+        raise Exception(f"stagedUploadsCreate failed: {errs}")
+    target = d['data']['stagedUploadsCreate']['stagedTargets'][0]
+    upload_url = target['url']
+    resource_url = target['resourceUrl']
+    parameters = {p['name']: p['value'] for p in target['parameters']}
+    staged_upload_path = parameters.get('key', '')
+    print(f"     staged upload path: {staged_upload_path}")
+
+    # ---- Step 3: Upload JSONL til S3 ----
+    print(f"  ⬆ Uploader JSONL til Shopify's S3...")
+    with open(jsonl_path, 'rb') as f:
+        files = {'file': ('bulk_price_updates.jsonl', f, 'text/jsonl')}
+        # Build multipart form: parameters first, then file last
+        data = list(parameters.items())
+        r = requests.post(upload_url, data=data, files=files, timeout=120)
+    if r.status_code not in (200, 201, 204):
+        raise Exception(f"S3 upload failed: HTTP {r.status_code}: {r.text[:300]}")
+    print(f"     ✅ Uploaded (status {r.status_code})")
+    os.unlink(jsonl_path)
+
+    # ---- Step 4: bulkOperationRunMutation ----
+    print(f"  🚀 Starter bulk-mutation...")
+    d = gql(BULK_RUN_MUTATION, {
+        "mutation": BULK_MUTATION_TEMPLATE,
+        "stagedUploadPath": staged_upload_path,
+    })
+    bulk = d['data']['bulkOperationRunMutation']
+    if bulk.get('userErrors'):
+        raise Exception(f"bulkOperationRunMutation failed: {bulk['userErrors']}")
+    op = bulk['bulkOperation']
+    stats["bulk_operation_id"] = op['id']
+    print(f"     ✅ Bulk operation startet: {op['id']} (status={op['status']})")
+
+    # ---- Step 5: Poll til færdig ----
+    print(f"  ⏳ Poller status hvert {CONFIG['bulk_poll_interval_seconds']}s...")
+    start = time.time()
+    last_status = None
+    last_count = None
+    max_wait = CONFIG["bulk_max_wait_minutes"] * 60
+    while True:
+        time.sleep(CONFIG["bulk_poll_interval_seconds"])
+        d = gql(BULK_STATUS_QUERY)
+        cur = d['data']['currentBulkOperation']
+        if cur is None:
+            print(f"  ⚠ currentBulkOperation returnerede null — antager færdig")
+            break
+        status = cur['status']
+        count = cur.get('objectCount') or 0
+        elapsed = int(time.time() - start)
+        if status != last_status or count != last_count:
+            print(f"     [{elapsed:>4}s] status={status} objectCount={count}")
+            last_status = status; last_count = count
+        if status in ('COMPLETED', 'FAILED', 'CANCELED', 'EXPIRED'):
+            break
+        if time.time() - start > max_wait:
+            raise Exception(f"Bulk operation timeout efter {max_wait}s — status={status}")
+
+    # ---- Step 6: Parse resultat ----
+    if cur['status'] != 'COMPLETED':
+        raise Exception(f"Bulk operation endte med status={cur['status']}, errorCode={cur.get('errorCode')}")
+
+    stats["object_count"] = cur.get('objectCount') or 0
+    print(f"  ✅ Bulk completed: {stats['object_count']} mutations executed")
+
+    # Download result JSONL og count errors
+    result_url = cur.get('url')
+    if result_url:
         try:
-            d = gql(COST_MUTATION, {
-                "id": f"gid://shopify/InventoryItem/{inv_id}",
-                "input": {"cost": str(cost)},
-            })
-            errs = d['data']['inventoryItemUpdate']['userErrors']
-            if errs:
-                stats["errors"] += 1
-                print(f"  ⚠ cost inv_id {inv_id}: userErrors {errs[:1]}")
-            else:
-                stats["cost_updated"] += 1
-                if n % 100 == 0 or n == len(cost_ops):
-                    print(f"  Cost progress: {n}/{len(cost_ops)}")
+            r = requests.get(result_url, timeout=120)
+            r.raise_for_status()
+            result_lines = r.text.strip().split('\n')
+            for line in result_lines:
+                if not line: continue
+                try:
+                    res = json.loads(line)
+                    user_errors = (res.get('data', {}) or {}).get(
+                        'productVariantsBulkUpdate', {}).get('userErrors') or []
+                    if user_errors:
+                        stats["errors"] += len(user_errors)
+                    else:
+                        # Count successful productVariants
+                        pv = (res.get('data', {}) or {}).get(
+                            'productVariantsBulkUpdate', {}).get('productVariants') or []
+                        stats["variants_updated"] += len(pv)
+                        stats["products_processed"] += 1
+                except json.JSONDecodeError:
+                    continue
+            if stats["errors"]:
+                print(f"  ⚠ {stats['errors']} userErrors i bulk-resultat")
         except Exception as e:
-            stats["errors"] += 1
-            print(f"  ❌ cost inv_id {inv_id} fejlede: {str(e)[:150]}")
+            print(f"  ⚠ Kunne ikke parse resultat: {str(e)[:200]}")
 
     return stats
+
+
+def push_to_shopify(today_rows, on_sale_rows, variants_map):
+    """Auto-vælg Niveau 2 eller Niveau 3 baseret på batch-størrelse."""
+    total = len(today_rows) + len(on_sale_rows)
+    threshold = CONFIG["bulk_threshold"]
+    print(f"📦 Total changes: {total} (threshold for bulk: {threshold})")
+    if total >= threshold:
+        return push_to_shopify_bulk(today_rows, on_sale_rows, variants_map)
+    else:
+        return push_to_shopify_graphql(today_rows, on_sale_rows, variants_map)
 
 
 # === STATE / OUTPUT =================================================
@@ -505,7 +695,6 @@ def main():
     cache = load_shop_cache()
     shop_skus = set(cache['skus'])
     variants_map = {k: v for k, v in cache['variants'].items()}
-    sku_to_inv = cache['inventory_items']
     print(f"📦 Cache: {len(shop_skus)} SKUs")
 
     feed_df = fetch_supplier_feed()
@@ -513,7 +702,7 @@ def main():
         feed_df, state, pricing_cfg, shop_skus)
 
     if args.live:
-        stats = push_to_shopify(today_rows, on_sale_rows, variants_map, sku_to_inv)
+        stats = push_to_shopify(today_rows, on_sale_rows, variants_map)
         print(f"\n📊 STATS: {stats}")
         if stats["errors"]:
             sys.exit(1)
