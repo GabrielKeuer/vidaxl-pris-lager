@@ -2,7 +2,7 @@
 
 **Started:** 2026-06-02
 **Owner:** Gabriel + Claude
-**Status:** Foundation-fixes deployed (Sollux/Benuta retry + concurrency). Migration starter Dag 1.
+**Status:** Dag 1 (sync_inventory) ✅ DONE. Dag 2 (sync_prices) ✅ DONE. Næste: Dag 3 rotate_groups.
 
 ---
 
@@ -181,17 +181,28 @@ def snapshot(operations, label) -> Path:
 
 ---
 
-## Tidslinje
+## Tidslinje (REVIDERET 2026-06-02 efter Dag 1+2)
 
-| Dag | Fokus | Output |
+| Dag | Fokus | Status |
 |---|---|---|
-| 1 | Extend `update_shop_cache.py` + migrate `sync_inventory.py` | Inventory direct |
-| 2 | Migrate `daily_delete.py` (approval-gate uændret) | Delete direct |
-| 3 | Migrate `daily_create.py` | Create direct |
-| 4 | Migrate `daily_create_large.py` | Large-create direct |
-| 5 | Migrate `sync_prices.py` + arkitektur-cleanup | Prices direct, ren delta |
-| 6 | Migrate `rotate_groups.py` med staged batching + snapshot | Rotation direct |
-| 7 | Cancel Matrixify subscription, cleanup døde files | Delmål 1 done |
+| 1 | sync_inventory + cache-extension | ✅ DONE (commit ac1bc37a) |
+| 2 | sync_prices + Bulk Operations + on_sale fix | ✅ DONE (commit ab3e0b9c) |
+| 3 | rotate_groups (Niveau 3, 50k SKUs, snapshot+staged) | NÆSTE |
+| 4 | daily_delete (approval-gate uændret) | |
+| 5 | daily_create (productCreate + variants + media orchestration) | |
+| 6 | daily_create_large (samme som 5, større variant-counts) | |
+| 7 | Cancel Matrixify subscription, cleanup | |
+
+## Dag 1 — sync_inventory læring
+- inventorySetOnHandQuantities virker per-SKU, batchet 100/call
+- ~22 min GitHub Actions cron lag observeret (normalt)
+
+## Dag 2 — sync_prices læring
+- **VIGTIG opdagelse:** on_sale produkter havde 29.817 cost+price drift fra OLD's konservative skip-logik. Rettet til kun at låse compareAt (ikke price+cost).
+- **Edge case:** 375 produkter havde VidaXL b2b stigning så ny sale ≥ låst compareAt → ryd compareAt + sæt price=ny_sale. Verificeret via canary.
+- **Niveau 2 vs 3 threshold:** sat til 1000 changes. Daily runs (50-500) bruger Niveau 2 (~30s). Catch-up runs (>1000) bruger Niveau 3 (~6.6 min for 30k).
+- **Cost-i-variant:** ProductVariantsBulkInput.inventoryItem.cost halverer mutations (1 mutation pr. produkt opdaterer price + compareAt + cost).
+- **Feed-fordeling bekræftet:** offer feed til sync (lightweight), main feed til create/delete (full catalog).
 
 ---
 
