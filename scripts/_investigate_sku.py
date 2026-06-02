@@ -46,40 +46,8 @@ print(f"\n═══════════════════════�
 print(f" SKU: {SKU}")
 print(f"══════════════════════════════════════════════════════════\n")
 
-# === 1. VidaXL feed ===
-import time as _time
-print("【1】 VidaXL FEED (kilde til alle b2b-priser)")
-print("    Henter feed...")
-for attempt in range(1, 5):
-    r = requests.get(VIDAXL_URL, headers=FEED_HEADERS, timeout=180)
-    if r.status_code in (403, 429, 500, 502, 503, 504):
-        wait = 5 * attempt
-        print(f"    feed responded {r.status_code} (attempt {attempt}/4) — retrying in {wait}s")
-        _time.sleep(wait)
-        continue
-    r.raise_for_status()
-    break
-else:
-    sys.exit(f"❌ VidaXL feed unreachable efter 4 forsoeg")
-df = pd.read_csv(StringIO(r.text))
-df['SKU'] = df['SKU'].astype(str)
-row = df[df['SKU'] == SKU]
-if row.empty:
-    print(f"    ❌ SKU {SKU} FINDES IKKE i VidaXL feed lige nu")
-    print(f"    → Det betyder produktet er UDGÅET fra VidaXL's katalog.")
-    print(f"    → daily_delete.py vil flagge det til sletning ved næste kørsel.")
-else:
-    r0 = row.iloc[0]
-    print(f"    ✅ SKU {SKU} findes i VidaXL feed.")
-    print(f"    Article name: {r0.get('Article name')}")
-    print(f"    B2B price: {r0.get('B2B price')} EUR (RAW)")
-    print(f"    Stock: {r0.get('Stock')}")
-    avail_keys = [c for c in df.columns if 'available' in c.lower() or 'status' in c.lower()]
-    for k in avail_keys:
-        print(f"    {k}: {r0.get(k)}")
-
-# === 2. Shopify ===
-print("\n【2】 SHOPIFY (current state)")
+# === 1. Shopify (rækkefølge ændret: pull denne FØRST, så vi har data selv hvis feed = 403) ===
+print("【1】 SHOPIFY (current state)")
 with open('output/shop_skus.json', encoding='utf-8') as f:
     cache = json.load(f)
 vm = cache.get('variants', {}).get(SKU)
@@ -109,8 +77,8 @@ else:
     print(f"    CompareAtPrice: {v.get('compareAtPrice')}")
     print(f"    Cost: {cost.get('amount')} kr")
 
-# === 3. Supabase pricing state ===
-print("\n【3】 SUPABASE vidaxl_pricing_state (vores tracker)")
+# === 2. Supabase pricing state ===
+print("\n【2】 SUPABASE vidaxl_pricing_state (vores tracker)")
 url = os.environ.get("SUPABASE_URL"); key = os.environ.get("SUPABASE_SERVICE_KEY")
 if not url or not key:
     print(f"    ⚠ SUPABASE_URL/KEY mangler — kan ikke tjekke")
@@ -126,5 +94,47 @@ else:
                   'sale_price', 'warmup_complete_at', 'last_normal_period_started_at']:
             if k in s:
                 print(f"    {k}: {s[k]}")
+
+# === 3. VidaXL feed (sidst - kan timeout med 403) ===
+import time as _time
+print("\n【3】 VidaXL FEED (b2b-pris-kilde)")
+print("    Henter feed (op til 6 forsoeg pga. supplier rate-limit)...")
+df = None
+for attempt in range(1, 7):
+    try:
+        r = requests.get(VIDAXL_URL, headers=FEED_HEADERS, timeout=180)
+        if r.status_code in (403, 429, 500, 502, 503, 504):
+            wait = 10 * attempt
+            print(f"    {r.status_code} (attempt {attempt}/6) — wait {wait}s")
+            _time.sleep(wait)
+            continue
+        r.raise_for_status()
+        df = pd.read_csv(StringIO(r.text))
+        df['SKU'] = df['SKU'].astype(str)
+        break
+    except Exception as e:
+        print(f"    fejl: {str(e)[:120]}")
+        _time.sleep(10 * attempt)
+
+if df is None:
+    print(f"    ⚠ Feed ikke tilgaengelig. Falder tilbage paa Supabase b2b_cost-data.")
+else:
+    print(f"    Total rows i feed: {len(df)}")
+    row = df[df['SKU'] == SKU]
+    if row.empty:
+        print(f"    ❌ SKU {SKU} FINDES IKKE i VidaXL feed lige nu")
+        print(f"    → Produktet er UDGAAET / pulled fra VidaXL's katalog.")
+        print(f"    → daily_delete.py vil flagge til sletning ved naeste koersel.")
+    else:
+        r0 = row.iloc[0]
+        print(f"    ✅ SKU {SKU} findes i VidaXL feed")
+        print(f"    Article name: {r0.get('Article name')}")
+        print(f"    B2B price: {r0.get('B2B price')} EUR (RAW fra feed)")
+        print(f"    Stock: {r0.get('Stock')}")
+        for c in df.columns:
+            if c not in ('SKU', 'Article name', 'B2B price', 'Stock'):
+                val = r0.get(c)
+                if pd.notna(val) and str(val).strip():
+                    print(f"    {c}: {val}")
 
 print(f"\n══════════════════════════════════════════════════════════\n")
