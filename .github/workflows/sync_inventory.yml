@@ -4,7 +4,7 @@ on:
     - cron: '45 * * * *'  # 45 min efter hver time
   workflow_dispatch:
 
-# Forhindr 15-min cancel-stalls (samme mønster som Benuta/Sollux 2026-06-02 fix).
+# Cancel-in-progress (samme moenster som Sollux/Benuta fix 2026-06-02)
 concurrency:
   group: sync-inventory-hourly
   cancel-in-progress: true
@@ -12,7 +12,7 @@ concurrency:
 jobs:
   sync-inventory:
     runs-on: ubuntu-latest
-    timeout-minutes: 15  # Normal kørsel < 5 min, peak ~8 min ved 18k ændringer
+    timeout-minutes: 15  # Normal ~5 min, peak ~8 min ved 18k aendringer
 
     steps:
     - uses: actions/checkout@v4
@@ -26,41 +26,28 @@ jobs:
       run: |
         pip install requests pandas
 
-    # === FASE 1: PARALLEL DRY-RUN (migration validation) =================
-    # I denne fase kører BÅDE gammelt og nyt script. Det nye er i --dry-run
-    # mode og skriver til output/new_inventory_updates.csv. Compare-step
-    # verificerer at de to filer matcher. Når vi har set ~3 hourly runs med
-    # tom diff → vi flipper denne workflow til --live mode og dropper det
-    # gamle script + Matrixify-import.
-    # Hvis nyt script (eller compare) fejler → ALT job markeres failed →
-    # vi får besked. Gammel CSV → Matrixify er stadig kilden til Shopify
-    # opdateringerne i denne fase, så ingen produktions-impact ved fejl.
+    # === LIVE direct-API kald siden cutover 2026-06-02 (commit 35846a72) ===
+    # Tidligere: scripts/sync_inventory.py emitterede CSV, Matrixify pollede CSV
+    #            paa sin egen schedule og kaldte Shopify.
+    # Nu:        sync_inventory_v2 --live kalder inventorySetOnHandQuantities
+    #            direkte i batches af 100. Validerer FOER cutover via:
+    #              - CSV-diff (workflow shadow-step, 154 rows identical)
+    #              - Round-trip canary (SKU 3119174: 10 -> 11 -> 10 verified)
 
-    # NB: NY KØRER FOR GAMMEL. Begge laeser samme state-fil og samme VidaXL-feed
-    # for at producere diff. Hvis OLD koerer foerst, opdaterer den state til dagens
-    # tilstand, og NEW finder derefter 0 aendringer => falsk diff. Med NY foerst:
-    # begge ser samme "foer"-state og skal producere identisk output-CSV.
-
-    - name: 🟢 NEW — Sync inventory v2 (dry-run, read-only state)
+    - name: Sync inventory (direct API)
       env:
         SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
         SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
       run: |
-        python scripts/sync_inventory_v2.py --skip-state-save
+        python scripts/sync_inventory_v2.py --live
 
-    - name: 🔵 OLD — Sync inventory (Matrixify-CSV)
-      run: |
-        python scripts/sync_inventory.py
-
-    - name: 🔍 VALIDATE — compare old vs new CSV
-      run: |
-        python scripts/_compare_inventory_csvs.py
-
-    - name: Commit changes
+    - name: Commit state + neutralized CSV
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add output/inventory_updates.csv output/new_inventory_updates.csv state/last_inventory.csv
+        # state/last_inventory.csv = naeste runs diff-grundlag (commit som foer)
+        # output/inventory_updates.csv = nu TOM fil (Matrixify-neutralisering)
+        git add output/inventory_updates.csv state/last_inventory.csv
         git commit -m "Inventory sync - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
         git push
 
@@ -72,6 +59,6 @@ jobs:
           github.rest.issues.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            title: 'Inventory sync failed',
-            body: 'The hourly inventory sync workflow failed. Check the Actions tab for details.'
+            title: 'Inventory sync v2 (direct API) failed',
+            body: 'sync_inventory_v2 --live failed. Check the Actions tab.'
           })

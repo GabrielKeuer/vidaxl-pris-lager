@@ -259,6 +259,13 @@ def main():
         print(f"\n📊 STATS: updated={stats['updated']}, skipped_no_inv_id={stats['skipped_no_inv_id']}, errors={stats['errors']}")
         if stats['errors']:
             sys.exit(1)
+        # Neutraliser Matrixify-CSV: skriv TOM fil (kun header) saa Matrixify -
+        # hvis stadig scheduled - laeser intet at gøre. Belt-and-braces.
+        os.makedirs(os.path.dirname(CONFIG["dry_run_csv"].replace('new_', '')) or '.', exist_ok=True)
+        with open("output/inventory_updates.csv", 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=CONFIG["csv_headers"])
+            writer.writeheader()
+        print(f"🧹 Tømte output/inventory_updates.csv (Matrixify-neutralisering)")
     else:
         write_dry_run_csv(changes, CONFIG["dry_run_csv"])
 
