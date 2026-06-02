@@ -1,27 +1,22 @@
-"""End-to-end canary test af sync_inventory_v2's direct-API kald.
+"""End-to-end ROUND-TRIP canary test af direct-API inventory.
 
-Hvad CSV-diff bekraefter:
-  Listen af SKUs + qty vi VIL aendre er identisk med det gamle script.
+Plukker EN tilfaeldig SKU fra cachen, og:
+  1. Laeser nuvaerende Shopify on-hand-vaerdi (call A)
+  2. Saetter den til vaerdi+1 via inventorySetOnHandQuantities
+  3. Laeser igen — bekraefter den er vaerdi+1
+  4. Saetter den tilbage til original vaerdi
+  5. Laeser igen — bekraefter den er den oprindelige vaerdi
 
-Hvad CSV-diff IKKE bekraefter:
-  At vores GraphQL-mutation faktisk lander i Shopify, at inventory_item_id
-  peger paa den rigtige variant, at payload-strukturen er valid.
+Net effekt paa shop: NUL (vi ender med original vaerdi). Beviser at hele
+kaeden virker: GraphQL endpoint, credentials, inventory_item_id mapping,
+location_id mapping, payload-struktur, mutation-resultat reflekteres
+korrekt i efterfoelgende reads.
 
-Denne canary tager EN SKU fra seneste dry-run-output, og:
-  1. Laeser nuvaerende Shopify on-hand-vaerdi for det SKU
-  2. Sammenligner med vores intended-vaerdi
-  3. Hvis allerede ens → vaelger naeste row (intet at validere)
-  4. Hvis forskellige → kalder inventorySetOnHandQuantities for kun den ene
-  5. Laeser igen, bekraefter Shopify reflekterer den nye vaerdi
-  6. Rapporterer SKU + variant-URL saa Gabriel kan spot-checke i Admin
-
-Risiko: NUL. Vi anvender en aendring der ALLIGEVEL ville ske via Matrixify
-naar dens schedule kører senere. Vi gør det bare via direct-API i stedet
-for via CSV-broker.
+Bruges som validation FOER vi flipper sync_inventory_v2 til --live mode.
 """
-import csv
 import json
 import os
+import random
 import sys
 import time
 from datetime import datetime
@@ -30,7 +25,6 @@ import requests
 
 
 CACHE_PATH = "output/shop_skus.json"
-DRYRUN_CSV = "output/new_inventory_updates.csv"
 
 SHOPIFY_STORE = os.environ.get('SHOPIFY_STORE_URL') or 'b7916a-38.myshopify.com'
 SHOPIFY_TOKEN = os.environ.get('SHOPIFY_ACCESS_TOKEN')
@@ -39,7 +33,6 @@ HEADERS = {'X-Shopify-Access-Token': SHOPIFY_TOKEN, 'Content-Type': 'application
 
 
 def gql(query, variables=None):
-    """Simpel GraphQL kald."""
     payload = {'query': query}
     if variables:
         payload['variables'] = variables
@@ -51,64 +44,51 @@ def gql(query, variables=None):
     return d
 
 
-def query_on_hand(inventory_item_id: int, location_id: str) -> int:
-    """Hent nuvaerende on-hand-vaerdi for et inventory_item paa en location."""
+def query_on_hand(inv_id: int, loc_id: str):
     q = """
     query qty($inventoryItemId: ID!, $locationId: ID!) {
       inventoryLevel(inventoryItemId: $inventoryItemId, locationId: $locationId) {
-        quantities(names: ["on_hand", "available"]) {
-          name
-          quantity
-        }
+        quantities(names: ["on_hand"]) { name quantity }
       }
     }
     """
-    vars = {
-        'inventoryItemId': f"gid://shopify/InventoryItem/{inventory_item_id}",
-        'locationId': f"gid://shopify/Location/{location_id}",
-    }
-    d = gql(q, vars)
+    d = gql(q, {
+        'inventoryItemId': f"gid://shopify/InventoryItem/{inv_id}",
+        'locationId': f"gid://shopify/Location/{loc_id}",
+    })
     level = (d.get('data') or {}).get('inventoryLevel')
     if not level:
         return None
-    on_hand = next((q['quantity'] for q in level['quantities'] if q['name'] == 'on_hand'), None)
-    return on_hand
+    return next((x['quantity'] for x in level['quantities'] if x['name'] == 'on_hand'), None)
 
 
-def get_variant_admin_url(inventory_item_id: int) -> str:
-    """Find Shopify Admin URL for varianten saa Gabriel kan spot-checke manuelt."""
+def variant_info(inv_id: int):
     q = """
-    query findVariant($inventoryItemId: ID!) {
+    query info($inventoryItemId: ID!) {
       inventoryItem(id: $inventoryItemId) {
         variant {
-          id
-          sku
-          title
-          product { id title handle }
+          sku title
+          product { id title }
         }
       }
     }
     """
-    vars = {'inventoryItemId': f"gid://shopify/InventoryItem/{inventory_item_id}"}
-    d = gql(q, vars)
+    d = gql(q, {'inventoryItemId': f"gid://shopify/InventoryItem/{inv_id}"})
     item = (d.get('data') or {}).get('inventoryItem')
     if not item:
-        return None
+        return {}
     v = item.get('variant') or {}
     p = v.get('product') or {}
-    product_gid = p.get('id', '')
-    product_num = product_gid.rsplit('/', 1)[-1] if product_gid else ''
+    pid = (p.get('id') or '').rsplit('/', 1)[-1]
     return {
         'sku': v.get('sku'),
         'product_title': p.get('title'),
         'variant_title': v.get('title'),
-        'admin_url': f"https://{SHOPIFY_STORE}/admin/products/{product_num}",
-        'inventory_url': f"https://{SHOPIFY_STORE}/admin/products/{product_num}/inventory",
+        'admin_url': f"https://{SHOPIFY_STORE}/admin/products/{pid}/inventory" if pid else '',
     }
 
 
-def set_on_hand(inventory_item_id: int, location_id: str, quantity: int) -> dict:
-    """Kald inventorySetOnHandQuantities for EN SKU."""
+def set_on_hand(inv_id: int, loc_id: str, qty: int):
     m = """
     mutation setOnHand($input: InventorySetOnHandQuantitiesInput!) {
       inventorySetOnHandQuantities(input: $input) {
@@ -117,102 +97,91 @@ def set_on_hand(inventory_item_id: int, location_id: str, quantity: int) -> dict
       }
     }
     """
-    vars = {
+    d = gql(m, {
         'input': {
             'reason': 'correction',
-            'referenceDocumentUri': f'logistics://boligretning/canary-{datetime.utcnow().date()}',
+            'referenceDocumentUri': f'logistics://boligretning/canary-{datetime.utcnow().isoformat()}',
             'setQuantities': [{
-                'inventoryItemId': f"gid://shopify/InventoryItem/{inventory_item_id}",
-                'locationId': f"gid://shopify/Location/{location_id}",
-                'quantity': quantity,
+                'inventoryItemId': f"gid://shopify/InventoryItem/{inv_id}",
+                'locationId': f"gid://shopify/Location/{loc_id}",
+                'quantity': qty,
             }],
         }
-    }
-    return gql(m, vars)
+    })
+    return d['data']['inventorySetOnHandQuantities']
 
 
 def main():
     if not SHOPIFY_TOKEN:
         sys.exit("❌ SHOPIFY_ACCESS_TOKEN mangler")
 
-    if not os.path.exists(DRYRUN_CSV):
-        sys.exit(f"❌ {DRYRUN_CSV} findes ikke — koer 'python scripts/sync_inventory_v2.py' foerst")
-
     with open(CACHE_PATH, encoding='utf-8') as f:
         cache = json.load(f)
-    location_id = cache['location_id']
-    sku_to_inv = cache['inventory_items']
-    print(f"📦 Cache: location={location_id}, {len(sku_to_inv)} SKUs")
+    loc_id = cache['location_id']
+    items = cache['inventory_items']
+    print(f"📦 Cache: location={loc_id}, {len(items)} SKUs\n")
 
-    # Laes dry-run-rows
-    with open(DRYRUN_CSV, encoding='utf-8') as f:
-        rows = list(csv.DictReader(f))
-    if not rows:
-        print("✅ Dry-run var tom (ingen aendringer) — intet at validere")
-        return
-    print(f"📄 Dry-run CSV: {len(rows)} kandidater\n")
+    # Vaelg en tilfaeldig SKU (deterministisk seed for reproducerbarhed pr. dag)
+    random.seed(datetime.utcnow().strftime("%Y%m%d"))
+    samples = random.sample(list(items.items()), 20)
 
-    # Find en SKU hvor (a) inventory_item_id eksisterer i cachen,
-    # og (b) Shopifys nuvaerende vaerdi reelt afviger fra den nye
+    # Find foerste SKU hvor on_hand > 0 (saa vi har plads til +1 / -1 uden negativ stock)
     chosen = None
-    for row in rows[:30]:                          # tjek op til 30 for at finde en god kandidat
-        sku = row['Variant SKU'].strip()
-        new_qty = int(row['Inventory Available: Shop location'])
-        inv_id = sku_to_inv.get(sku)
-        if not inv_id:
+    for sku, inv_id in samples:
+        try:
+            current = query_on_hand(inv_id, loc_id)
+        except Exception:
             continue
-        current = query_on_hand(inv_id, location_id)
-        if current is None:
+        if current is None or current <= 0:
             continue
-        if current == new_qty:
-            continue                               # ville vaere no-op — find en med reel forskel
-        chosen = {'sku': sku, 'inv_id': inv_id, 'new_qty': new_qty, 'current': current}
+        chosen = {'sku': sku, 'inv_id': inv_id, 'original': current}
         break
 
     if not chosen:
-        print("⚠ Kunne ikke finde en SKU hvor Shopify-vaerdi afviger fra v2-output blandt foerste 30")
-        print("  Det betyder enten at Matrixify allerede har anvendt aendringerne,")
-        print("  eller at alle de foerste 30 rows har samme vaerdi i forvejen.")
-        return
+        sys.exit("❌ Kunne ikke finde testbar SKU (alle havde 0 stock eller fejlede)")
 
-    sku = chosen['sku']; inv_id = chosen['inv_id']
-    current = chosen['current']; new_qty = chosen['new_qty']
-    print(f"🎯 Valgt SKU: {sku}")
-    print(f"   inventory_item_id: {inv_id}")
-    print(f"   Shopify on-hand FOER: {current}")
-    print(f"   v2 vil saette til:    {new_qty}\n")
+    sku = chosen['sku']; inv_id = chosen['inv_id']; orig = chosen['original']
+    test_qty = orig + 1
 
-    # Hent variant-info til spot-check
-    info = get_variant_admin_url(inv_id)
-    if info:
-        print(f"📋 Product: {info['product_title']}")
-        if info['variant_title'] and info['variant_title'] != 'Default Title':
-            print(f"   Variant: {info['variant_title']}")
-        print(f"   Admin: {info['admin_url']}")
-        print(f"   Inventory: {info['inventory_url']}\n")
+    info = variant_info(inv_id)
+    print(f"🎯 Test-SKU: {sku} (inventory_item_id {inv_id})")
+    print(f"   Product: {info.get('product_title')}")
+    print(f"   Variant: {info.get('variant_title')}")
+    print(f"   Admin: {info.get('admin_url')}\n")
 
-    # Anvend aendringen
-    print("🚀 Kalder inventorySetOnHandQuantities...")
-    result = set_on_hand(inv_id, location_id, new_qty)
-    set_result = result['data']['inventorySetOnHandQuantities']
-    if set_result['userErrors']:
-        print(f"❌ FEJL — userErrors: {set_result['userErrors']}")
-        sys.exit(1)
-    print(f"   ✅ Mutation accepteret. inventoryAdjustmentGroup: {set_result.get('inventoryAdjustmentGroup')}")
+    print(f"📖 Step 1: Laes nuvaerende on_hand = {orig}")
 
-    # Verificér via re-query
+    print(f"\n📝 Step 2: Saet on_hand = {test_qty} (= {orig}+1)")
+    r1 = set_on_hand(inv_id, loc_id, test_qty)
+    if r1['userErrors']:
+        sys.exit(f"❌ Set #1 fejlede: {r1['userErrors']}")
+    print(f"   ✅ Mutation accepteret: {r1['inventoryAdjustmentGroup']}")
+
     time.sleep(2)
-    after = query_on_hand(inv_id, location_id)
-    print(f"\n🔬 Shopify on-hand EFTER: {after}")
+    after1 = query_on_hand(inv_id, loc_id)
+    print(f"\n🔬 Step 3: Re-laes on_hand = {after1}")
+    if after1 != test_qty:
+        sys.exit(f"❌ MISMATCH efter set #1: forventet {test_qty}, fik {after1}")
+    print(f"   ✅ Vaerdi flippede korrekt fra {orig} til {after1}")
 
-    if after == new_qty:
-        print(f"\n✅ END-TO-END BEKRAEFTET")
-        print(f"   {current} → {after} (forventet {new_qty})")
-        print(f"   Direct-API path virker for inventory.")
-    else:
-        print(f"\n❌ MISMATCH — forventet {new_qty}, fik {after}")
-        print(f"   Noget i kaeden virker ikke som forventet. Spot-check via Admin URL.")
-        sys.exit(1)
+    print(f"\n📝 Step 4: Restore — saet on_hand tilbage til {orig}")
+    r2 = set_on_hand(inv_id, loc_id, orig)
+    if r2['userErrors']:
+        sys.exit(f"❌ Set #2 fejlede: {r2['userErrors']}")
+    print(f"   ✅ Mutation accepteret")
+
+    time.sleep(2)
+    after2 = query_on_hand(inv_id, loc_id)
+    print(f"\n🔬 Step 5: Re-laes on_hand = {after2}")
+    if after2 != orig:
+        sys.exit(f"❌ MISMATCH efter restore: forventet {orig}, fik {after2}")
+    print(f"   ✅ Vaerdi restored til original {after2}")
+
+    print(f"\n{'='*60}")
+    print(f"✅ END-TO-END BEKRAEFTET — direct-API path virker")
+    print(f"   SKU {sku}: {orig} → {test_qty} → {orig}")
+    print(f"   Net change: 0 (shop er identisk med foer)")
+    print(f"{'='*60}")
 
 
 if __name__ == "__main__":

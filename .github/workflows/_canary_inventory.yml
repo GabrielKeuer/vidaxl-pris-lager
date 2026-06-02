@@ -19,16 +19,9 @@ jobs:
         with:
           python-version: '3.10'
       - name: Install dependencies
-        run: pip install requests pandas
+        run: pip install requests
 
-      # Genskab frisk dry-run CSV (i case git-versioneret er stale)
-      - name: Re-run dry-run (frisk dataset)
-        env:
-          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
-          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
-        run: python scripts/sync_inventory_v2.py --skip-state-save
-
-      - name: Run canary (one SKU end-to-end)
+      - name: Run canary (round-trip one SKU)
         env:
           SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
           SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
