@@ -5,9 +5,15 @@ on:
     - cron: '0 8 * * *'  # Kl. 10:00 dansk tid (UTC+2 om sommeren)
   workflow_dispatch:
 
+# Cancel-in-progress safety (samme moenster som Sollux/Benuta/sync_inventory)
+concurrency:
+  group: sync-prices-daily
+  cancel-in-progress: true
+
 jobs:
   sync-prices:
     runs-on: ubuntu-latest
+    timeout-minutes: 20  # Normal ~5 min, headroom for store delta dage
 
     steps:
     - uses: actions/checkout@v4
@@ -21,18 +27,34 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    - name: Sync prices
+    # === FASE 1: PARALLEL DRY-RUN (migration validation) =================
+    # NY foerst (--skip-state-save: laeser Supabase men opdaterer ikke).
+    # Saa GAMMEL (laeser samme state, opdaterer state).
+    # Compare verificerer at de to merged-CSVs er bit-for-bit identiske.
+    # Naar match observed -> flip workflow til kun NEW i --live mode.
+
+    - name: 🟢 NEW — sync_prices_v2 (dry-run, read-only state)
+      env:
+        SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+        SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      run: python scripts/sync_prices_v2.py --skip-state-save
+
+    - name: 🔵 OLD — sync_prices (Matrixify-CSV path)
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-      run: |
-        python scripts/sync_prices.py
+      run: python scripts/sync_prices.py
+
+    - name: 🔍 VALIDATE — compare old vs new CSV
+      run: python scripts/_compare_prices_csvs.py
 
     - name: Commit changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add output/price_updates.csv
+        git add output/price_updates.csv output/new_price_updates.csv
         git commit -m "Price sync - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
         git push
 
@@ -45,5 +67,5 @@ jobs:
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: 'Price sync failed',
-            body: 'The daily price sync workflow failed. Check the Actions tab for details.'
+            body: 'sync_prices workflow failed (shadow-validation phase). Check Actions tab.'
           })
