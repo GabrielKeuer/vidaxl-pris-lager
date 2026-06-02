@@ -3,34 +3,63 @@ on:
   schedule:
     - cron: '45 * * * *'  # 45 min efter hver time
   workflow_dispatch:
+
+# Forhindr 15-min cancel-stalls (samme mønster som Benuta/Sollux 2026-06-02 fix).
+concurrency:
+  group: sync-inventory-hourly
+  cancel-in-progress: true
+
 jobs:
   sync-inventory:
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 15  # Normal kørsel < 5 min, peak ~8 min ved 18k ændringer
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-    
+
     - name: Install dependencies
       run: |
         pip install requests pandas
-    
-    - name: Sync inventory
+
+    # === FASE 1: PARALLEL DRY-RUN (migration validation) =================
+    # I denne fase kører BÅDE gammelt og nyt script. Det nye er i --dry-run
+    # mode og skriver til output/new_inventory_updates.csv. Compare-step
+    # verificerer at de to filer matcher. Når vi har set ~3 hourly runs med
+    # tom diff → vi flipper denne workflow til --live mode og dropper det
+    # gamle script + Matrixify-import.
+    # Hvis nyt script (eller compare) fejler → ALT job markeres failed →
+    # vi får besked. Gammel CSV → Matrixify er stadig kilden til Shopify
+    # opdateringerne i denne fase, så ingen produktions-impact ved fejl.
+
+    - name: 🔵 OLD — Sync inventory (Matrixify-CSV)
       run: |
         python scripts/sync_inventory.py
-    
+
+    - name: 🟢 NEW — Sync inventory v2 (dry-run)
+      env:
+        SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+        SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+      run: |
+        # --skip-state-save: lad gammelt script eje state-filen, undgå race
+        python scripts/sync_inventory_v2.py --skip-state-save
+
+    - name: 🔍 VALIDATE — compare old vs new CSV
+      run: |
+        python scripts/_compare_inventory_csvs.py
+
     - name: Commit changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add output/inventory_updates.csv state/last_inventory.csv
+        git add output/inventory_updates.csv output/new_inventory_updates.csv state/last_inventory.csv
         git commit -m "Inventory sync - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
         git push
-    
+
     - name: Notify on failure
       if: failure()
       uses: actions/github-script@v6
