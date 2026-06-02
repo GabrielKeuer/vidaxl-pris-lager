@@ -1,0 +1,26 @@
+name: Canary - rotation compareAt-set semantik
+
+# Validerer at "set compareAt til en konkret value" virker via Bulk Operations.
+# Dette er den ene path rotate_groups_v2 bruger som vi ikke har testet
+# end-to-end endnu. Round-trip: 3 SKUs med compareAt=null → set til value
+# → verify → restore null → verify.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install requests
+      - name: Run rotation compareAt canary
+        env:
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+        run: python scripts/_canary_rotation_v2.py
