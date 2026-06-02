@@ -12,7 +12,7 @@ concurrency:
 jobs:
   sync-prices:
     runs-on: ubuntu-latest
-    timeout-minutes: 20  # Normal ~5 min, headroom for store on_sale-drift dage
+    timeout-minutes: 60  # Bulk Operations kan tage 15+ min for store catch-ups
 
     steps:
     - uses: actions/checkout@v4
@@ -26,35 +26,27 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    # === REVERTET TIL SHADOW-MODE 2026-06-02 ===
-    # Forsoeg paa cutover (commit 85a0c298) fejlede pga. 20-min timeout.
-    # 30k+ mutations ved Niveau 2 (regular GraphQL) tager ~4 timer pga.
-    # Shopify rate limit (50 points/sec). Vi skal bruge Bulk Operations
-    # (Niveau 3) for foerste catch-up run. Daglige runs efter catch-up er
-    # smaa (50-500 changes) og kan koere paa Niveau 2.
+    # === LIVE direct-API siden cutover 2026-06-02 (commit 7c20f91b refactor) ===
+    # Auto-vaelg Niveau 2 (<1000 changes) eller Niveau 3 (Bulk Operations).
+    # Validation FOER cutover:
+    #   - CSV-diff: 158844 rows identical (commit ce003697)
+    #   - Round-trip canary (price): SKU 862071 (799→800→799)
+    #   - On_sale compareAt semantics: SKU 853202 (KEEP+CLEAR)
+    #   - Bulk + cost-in-variant: 3 SKUs round-trip (commit 8708f708)
 
-    - name: 🟢 NEW — sync_prices_v2 (dry-run, read-only state)
+    - name: Sync prices (direct API, auto Niveau 2/3)
       env:
         SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
         SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-      run: python scripts/sync_prices_v2.py --skip-state-save
+      run: python scripts/sync_prices_v2.py --live
 
-    - name: 🔵 OLD — sync_prices (Matrixify-CSV path)
-      env:
-        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-      run: python scripts/sync_prices.py
-
-    - name: 🔍 VALIDATE — compare old vs new CSV
-      run: python scripts/_compare_prices_csvs.py
-
-    - name: Commit changes
+    - name: Commit state + audit trail
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add output/price_updates.csv output/new_price_updates.csv output/on_sale_diffs.csv
+        git add output/price_updates.csv output/on_sale_diffs.csv
         git commit -m "Price sync - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
         git push
 
