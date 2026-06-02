@@ -1,89 +1,151 @@
-import requests
+"""Daily/twice-daily SKU + inventory_item_id cache for downstream sync scripts.
+
+Output (output/shop_skus.json) — UDVIDET 2026-06-02 til at understøtte
+direct-API migration:
+  - skus: list[str]                  — bagudkompatibelt (eksisterende læsere)
+  - count: int
+  - updated: ISO timestamp
+  - location_id: str (numerisk)      — NY: primary fulfillment location
+  - inventory_items: {sku: int}      — NY: mapping SKU → inventory_item_id
+
+Eksisterende læsere bruger kun `skus` og bliver ikke påvirket. Nye
+direct-API scripts (sync_inventory_v2 og frem) bruger location_id +
+inventory_items til at konstruere mutations uden ekstra GraphQL-rundtur.
+"""
 import json
 import os
+import time
 from datetime import datetime
 
-# Shopify credentials
+import requests
+
 SHOPIFY_STORE = 'b7916a-38.myshopify.com'
 SHOPIFY_TOKEN = os.environ['SHOPIFY_ACCESS_TOKEN']
+GRAPHQL = f"https://{SHOPIFY_STORE}/admin/api/2024-01/graphql.json"
+HEADERS = {'X-Shopify-Access-Token': SHOPIFY_TOKEN, 'Content-Type': 'application/json'}
 
-def fetch_all_skus():
-    """Hent alle SKUs fra Shopify via GraphQL"""
-    print(f"🚀 Fetching SKUs from Shopify...")
-    
-    all_skus = set()
+
+def gql(query, variables=None, max_retries=4):
+    """GraphQL kald med throttle-aware backoff."""
+    payload = {'query': query}
+    if variables:
+        payload['variables'] = variables
+    for attempt in range(1, max_retries + 1):
+        r = requests.post(GRAPHQL, headers=HEADERS, json=payload, timeout=60)
+        if r.status_code != 200:
+            raise Exception(f"HTTP {r.status_code}: {r.text[:300]}")
+        data = r.json()
+        if 'errors' in data:
+            throttled = any('Throttled' in str(e) or 'THROTTLED' in str(e) for e in data['errors'])
+            if throttled and attempt < max_retries:
+                wait = 2 ** attempt
+                print(f"  ⏳ Throttled, retry {attempt}/{max_retries} in {wait}s")
+                time.sleep(wait)
+                continue
+            raise Exception(f"GraphQL errors: {data['errors']}")
+        # Frivillig backoff hvis cost-bucket er ved at være tom
+        cost = data.get('extensions', {}).get('cost', {})
+        throttle = cost.get('throttleStatus', {})
+        if throttle.get('currentlyAvailable', 1000) < 200:
+            time.sleep(0.5)
+        return data
+    raise Exception("Max retries exceeded")
+
+
+def fetch_primary_location():
+    """Hent primary fulfillment-location (numerisk ID)."""
+    q = """
+    query {
+      locations(first: 5) {
+        edges { node { id name isPrimary } }
+      }
+    }
+    """
+    data = gql(q)
+    edges = data['data']['locations']['edges']
+    primary = next((e['node'] for e in edges if e['node'].get('isPrimary')), edges[0]['node'])
+    # gid://shopify/Location/97768178013 → 97768178013
+    loc_id = primary['id'].rsplit('/', 1)[-1]
+    print(f"📍 Primary location: {primary['name']} ({loc_id})")
+    return loc_id
+
+
+def fetch_all_variants():
+    """Hent alle SKUs + inventory_item_ids paginating via cursor.
+
+    Cost-budgettet hos Shopify er rigeligt til at hente 165k varianter
+    i én session. Vi henter pr. side med 250 varianter og pauser kun
+    hvis throttle-bucket nærmer sig tom.
+    """
+    print("🚀 Fetching SKUs + inventory_item_ids from Shopify...")
+    skus = set()
+    items = {}                # sku -> numeric inventory_item_id
     cursor = None
     page = 0
-    
     while True:
-        query = """
+        q = """
         query getVariants($cursor: String) {
           productVariants(first: 250, after: $cursor) {
             edges {
               node {
                 sku
+                inventoryItem { id }
               }
             }
-            pageInfo {
-              hasNextPage
-              endCursor
-            }
+            pageInfo { hasNextPage endCursor }
           }
         }
         """
-        
-        response = requests.post(
-            f"https://{SHOPIFY_STORE}/admin/api/2024-01/graphql.json",
-            headers={
-                'X-Shopify-Access-Token': SHOPIFY_TOKEN,
-                'Content-Type': 'application/json'
-            },
-            json={'query': query, 'variables': {'cursor': cursor}}
-        )
-        
-        if response.status_code != 200:
-            raise Exception(f"API Error: {response.status_code}")
-            
-        data = response.json()
+        data = gql(q, {'cursor': cursor})
         variants = data['data']['productVariants']
-        
-        # Extract SKUs
         for edge in variants['edges']:
-            sku = edge['node'].get('sku')
-            if sku and sku.strip():
-                all_skus.add(str(sku).strip())
-        
-        # Check for more pages
+            n = edge['node']
+            sku = (n.get('sku') or '').strip()
+            inv = (n.get('inventoryItem') or {}).get('id') or ''
+            if not sku or not inv:
+                continue
+            sku = str(sku)
+            # gid://shopify/InventoryItem/45678 → 45678 (numerisk for kompakt JSON)
+            try:
+                inv_num = int(inv.rsplit('/', 1)[-1])
+            except ValueError:
+                continue
+            skus.add(sku)
+            items[sku] = inv_num
+        page += 1
+        if page % 20 == 0:
+            print(f"  Page {page}: {len(skus)} SKUs cached so far")
         if not variants['pageInfo']['hasNextPage']:
             break
-            
         cursor = variants['pageInfo']['endCursor']
-        page += 1
-        print(f"  Page {page}: {len(all_skus)} SKUs...")
-    
-    return sorted(list(all_skus))
+    print(f"✅ Total: {len(skus)} SKUs, {len(items)} med inventory_item_id")
+    return sorted(skus), items
+
 
 def main():
-    try:
-        skus = fetch_all_skus()
-        print(f"✅ Found {len(skus)} SKUs")
-        
-        # Save to output folder
-        output = {
-            'skus': skus,
-            'count': len(skus),
-            'updated': datetime.now().isoformat()
-        }
-        
-        os.makedirs('output', exist_ok=True)
-        with open('output/shop_skus.json', 'w') as f:
-            json.dump(output, f, indent=2)
-        
-        print(f"💾 Saved to output/shop_skus.json")
-        
-    except Exception as e:
-        print(f"❌ Error: {e}")
-        exit(1)
+    location_id = fetch_primary_location()
+    skus, items = fetch_all_variants()
+
+    output = {
+        'skus': skus,                   # bagudkompatibelt
+        'count': len(skus),
+        'updated': datetime.utcnow().isoformat() + 'Z',
+        'location_id': location_id,     # NY
+        'inventory_items': items,       # NY (sku -> int)
+    }
+
+    os.makedirs('output', exist_ok=True)
+    # Kompakt JSON (ingen indent) — sparer ~40% størrelse for 165k SKUs
+    with open('output/shop_skus.json', 'w', encoding='utf-8') as f:
+        json.dump(output, f, separators=(',', ':'))
+
+    size_mb = os.path.getsize('output/shop_skus.json') / 1024 / 1024
+    print(f"💾 Saved output/shop_skus.json ({size_mb:.1f} MB)")
+
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception as e:
+        print(f"❌ Error: {e}")
+        raise
