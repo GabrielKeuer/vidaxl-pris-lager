@@ -95,46 +95,93 @@ else:
             if k in s:
                 print(f"    {k}: {s[k]}")
 
-# === 3. VidaXL feed (sidst - kan timeout med 403) ===
+# === 3. VidaXL feeds — TJEK BEGGE (main + offer) ===
 import time as _time
-print("\n【3】 VidaXL FEED (b2b-pris-kilde)")
-print("    Henter feed (op til 6 forsoeg pga. supplier rate-limit)...")
-df = None
-for attempt in range(1, 7):
-    try:
-        r = requests.get(VIDAXL_URL, headers=FEED_HEADERS, timeout=180)
-        if r.status_code in (403, 429, 500, 502, 503, 504):
-            wait = 10 * attempt
-            print(f"    {r.status_code} (attempt {attempt}/6) — wait {wait}s")
-            _time.sleep(wait)
-            continue
-        r.raise_for_status()
-        df = pd.read_csv(StringIO(r.text))
-        df['SKU'] = df['SKU'].astype(str)
-        break
-    except Exception as e:
-        print(f"    fejl: {str(e)[:120]}")
-        _time.sleep(10 * attempt)
+import zipfile
+import io as _io
 
-if df is None:
-    print(f"    ⚠ Feed ikke tilgaengelig. Falder tilbage paa Supabase b2b_cost-data.")
-else:
-    print(f"    Total rows i feed: {len(df)}")
-    row = df[df['SKU'] == SKU]
+OFFER_URL = ("https://feed.vidaxl.io/api/v1/feeds/download/"
+             "f05d7105-88c0-45a4-a3a5-f1b48ba55d2a/DK/vidaXL_dk_dropshipping_offer.csv")
+MAIN_URL = ("https://feed.vidaxl.io/api/v1/feeds/download/"
+            "f05d7105-88c0-45a4-a3a5-f1b48ba55d2a/DK/vidaXL_dk_dropshipping.csv.zip")
+
+
+def _fetch_with_retry(url, label, max_attempts=6):
+    print(f"\n    Henter {label}...")
+    for attempt in range(1, max_attempts + 1):
+        try:
+            r = requests.get(url, headers=FEED_HEADERS, timeout=300)
+            if r.status_code in (403, 429, 500, 502, 503, 504):
+                wait = 10 * attempt
+                print(f"    {r.status_code} (attempt {attempt}/{max_attempts}) — wait {wait}s")
+                _time.sleep(wait)
+                continue
+            r.raise_for_status()
+            return r
+        except Exception as e:
+            print(f"    fejl: {str(e)[:120]}")
+            _time.sleep(10 * attempt)
+    return None
+
+
+def _show_row(label, df, sku):
+    print(f"\n    {label}: {len(df):,} total rows")
+    row = df[df['SKU'].astype(str) == sku]
     if row.empty:
-        print(f"    ❌ SKU {SKU} FINDES IKKE i VidaXL feed lige nu")
-        print(f"    → Produktet er UDGAAET / pulled fra VidaXL's katalog.")
-        print(f"    → daily_delete.py vil flagge til sletning ved naeste koersel.")
-    else:
-        r0 = row.iloc[0]
-        print(f"    ✅ SKU {SKU} findes i VidaXL feed")
-        print(f"    Article name: {r0.get('Article name')}")
-        print(f"    B2B price: {r0.get('B2B price')} EUR (RAW fra feed)")
-        print(f"    Stock: {r0.get('Stock')}")
-        for c in df.columns:
-            if c not in ('SKU', 'Article name', 'B2B price', 'Stock'):
-                val = r0.get(c)
-                if pd.notna(val) and str(val).strip():
-                    print(f"    {c}: {val}")
+        print(f"    ❌ SKU {sku} IKKE i {label}")
+        return False
+    r0 = row.iloc[0]
+    print(f"    ✅ SKU {sku} findes i {label}")
+    for c in df.columns:
+        val = r0.get(c)
+        if pd.notna(val) and str(val).strip():
+            v_str = str(val)
+            if len(v_str) > 100: v_str = v_str[:100] + '...'
+            print(f"      {c}: {v_str}")
+    return True
+
+
+# Offer feed (stock + price — bruges af sync_inventory, sync_prices)
+print("\n【3a】 OFFER FEED (vidaXL_dk_dropshipping_offer.csv) — Stock+Price kilde")
+r_offer = _fetch_with_retry(OFFER_URL, "offer feed")
+in_offer = False
+if r_offer is not None:
+    df_offer = pd.read_csv(StringIO(r_offer.text))
+    in_offer = _show_row("offer feed", df_offer, SKU)
+else:
+    print(f"    ⚠ Offer feed ikke tilgaengelig")
+
+# Main feed (full catalog — bruges af daily_create, daily_delete)
+print("\n【3b】 MAIN FEED (vidaXL_dk_dropshipping.csv.zip) — Full catalog, source-of-truth")
+r_main = _fetch_with_retry(MAIN_URL, "main feed (.zip)")
+in_main = False
+if r_main is not None:
+    try:
+        with zipfile.ZipFile(_io.BytesIO(r_main.content)) as zf:
+            csv_name = next((n for n in zf.namelist() if n.endswith('.csv')), None)
+            if not csv_name:
+                print(f"    ⚠ Kunne ikke finde CSV i ZIP — entries: {zf.namelist()[:3]}")
+            else:
+                with zf.open(csv_name) as f:
+                    df_main = pd.read_csv(f, sep=None, engine='python')
+                    in_main = _show_row("main feed", df_main, SKU)
+    except Exception as e:
+        print(f"    ⚠ Kunne ikke unzip main feed: {str(e)[:200]}")
+else:
+    print(f"    ⚠ Main feed ikke tilgaengelig")
+
+# === KONKLUSION ===
+print(f"\n【KONKLUSION】")
+if in_main and in_offer:
+    print(f"    ✅ SKU {SKU} er AKTIV hos VidaXL (i begge feeds)")
+elif in_offer and not in_main:
+    print(f"    ⚠ SKU {SKU} er KUN i offer-feed, IKKE i main-feed")
+    print(f"    → VidaXL har formentlig fjernet det fra hovedkataloget")
+    print(f"    → daily_delete.py vil flagge det til sletning ved naeste koersel")
+    print(f"    → BEKRAEFTER din mistanke om at det er udgaaet")
+elif not in_offer and in_main:
+    print(f"    ⚠ SKU {SKU} er KUN i main, IKKE i offer — mystisk, men ikke udgaaet")
+else:
+    print(f"    ❌ SKU {SKU} er FJERNET fra begge feeds — DEFINITIVT udgaaet")
 
 print(f"\n══════════════════════════════════════════════════════════\n")
