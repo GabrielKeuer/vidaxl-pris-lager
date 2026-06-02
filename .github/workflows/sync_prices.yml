@@ -54,7 +54,7 @@ jobs:
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add output/price_updates.csv output/new_price_updates.csv
+        git add output/price_updates.csv output/new_price_updates.csv output/on_sale_diffs.csv
         git commit -m "Price sync - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
         git push
 
