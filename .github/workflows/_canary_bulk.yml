@@ -1,0 +1,26 @@
+name: Canary - bulk operations + cost-in-variant
+
+# Validerer:
+#   - bulkOperationRunMutation submit/poll/parse virker
+#   - inventoryItem.cost i ProductVariantsBulkInput virker
+#   - KEEP-mode (omit compareAt) virker også via bulk
+
+on:
+  workflow_dispatch:
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install requests
+      - name: Run bulk + cost canary
+        env:
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+        run: python scripts/_canary_bulk_combined_v2.py
