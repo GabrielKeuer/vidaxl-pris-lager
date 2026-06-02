@@ -1,0 +1,45 @@
+name: Validate rotation v2 (shadow + diff)
+
+# Manuel trigger: koerer baade OLD og NEW i --dry-run mode, sammenligner CSVs.
+# Verificerer at v2 producerer samme logiske output som v1 FOER cutover.
+# Bruger --force fordi vi netop kørte rotation 1. juni (under 25-dages gate).
+
+on:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: 🔵 OLD — rotate_groups (dry-run, force)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/rotate_groups.py --dry-run --force
+
+      - name: 🟢 NEW — rotate_groups_v2 (dry-run, force)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python scripts/rotate_groups_v2.py --dry-run --force
+
+      - name: 🔍 VALIDATE — compare CSVs
+        run: python scripts/_compare_rotation_csvs.py
+
+      - name: Upload CSVs som artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: rotation-csvs
+          path: |
+            output/price_updates.csv
+            output/new_rotation_updates.csv
+          retention-days: 14
