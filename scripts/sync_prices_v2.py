@@ -517,10 +517,14 @@ def main():
         print(f"\n📊 STATS: {stats}")
         if stats["errors"]:
             sys.exit(1)
-        # Neutraliser eksisterende CSV (Matrixify læser intet at gøre)
+        # Neutraliser eksisterende Matrixify-CSV (skriv tom så hvis schedule
+        # stadig kører, læser den intet at gøre)
         with open(CONFIG["live_csv_path"], "w", newline="", encoding="utf-8") as f:
             csv.DictWriter(f, fieldnames=CONFIG["csv_headers"]).writeheader()
         print(f"🧹 Tømte {CONFIG['live_csv_path']} (Matrixify-neutralisering)")
+        # Audit trail: skriv on_sale_diffs.csv også i --live så vi har historie
+        # over hvilke aendringer der blev pushed (specielt edge cases).
+        write_on_sale_csv(on_sale_rows, CONFIG["on_sale_diffs_csv"])
     else:
         # Dry-run: main CSV matcher OLD bit-for-bit (KUN non-sale rows).
         # on_sale ændringer skrives til separat fil — synlig dokumentation
