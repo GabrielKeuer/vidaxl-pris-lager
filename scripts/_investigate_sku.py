@@ -47,10 +47,20 @@ print(f" SKU: {SKU}")
 print(f"══════════════════════════════════════════════════════════\n")
 
 # === 1. VidaXL feed ===
+import time as _time
 print("【1】 VidaXL FEED (kilde til alle b2b-priser)")
 print("    Henter feed...")
-r = requests.get(VIDAXL_URL, headers=FEED_HEADERS, timeout=180)
-r.raise_for_status()
+for attempt in range(1, 5):
+    r = requests.get(VIDAXL_URL, headers=FEED_HEADERS, timeout=180)
+    if r.status_code in (403, 429, 500, 502, 503, 504):
+        wait = 5 * attempt
+        print(f"    feed responded {r.status_code} (attempt {attempt}/4) — retrying in {wait}s")
+        _time.sleep(wait)
+        continue
+    r.raise_for_status()
+    break
+else:
+    sys.exit(f"❌ VidaXL feed unreachable efter 4 forsoeg")
 df = pd.read_csv(StringIO(r.text))
 df['SKU'] = df['SKU'].astype(str)
 row = df[df['SKU'] == SKU]
