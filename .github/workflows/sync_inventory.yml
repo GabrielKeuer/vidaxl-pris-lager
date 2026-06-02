@@ -36,17 +36,21 @@ jobs:
     # vi får besked. Gammel CSV → Matrixify er stadig kilden til Shopify
     # opdateringerne i denne fase, så ingen produktions-impact ved fejl.
 
-    - name: 🔵 OLD — Sync inventory (Matrixify-CSV)
-      run: |
-        python scripts/sync_inventory.py
+    # NB: NY KØRER FOR GAMMEL. Begge laeser samme state-fil og samme VidaXL-feed
+    # for at producere diff. Hvis OLD koerer foerst, opdaterer den state til dagens
+    # tilstand, og NEW finder derefter 0 aendringer => falsk diff. Med NY foerst:
+    # begge ser samme "foer"-state og skal producere identisk output-CSV.
 
-    - name: 🟢 NEW — Sync inventory v2 (dry-run)
+    - name: 🟢 NEW — Sync inventory v2 (dry-run, read-only state)
       env:
         SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
         SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
       run: |
-        # --skip-state-save: lad gammelt script eje state-filen, undgå race
         python scripts/sync_inventory_v2.py --skip-state-save
+
+    - name: 🔵 OLD — Sync inventory (Matrixify-CSV)
+      run: |
+        python scripts/sync_inventory.py
 
     - name: 🔍 VALIDATE — compare old vs new CSV
       run: |
