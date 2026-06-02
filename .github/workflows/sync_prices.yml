@@ -26,34 +26,35 @@ jobs:
       run: |
         pip install -r requirements.txt
 
-    # === LIVE direct-API kald siden cutover 2026-06-02 ===
-    # Tidligere: scripts/sync_prices.py emitterede merged CSV (158k rows),
-    #            Matrixify pollede CSV paa sin egen schedule og kaldte Shopify.
-    # Nu:        sync_prices_v2 --live kalder productVariantsBulkUpdate +
-    #            inventoryItemUpdate direkte. Validation FOER cutover:
-    #              - CSV-diff: 158844 rows identical
-    #              - Round-trip canary (price): SKU 862071 (799→800→799)
-    #              - On_sale canary (KEEP+CLEAR semantics): SKU 853202
-    #
-    # On_sale rettelse: cost+price opdateres ved b2b-drift, compareAt laast.
-    # Edge case (sale >= compareAt) ryd compareAt + brug nyt sale-niveau.
+    # === REVERTET TIL SHADOW-MODE 2026-06-02 ===
+    # Forsoeg paa cutover (commit 85a0c298) fejlede pga. 20-min timeout.
+    # 30k+ mutations ved Niveau 2 (regular GraphQL) tager ~4 timer pga.
+    # Shopify rate limit (50 points/sec). Vi skal bruge Bulk Operations
+    # (Niveau 3) for foerste catch-up run. Daglige runs efter catch-up er
+    # smaa (50-500 changes) og kan koere paa Niveau 2.
 
-    - name: Sync prices (direct API)
+    - name: 🟢 NEW — sync_prices_v2 (dry-run, read-only state)
       env:
         SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
         SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-      run: |
-        python scripts/sync_prices_v2.py --live
+      run: python scripts/sync_prices_v2.py --skip-state-save
 
-    - name: Commit state + audit trail
+    - name: 🔵 OLD — sync_prices (Matrixify-CSV path)
+      env:
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+      run: python scripts/sync_prices.py
+
+    - name: 🔍 VALIDATE — compare old vs new CSV
+      run: python scripts/_compare_prices_csvs.py
+
+    - name: Commit changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        # price_updates.csv = tom (Matrixify-neutralisering)
-        # on_sale_diffs.csv = audit trail af on_sale aendringer der blev pushed
-        git add output/price_updates.csv output/on_sale_diffs.csv
+        git add output/price_updates.csv output/new_price_updates.csv output/on_sale_diffs.csv
         git commit -m "Price sync - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
         git push
 
