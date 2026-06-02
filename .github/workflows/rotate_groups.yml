@@ -1,8 +1,14 @@
 name: Rotate VidaXL Sale Groups
 
 # Runs automatically on the 1st of each month at 02:00 UTC.
-# Compliance gate inside rotate_groups.py refuses to run if last rotation
+# Compliance gate inside rotate_groups_v2.py refuses to run if last rotation
 # was less than 25 days ago (Omnibus 4.4-rule). Use force=true to override.
+#
+# Cutover 2026-06-02 (commit ac2724ab): rotate_groups_v2.py (direct API +
+# Bulk Operations + pre-flight snapshot). Validation FOER cutover:
+#   - Shadow CSV-diff: 107.942 rows identical
+#   - Bulk Operations + cost-in-variant: SKUs 3197629/315475/3256389 round-trip
+#   - On_sale compareAt semantics: SKU 853202 (KEEP+CLEAR)
 
 on:
   schedule:
@@ -10,7 +16,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: "Compute and write CSV, but DO NOT update Supabase or save rotation state"
+        description: "Compute and writes CSV, but DO NOT update Supabase or push til Shopify"
         type: boolean
         default: false
       force:
@@ -18,9 +24,14 @@ on:
         type: boolean
         default: false
 
+concurrency:
+  group: rotate-groups-monthly
+  cancel-in-progress: false  # rotation skal ALDRIG kanselleres midt-i
+
 jobs:
   rotate:
     runs-on: ubuntu-latest
+    timeout-minutes: 90  # Bulk Operations til 100k+ mutations + snapshot
 
     steps:
     - uses: actions/checkout@v4
@@ -31,33 +42,40 @@ jobs:
         python-version: '3.10'
 
     - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
+      run: pip install -r requirements.txt
 
-    - name: Rotate groups
+    - name: Rotate groups (direct API, Bulk Operations)
       id: rotate
       env:
         SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
         SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+        SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
       run: |
         ARGS=""
-        if [ "${{ inputs.dry_run }}" = "true" ]; then ARGS="$ARGS --dry-run"; fi
+        if [ "${{ inputs.dry_run }}" = "true" ]; then
+          ARGS="$ARGS --dry-run"
+        else
+          ARGS="$ARGS --live"
+        fi
         if [ "${{ inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
-        python scripts/rotate_groups.py $ARGS | tee rotate_output.txt
+        python scripts/rotate_groups_v2.py $ARGS | tee rotate_output.txt
         # Capture summary for Slack
         ENDED=$(grep -oE 'Ended sale on [0-9]+' rotate_output.txt | grep -oE '[0-9]+' | head -1 || echo "0")
         STARTED=$(grep -oE 'Started sale on [0-9]+' rotate_output.txt | grep -oE '[0-9]+' | head -1 || echo "0")
-        ACTIVE=$(grep -oE 'active_group=[ABC]' rotate_output.txt | head -1 | cut -d= -f2 || echo "?")
+        ACTIVE=$(grep -oE 'active=[ABC]' rotate_output.txt | head -1 | cut -d= -f2 || echo "?")
         echo "ended=$ENDED" >> $GITHUB_OUTPUT
         echo "started=$STARTED" >> $GITHUB_OUTPUT
         echo "active=$ACTIVE" >> $GITHUB_OUTPUT
 
-    - name: Commit rotation CSV
+    - name: Commit state + audit trail (snapshot)
       if: ${{ inputs.dry_run != true }}
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add output/price_updates.csv
+        # Snapshot ligger i output/rotation_snapshots/ — committes som audit trail.
+        # price_updates.csv er tom (Matrixify-neutralisering).
+        git add output/price_updates.csv output/rotation_snapshots/ || true
         git commit -m "Rotation $(date +'%Y-%m-%d %H:%M UTC')" || echo "No changes"
         git push
 
@@ -67,7 +85,7 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       run: |
         curl -s -X POST -H 'Content-Type: application/json' \
-          --data "{\"text\": \":arrows_counterclockwise: *VidaXL rotation gennemført* — gruppe ${{ steps.rotate.outputs.active }} er nu aktiv. Endte salg på ${{ steps.rotate.outputs.ended }} produkter, startede salg på ${{ steps.rotate.outputs.started }} produkter. Matrixify importerer fra price_updates.csv på næste schedule.\"}" \
+          --data "{\"text\": \":arrows_counterclockwise: *VidaXL rotation gennemført (direct API)* — gruppe ${{ steps.rotate.outputs.active }} er nu aktiv. Endte salg på ${{ steps.rotate.outputs.ended }} produkter, startede salg på ${{ steps.rotate.outputs.started }} produkter via Bulk Operations.\"}" \
           "$SLACK_WEBHOOK_URL"
 
     - name: Slack notify on failure
