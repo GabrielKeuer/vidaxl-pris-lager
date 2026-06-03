@@ -1,0 +1,53 @@
+name: Bulk Repricing
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: 'pricing_bulk_jobs.id (UUID)'
+        required: true
+      vendor:
+        description: 'Vendor (vidaXL/Sollux/Benuta)'
+        required: true
+      product_type:
+        description: 'Produkttype (tom = vendor-general)'
+        required: false
+        default: ''
+      dry_run:
+        description: 'true = preview uden push til Shopify'
+        required: false
+        default: 'false'
+
+jobs:
+  bulk-reprice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run bulk repricing
+        env:
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          GITHUB_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          JOB_ID: ${{ github.event.inputs.job_id }}
+          VENDOR: ${{ github.event.inputs.vendor }}
+          PRODUCT_TYPE: ${{ github.event.inputs.product_type }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: |
+          if [ -n "$PRODUCT_TYPE" ] && [ "$DRY_RUN" = "true" ]; then
+            python scripts/bulk_repricing.py --job-id "$JOB_ID" --vendor "$VENDOR" --product-type "$PRODUCT_TYPE" --dry-run
+          elif [ -n "$PRODUCT_TYPE" ]; then
+            python scripts/bulk_repricing.py --job-id "$JOB_ID" --vendor "$VENDOR" --product-type "$PRODUCT_TYPE"
+          elif [ "$DRY_RUN" = "true" ]; then
+            python scripts/bulk_repricing.py --job-id "$JOB_ID" --vendor "$VENDOR" --dry-run
+          else
+            python scripts/bulk_repricing.py --job-id "$JOB_ID" --vendor "$VENDOR"
+          fi
