@@ -154,7 +154,7 @@ def load_pricing_state(sb) -> dict:
 # === TRANSFORM =======================================================
 # Identisk logik som sync_prices.py — vi GENBRUGER pricing.py uændret.
 
-def compute_price_diffs(feed_df, state, pricing_cfg, shop_skus):
+def compute_price_diffs(feed_df, state, pricing_cfg_resolver, shop_skus):
     """Returnér (today_rows, on_sale_rows, state_updates, counters).
 
     today_rows    = warmup/normal product changes (matchet med OLD scripts output)
@@ -199,6 +199,11 @@ def compute_price_diffs(feed_df, state, pricing_cfg, shop_skus):
             continue
 
         status = product_state["status"]
+        # Resolve pricing-config per SKU (Katalog Engine: vendor + product_type)
+        pricing_cfg = pricing_cfg_resolver(sku)
+        if not pricing_cfg:
+            counters["skip_no_state"] += 1  # genbrug skip-counter — ingen config = ingen handling
+            continue
         new_normal = pricing.calculate_normal_price(b2b, pricing_cfg)
         new_sale = pricing.calculate_sale_price(b2b, pricing_cfg)
         old_normal = int(float(product_state.get("normal_price") or 0))
@@ -684,10 +689,11 @@ def main():
     if sb is None:
         sys.exit("❌ SUPABASE_URL / SUPABASE_SERVICE_KEY mangler")
 
-    pricing_cfg = pricing.load_pricing_config(sb)
-    if not pricing_cfg or not pricing_cfg.get("tiers"):
-        sys.exit("❌ Pricing tiers ikke loaded fra Supabase — afviser at koere med fallback")
-    print(f"✅ {len(pricing_cfg['tiers'])} pricing tiers")
+    # Verify at vi har en gaeldende default-config (fallback)
+    default_cfg = pricing.load_pricing_config(sb)
+    if not default_cfg or not default_cfg.get("tiers"):
+        sys.exit("❌ Default pricing-config ikke loaded fra Supabase — afviser at koere med hardcoded fallback")
+    print(f"✅ Default pricing config OK ({len(default_cfg['tiers'])} tiers)")
 
     state = load_pricing_state(sb)
     print(f"✅ {len(state)} rows fra vidaxl_pricing_state")
@@ -695,11 +701,28 @@ def main():
     cache = load_shop_cache()
     shop_skus = set(cache['skus'])
     variants_map = {k: v for k, v in cache['variants'].items()}
-    print(f"📦 Cache: {len(shop_skus)} SKUs")
+    # NY: Katalog Engine support — vendor + product_type per SKU fra shop_cache
+    product_types_by_sku = cache.get('product_types', {})
+    vendors_by_sku = cache.get('vendors', {})
+    print(f"📦 Cache: {len(shop_skus)} SKUs ({len(product_types_by_sku)} m. type, {len(vendors_by_sku)} m. vendor)")
+
+    # Resolver-funktion: cacher pricing-config pr (vendor, product_type)
+    # for at undgaa 50k Supabase-calls. Default vendor = vidaXL (dette repo
+    # haandterer kun vidaXL-feed; andre vendors har egne scripts).
+    _cfg_cache = {}
+    def resolve_pricing(sku):
+        vendor = vendors_by_sku.get(sku) or "vidaXL"
+        product_type = product_types_by_sku.get(sku) or None
+        key = (vendor, product_type or "__none__")
+        if key not in _cfg_cache:
+            cfg = pricing.load_pricing_config(sb, vendor=vendor, product_type=product_type)
+            _cfg_cache[key] = cfg or default_cfg
+        return _cfg_cache[key]
 
     feed_df = fetch_supplier_feed()
     today_rows, on_sale_rows, state_updates, counters = compute_price_diffs(
-        feed_df, state, pricing_cfg, shop_skus)
+        feed_df, state, resolve_pricing, shop_skus)
+    print(f"📋 Pricing-configs anvendt: {len(_cfg_cache)} unikke (vendor, type) kombinationer")
 
     if args.live:
         stats = push_to_shopify(today_rows, on_sale_rows, variants_map)

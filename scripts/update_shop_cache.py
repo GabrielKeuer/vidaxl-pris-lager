@@ -1,7 +1,8 @@
 """Daily/twice-daily SKU + ID-mappings cache for downstream sync scripts.
 
 Output (output/shop_skus.json) — UDVIDET 2026-06-02 til at understøtte
-direct-API migration:
+direct-API migration. UDVIDET 2026-06-03 med Katalog Engine support
+(product_types + vendors for vendor+type-aware pricing-config-lookup):
   - skus: list[str]                  — bagudkompatibelt (eksisterende læsere)
   - count: int
   - updated: ISO timestamp
@@ -9,7 +10,8 @@ direct-API migration:
   - inventory_items: {sku: int}      — sku → inventory_item_id (for sync_inventory_v2)
   - variants: {sku: [variant_id, product_id]}  — sku → (variant_id, product_id)
                                                   for sync_prices_v2 + rotate_groups_v2
-                                                  (productVariantsBulkUpdate kraever begge)
+  - product_types: {sku: str}        — NY: sku → productType (Katalog Engine)
+  - vendors: {sku: str}              — NY: sku → vendor (Katalog Engine)
 
 Eksisterende læsere bruger kun `skus` og bliver ikke påvirket. Nye
 direct-API scripts bruger de øvrige felter til at konstruere mutations
@@ -74,16 +76,21 @@ def fetch_primary_location():
 
 
 def fetch_all_variants():
-    """Hent alle SKUs + inventory_item_id + variant_id + product_id.
+    """Hent alle SKUs + inventory_item_id + variant_id + product_id + productType + vendor.
 
     Cost-budgettet hos Shopify er rigeligt til at hente 165k varianter
     i én session. Vi henter pr. side med 250 varianter og pauser kun
     hvis throttle-bucket nærmer sig tom.
+
+    productType + vendor caches per SKU saa Katalog Engine pricing-rules
+    kan respekteres af alle scripts (sync_prices_v2, rotate_groups_v2).
     """
-    print("🚀 Fetching SKUs + inventory_item_ids + variant/product ids from Shopify...")
+    print("🚀 Fetching SKUs + inventory_item_ids + variant/product ids + types + vendors from Shopify...")
     skus = set()
     items = {}                # sku -> numeric inventory_item_id (for sync_inventory_v2)
     variants_map = {}         # sku -> [variant_id, product_id] (for sync_prices_v2)
+    product_types = {}        # sku -> productType string (NEW: for vendor+type pricing-config)
+    vendors = {}              # sku -> vendor string (NEW: for vendor+type pricing-config)
     cursor = None
     page = 0
     while True:
@@ -95,7 +102,7 @@ def fetch_all_variants():
                 id
                 sku
                 inventoryItem { id }
-                product { id }
+                product { id productType vendor }
               }
             }
             pageInfo { hasNextPage endCursor }
@@ -112,7 +119,10 @@ def fetch_all_variants():
             sku = str(sku)
             inv = (n.get('inventoryItem') or {}).get('id') or ''
             var_id = n.get('id') or ''
-            prod_id = (n.get('product') or {}).get('id') or ''
+            product = n.get('product') or {}
+            prod_id = product.get('id') or ''
+            prod_type = (product.get('productType') or '').strip()
+            vendor = (product.get('vendor') or '').strip()
             try:
                 inv_num = int(inv.rsplit('/', 1)[-1]) if inv else None
                 var_num = int(var_id.rsplit('/', 1)[-1]) if var_id else None
@@ -125,31 +135,37 @@ def fetch_all_variants():
             if inv_num:
                 items[sku] = inv_num
             variants_map[sku] = [var_num, prod_num]
+            if prod_type:
+                product_types[sku] = prod_type
+            if vendor:
+                vendors[sku] = vendor
         page += 1
         if page % 20 == 0:
             print(f"  Page {page}: {len(skus)} SKUs cached so far")
         if not variants['pageInfo']['hasNextPage']:
             break
         cursor = variants['pageInfo']['endCursor']
-    print(f"✅ Total: {len(skus)} SKUs, {len(items)} m. inventory_item_id, {len(variants_map)} m. variant+product")
-    return sorted(skus), items, variants_map
+    print(f"✅ Total: {len(skus)} SKUs ({len(items)} inv, {len(variants_map)} var, "
+          f"{len(product_types)} types, {len(vendors)} vendors)")
+    return sorted(skus), items, variants_map, product_types, vendors
 
 
 def main():
     location_id = fetch_primary_location()
-    skus, items, variants_map = fetch_all_variants()
+    skus, items, variants_map, product_types, vendors = fetch_all_variants()
 
     output = {
         'skus': skus,                   # bagudkompatibelt
         'count': len(skus),
         'updated': datetime.utcnow().isoformat() + 'Z',
-        'location_id': location_id,     # primary fulfillment location
+        'location_id': location_id,
         'inventory_items': items,       # sku -> inventory_item_id
         'variants': variants_map,       # sku -> [variant_id, product_id]
+        'product_types': product_types, # sku -> productType (Katalog Engine)
+        'vendors': vendors,             # sku -> vendor (Katalog Engine)
     }
 
     os.makedirs('output', exist_ok=True)
-    # Kompakt JSON (ingen indent) — sparer ~40% størrelse for 165k SKUs
     with open('output/shop_skus.json', 'w', encoding='utf-8') as f:
         json.dump(output, f, separators=(',', ':'))
 
