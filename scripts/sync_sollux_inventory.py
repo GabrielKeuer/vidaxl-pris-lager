@@ -7,6 +7,7 @@ Synkroniserer lager fra Sollux CSV til Shopify produkter
 import os
 import sys
 import time
+import random
 import requests
 import csv
 from datetime import datetime
@@ -35,33 +36,56 @@ def log(message):
     print(f"[{timestamp}] {message}")
 
 
-def download_sollux_csv():
-    """Download CSV fra Sollux med retry-logik.
+# Retry-konfiguration for Sollux-download
+MAX_ATTEMPTS = 6
+# (connect, read): fejl hurtigt på connect (15s) frem for at sidde fast i 60s,
+# men giv serveren god tid til at levere selve CSV'en (120s).
+REQUEST_TIMEOUT = (15, 120)
+# Browser-agtig User-Agent — nogle WAF'er afviser default python-requests-UA.
+REQUEST_HEADERS = {
+    'User-Agent': ('Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
+                   'AppleWebKit/537.36 (KHTML, like Gecko) '
+                   'Chrome/124.0.0.0 Safari/537.36'),
+    'Accept': 'text/csv,*/*',
+}
 
-    Sollux-serveren (apps.sollux-lighting.com) har historisk daglige
-    ConnectTimeoutErrors. Vi prøver 3 gange med exponential backoff
-    (60s, 120s) før vi giver op. Timeout sat op fra 30s til 60s.
+
+def download_sollux_csv():
+    """Download CSV fra Sollux med sejlivet retry-logik.
+
+    Sollux-serveren (apps.sollux-lighting.com) er intermitterende: den giver
+    ConnectTimeout på enkelte timer (typisk ~35% af kørslerne på dårlige dage),
+    men kommer sig som regel inden for få minutter. Det er IKKE en daglig
+    pull-kvote (verificeret: dagens første kørsler fejler nogle gange mens
+    senere lykkes, og fejl er jævnt spredt over alle 24 timer).
+
+    Derfor: 6 forsøg med exponential backoff + jitter, så vi rider de korte
+    blip af i stedet for at give op efter 3 forsøg. Jobbet kører hver time,
+    så de ekstra forsøg belaster ikke Sollux mere end før.
     """
     log("📥 Downloading Sollux CSV...")
-    last_err = None
-    for attempt in range(1, 4):
+    for attempt in range(1, MAX_ATTEMPTS + 1):
         try:
-            response = requests.get(SOLLUX_CSV_URL, timeout=60)
+            response = requests.get(SOLLUX_CSV_URL, timeout=REQUEST_TIMEOUT,
+                                    headers=REQUEST_HEADERS)
             response.raise_for_status()
-            log(f"✅ Downloaded CSV ({len(response.text)} bytes, attempt {attempt}/3)")
+            log(f"✅ Downloaded CSV ({len(response.text)} bytes, "
+                f"attempt {attempt}/{MAX_ATTEMPTS})")
             return response.text
         except (requests.exceptions.ConnectionError,
                 requests.exceptions.Timeout,
                 requests.exceptions.HTTPError) as e:
-            last_err = e
             err_type = type(e).__name__
-            if attempt < 3:
-                wait = 60 * attempt   # 60s, 120s
-                log(f"⚠️  Attempt {attempt}/3 failed ({err_type}). Retrying in {wait}s...")
+            if attempt < MAX_ATTEMPTS:
+                # Exponential backoff (30, 45, 60, 75, 90 ...) + jitter, capped 90s
+                wait = min(30 + 15 * (attempt - 1), 90) + random.uniform(0, 10)
+                log(f"⚠️  Attempt {attempt}/{MAX_ATTEMPTS} failed ({err_type}). "
+                    f"Retrying in {wait:.0f}s...")
                 time.sleep(wait)
             else:
-                log(f"❌ All 3 attempts failed. Last error ({err_type}): {str(e)[:160]}")
-    log(f"❌ Could not download Sollux CSV after 3 attempts")
+                log(f"❌ All {MAX_ATTEMPTS} attempts failed. "
+                    f"Last error ({err_type}): {str(e)[:160]}")
+    log(f"❌ Could not download Sollux CSV after {MAX_ATTEMPTS} attempts")
     sys.exit(1)
 
 

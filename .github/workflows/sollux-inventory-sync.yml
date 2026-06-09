@@ -53,18 +53,45 @@ jobs:
             *.log
           retention-days: 7
       
-      - name: 🔔 Notify on failure
+      - name: 🔔 Notify on repeated failure
         if: failure()
         uses: actions/github-script@v7
         with:
           script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: '❌ Sollux Inventory Sync Failed',
-              body: `Sollux inventory sync failed at ${new Date().toISOString()}\n\nCheck the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.`,
-              labels: ['sollux', 'bug', 'automated']
-            })
+            // Sollux-endpointet er intermitterende — et enkelt blip fikser sig
+            // typisk næste time. For at undgå støj alarmerer vi KUN når den
+            // forrige kørsel også fejlede (2+ fortløbende fejl = ægte nedetid).
+            const { owner, repo } = context.repo;
+            const runs = await github.rest.actions.listWorkflowRuns({
+              owner, repo,
+              workflow_id: 'sollux-inventory-sync.yml',
+              status: 'completed',
+              per_page: 5,
+            });
+            const previous = runs.data.workflow_runs
+              .filter(r => r.id !== context.runId)
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
+
+            if (!previous || previous.conclusion !== 'failure') {
+              console.log(`Enkeltstående fejl (forrige kørsel: ${previous ? previous.conclusion : 'ingen'}) — ingen alarm.`);
+              return;
+            }
+
+            // 2+ fortløbende fejl. Undgå dublet hvis der allerede er en åben issue.
+            const title = '❌ Sollux Inventory Sync Failed';
+            const open = await github.rest.issues.listForRepo({
+              owner, repo, state: 'open', labels: 'sollux', per_page: 20,
+            });
+            if (open.data.some(i => i.title === title)) {
+              console.log('Åben Sollux-issue findes allerede — opretter ikke ny.');
+              return;
+            }
+
+            await github.rest.issues.create({
+              owner, repo, title,
+              body: `Sollux inventory sync fejlede 2+ kørsler i træk (seneste: ${new Date().toISOString()}).\n\nDette indikerer reel nedetid hos apps.sollux-lighting.com, ikke et enkeltstående blip.\n\nCheck [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}).`,
+              labels: ['sollux', 'bug', 'automated'],
+            });
 ---
 
 ## 📋 **Step 4: Test det manuelt**
