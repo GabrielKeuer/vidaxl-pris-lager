@@ -455,7 +455,7 @@ query {
 """
 
 
-def push_to_shopify_bulk(today_rows, on_sale_rows, variants_map):
+def push_to_shopify_bulk(today_rows, on_sale_rows, variants_map, progress_cb=None):
     """Niveau 3: bulkOperationRunMutation. Skalérer til 100k+ mutations.
     Submit JSONL → server-side async processing → poll → resultater.
 
@@ -560,6 +560,11 @@ def push_to_shopify_bulk(today_rows, on_sale_rows, variants_map):
         if status != last_status or count != last_count:
             print(f"     [{elapsed:>4}s] status={status} objectCount={count}")
             last_status = status; last_count = count
+            if progress_cb:
+                try:
+                    progress_cb(int(count), len(by_product))
+                except Exception as _e:
+                    print(f"     ⚠ progress_cb fejl (ignoreret): {str(_e)[:100]}")
         if status in ('COMPLETED', 'FAILED', 'CANCELED', 'EXPIRED'):
             break
         if time.time() - start > max_wait:
@@ -603,13 +608,18 @@ def push_to_shopify_bulk(today_rows, on_sale_rows, variants_map):
     return stats
 
 
-def push_to_shopify(today_rows, on_sale_rows, variants_map):
-    """Auto-vælg Niveau 2 eller Niveau 3 baseret på batch-størrelse."""
+def push_to_shopify(today_rows, on_sale_rows, variants_map, progress_cb=None):
+    """Auto-vælg Niveau 2 eller Niveau 3 baseret på batch-størrelse.
+
+    progress_cb(count, total): valgfri callback der kaldes løbende under
+    Niveau 3-poll (count = produkter behandlet indtil nu, total = produkter
+    i alt). Bruges af bulk_repricing til at vise progressbar i hubben.
+    Daglig sync kalder uden cb → ingen adfærdsændring."""
     total = len(today_rows) + len(on_sale_rows)
     threshold = CONFIG["bulk_threshold"]
     print(f"📦 Total changes: {total} (threshold for bulk: {threshold})")
     if total >= threshold:
-        return push_to_shopify_bulk(today_rows, on_sale_rows, variants_map)
+        return push_to_shopify_bulk(today_rows, on_sale_rows, variants_map, progress_cb)
     else:
         return push_to_shopify_graphql(today_rows, on_sale_rows, variants_map)
 

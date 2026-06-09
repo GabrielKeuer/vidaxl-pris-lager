@@ -247,7 +247,16 @@ def main():
             return 0
 
         # 6. LIVE: push via Shopify (auto Niveau 2/3) + gem state
-        stats = push_to_shopify(today_rows, on_sale_rows, variants_map)
+        # Løbende fremgang → pricing_bulk_jobs.actual_count, så hubben kan vise
+        # en progressbar (actual_count / preview_count). count = produkter
+        # behandlet indtil nu, tp = produkter i alt i denne push.
+        def _progress(count, tp):
+            if tp:
+                est = min(int(count / tp * total_changes), total_changes)
+                _update_job(sb, job_id, actual_count=est,
+                            log_summary=f"Pusher til Shopify… {count}/{tp} produkter")
+
+        stats = push_to_shopify(today_rows, on_sale_rows, variants_map, progress_cb=_progress)
         print(f"📊 STATS: {stats}")
         applied = stats.get("variants_updated", 0)
         errors = stats.get("errors", 0)
