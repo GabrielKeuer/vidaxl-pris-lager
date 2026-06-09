@@ -21,7 +21,9 @@ on:
 jobs:
   bulk-reprice:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    # Hurtig datasti (shop_cache + feed) gør hentefasen til sekunder; Bulk
+    # Operations-push kan dog poll'e op til 45 min ved fuld reprice. 90 = headroom.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python

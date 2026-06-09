@@ -362,6 +362,11 @@ def _build_by_product(today_rows, on_sale_rows, variants_map, stats):
         if row["Compare At Action"] == "CLEAR":
             vinput["compareAtPrice"] = None
             stats["on_sale_compare_at_cleared"] += 1
+        elif row["Compare At Action"] == "SET":
+            # Rule-change mode (bulk_repricing): genberegn "før"-prisen til ny normal.
+            # Daglig sync bruger aldrig SET (kun KEEP/CLEAR) → ingen adfærdsændring der.
+            vinput["compareAtPrice"] = str(row["Set Compare At"])
+            stats["on_sale_compare_at_set"] = stats.get("on_sale_compare_at_set", 0) + 1
         cost = None
         if row.get("Variant Cost") not in (None, "", "nan"):
             try: cost = float(row["Variant Cost"])
