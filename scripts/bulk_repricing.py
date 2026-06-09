@@ -255,14 +255,23 @@ def main():
         # Gem state EFTER push (så en fejlet push ikke efterlader state foran Shopify)
         upsert_state(sb, state_updates)
 
+        # Et par enkelte produkt-fejl (fx en slettet variant mellem cache-bygning
+        # og nu) skal IKKE markere hele kørslen som fejlet — bulk-operationen
+        # fuldførte. Vi tolererer op til 1% produkt-fejl som "completed" (med
+        # failed_count registreret); derover = systemisk problem → failed.
+        # Catastrofale fejl (submit/timeout/bulk FAILED) kastes og fanges nedenfor.
+        total_attempted = applied + errors
+        error_rate = errors / total_attempted if total_attempted else 0
+        ok = error_rate <= 0.01
         _update_job(sb, job_id,
-                    status="completed" if errors == 0 else "failed",
+                    status="completed" if ok else "failed",
                     actual_count=applied,
                     failed_count=errors,
-                    log_summary=f"Done. {applied} variants opdateret, {errors} fejl — {summary}",
+                    log_summary=f"{'Done' if ok else 'FAILED'}. {applied} opdateret, "
+                                f"{errors} fejl ({error_rate:.2%}) — {summary}",
                     completed_at=_now())
-        print(f"✅ DONE. Applied={applied}, Errors={errors}")
-        return 0 if errors == 0 else 1
+        print(f"{'✅ DONE' if ok else '❌ FAILED'}. Applied={applied}, Errors={errors} ({error_rate:.2%})")
+        return 0 if ok else 1
 
     except Exception as e:
         import traceback
