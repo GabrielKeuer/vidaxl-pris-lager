@@ -150,7 +150,7 @@ def gql(query: str, variables: dict | None = None) -> dict:
 def push_to_shopify(changes: pd.DataFrame, location_id: str, sku_to_inv: dict) -> dict:
     """Kald inventorySetQuantities i batches. Returner stats-dict."""
     print(f"🚀 Pushing {len(changes)} inventory updates til Shopify (location {location_id})")
-    stats = {'updated': 0, 'skipped_no_inv_id': 0, 'errors': 0}
+    stats = {'updated': 0, 'skipped_no_inv_id': 0, 'not_found': 0, 'errors': 0}
 
     # Byg quantities-array; skip SKUs uden mapping
     quantities = []
@@ -192,13 +192,42 @@ def push_to_shopify(changes: pd.DataFrame, location_id: str, sku_to_inv: dict) -
         try:
             data = gql(mutation, {'input': input_var})
             errs = data.get('data', {}).get('inventorySetOnHandQuantities', {}).get('userErrors', [])
-            if errs:
-                stats['errors'] += len(errs)
-                print(f"  ⚠ Batch {batch_num}/{total_batches}: {len(errs)} userErrors — første: {errs[0]}")
-            else:
+            if not errs:
                 stats['updated'] += len(batch)
                 if batch_num % 10 == 0 or batch_num == total_batches:
                     print(f"  ✅ Batch {batch_num}/{total_batches} OK ({stats['updated']} cumulative)")
+                continue
+            # Kategorisér fejl. "could not be found" = forældet inventoryItemId
+            # (produkt/variant slettet i Shopify siden cache-build) = benign, IKKE en reel fejl.
+            stale_idx = set(); other_errs = []
+            for e in errs:
+                msg = str(e.get('message', '')).lower()
+                fields = e.get('field') or []
+                if 'could not be found' in msg or 'not be found' in msg:
+                    idx = next((int(x) for x in fields if str(x).isdigit()), None)
+                    if idx is not None:
+                        stale_idx.add(idx)
+                    else:
+                        other_errs.append(e)
+                else:
+                    other_errs.append(e)
+            if stale_idx and not other_errs:
+                # Spring de forældede items over og retry RESTEN, så de stadig opdateres
+                # (inventorySetOnHandQuantities er atomisk pr. kald).
+                stats['not_found'] += len(stale_idx)
+                retry_batch = [b for j, b in enumerate(batch) if j not in stale_idx]
+                if retry_batch:
+                    rdata = gql(mutation, {'input': {**input_var, 'setQuantities': retry_batch}})
+                    rerrs = rdata.get('data', {}).get('inventorySetOnHandQuantities', {}).get('userErrors', [])
+                    if rerrs:
+                        stats['errors'] += len(rerrs)
+                        print(f"  ⚠ Batch {batch_num}/{total_batches}: retry-fejl efter skip: {rerrs[0]}")
+                    else:
+                        stats['updated'] += len(retry_batch)
+                print(f"  ⏭  Batch {batch_num}/{total_batches}: sprang {len(stale_idx)} forældet inv-item(s) over (slettede produkter), resten opdateret")
+            else:
+                stats['errors'] += len(errs)
+                print(f"  ⚠ Batch {batch_num}/{total_batches}: {len(errs)} userErrors — første: {errs[0]}")
         except Exception as e:
             stats['errors'] += len(batch)
             print(f"  ❌ Batch {batch_num}/{total_batches} fejlede: {str(e)[:200]}")
@@ -256,7 +285,7 @@ def main():
 
     if args.live:
         stats = push_to_shopify(changes, location_id, sku_to_inv)
-        print(f"\n📊 STATS: updated={stats['updated']}, skipped_no_inv_id={stats['skipped_no_inv_id']}, errors={stats['errors']}")
+        print(f"\n📊 STATS: updated={stats['updated']}, skipped_no_inv_id={stats['skipped_no_inv_id']}, not_found(forældet)={stats['not_found']}, errors={stats['errors']}")
         if stats['errors']:
             sys.exit(1)
         # Neutraliser Matrixify-CSV: skriv TOM fil (kun header) saa Matrixify -
