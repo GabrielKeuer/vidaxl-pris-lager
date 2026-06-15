@@ -79,8 +79,12 @@ def _update_job(sb, job_id, **fields):
 # =============================================================================
 
 def _shop_gql(query, variables=None):
-    store = os.environ.get("SHOPIFY_STORE", "")
+    # Accepter begge env-navne (hub/cron bruger SHOPIFY_STORE_URL) + strip evt. scheme/slash.
+    store = (os.environ.get("SHOPIFY_STORE_URL") or os.environ.get("SHOPIFY_STORE", "")).strip()
+    store = store.replace("https://", "").replace("http://", "").rstrip("/")
     token = os.environ.get("SHOPIFY_ACCESS_TOKEN", "")
+    if not store:
+        raise RuntimeError("SHOPIFY_STORE_URL/SHOPIFY_STORE env mangler - kan ikke bygge Shopify-URL")
     url = f"https://{store}/admin/api/2024-10/graphql.json"
     headers = {"X-Shopify-Access-Token": token, "Content-Type": "application/json"}
     data = json.dumps({"query": query, "variables": variables or {}}).encode("utf-8")
