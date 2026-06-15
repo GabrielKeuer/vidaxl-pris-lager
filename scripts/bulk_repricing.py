@@ -31,18 +31,23 @@ Argumenter:
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import sys
+import time
+import urllib.request
 from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import pandas as pd
 
+import pricing
 from pricing import (
     calculate_normal_price,
     calculate_sale_price,
     load_pricing_config,
+    resolve_variant_pricing,
 )
 from sync_prices_v2 import (
     fetch_supplier_feed,
@@ -65,6 +70,110 @@ def _update_job(sb, job_id, **fields):
         sb.table("pricing_bulk_jobs").update(fields).eq("id", job_id).execute()
     except Exception as e:
         print(f"⚠ Could not update job {job_id}: {e}")
+
+
+# =============================================================================
+# FICTIVE-MODE BULK (Benuta/Sollux/Kayoom) — ikke vidaXL-feed/rotation-baseret.
+# Henter vendorens produkter direkte fra Shopify; cost = Variant Cost (matcher
+# markup-basen pr. vendor); pris/førpris via resolve_variant_pricing(seed=handle).
+# =============================================================================
+
+def _shop_gql(query, variables=None):
+    store = os.environ.get("SHOPIFY_STORE", "")
+    token = os.environ.get("SHOPIFY_ACCESS_TOKEN", "")
+    url = f"https://{store}/admin/api/2024-10/graphql.json"
+    headers = {"X-Shopify-Access-Token": token, "Content-Type": "application/json"}
+    data = json.dumps({"query": query, "variables": variables or {}}).encode("utf-8")
+    for attempt in range(1, 5):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, data=data, headers=headers), timeout=120) as r:
+                d = json.loads(r.read().decode())
+        except Exception:
+            if attempt < 4:
+                time.sleep(2 ** attempt); continue
+            raise
+        if "errors" in d:
+            if any("hrottl" in str(e).lower() for e in d["errors"]) and attempt < 4:
+                time.sleep(2 ** attempt); continue
+            raise Exception(f"GraphQL: {d['errors']}")
+        return d
+    raise Exception("Max retries")
+
+
+_FETCH_VENDOR_PRODUCTS = """
+query($q: String!, $cursor: String) {
+  products(first: 50, query: $q, after: $cursor) {
+    pageInfo { hasNextPage endCursor }
+    edges { node { id handle
+      variants(first: 100) { edges { node { id price compareAtPrice
+        inventoryItem { unitCost { amount } } } } } } } } }
+"""
+_BULK_UPDATE = """
+mutation($pid: ID!, $variants: [ProductVariantsBulkInput!]!) {
+  productVariantsBulkUpdate(productId: $pid, variants: $variants) { userErrors { message } } }
+"""
+
+
+def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
+    q = f"vendor:{vendor}" + (f" AND product_type:'{ptype}'" if ptype else "")
+    cursor = None; product_updates = []; checked = 0; total_changes = 0
+    print(f"🔎 Henter '{vendor}'-produkter fra Shopify (fictive mode)...")
+    while True:
+        d = _shop_gql(_FETCH_VENDOR_PRODUCTS, {"q": q, "cursor": cursor})
+        pr = d["data"]["products"]
+        for e in pr["edges"]:
+            n = e["node"]; pid = n["id"]; handle = n["handle"]; updates = []
+            for ve in n["variants"]["edges"]:
+                v = ve["node"]; checked += 1
+                uc = (v.get("inventoryItem") or {}).get("unitCost") or {}
+                cost = float(uc.get("amount") or 0)
+                if cost <= 0:
+                    continue
+                np_, nc_ = resolve_variant_pricing(cost, cfg, seed=handle, on_sale=True)
+                np_ = int(np_); nc_ = int(nc_) if nc_ else None
+                cur_p = int(round(float(v["price"]))) if v.get("price") else 0
+                cur_c = int(round(float(v["compareAtPrice"]))) if v.get("compareAtPrice") else None
+                if np_ == cur_p and nc_ == cur_c:
+                    continue
+                u = {"id": v["id"], "price": str(np_), "compareAtPrice": str(nc_) if nc_ else None}
+                updates.append(u)
+            if updates:
+                product_updates.append((pid, updates)); total_changes += len(updates)
+        if pr["pageInfo"]["hasNextPage"]:
+            cursor = pr["pageInfo"]["endCursor"]
+        else:
+            break
+    _update_job(sb, job_id, preview_count=total_changes,
+                log_summary=f"Planlagt {total_changes} variant-ændringer ({len(product_updates)} produkter, {checked} tjekket)")
+    print(f"📊 fictive: {total_changes} ændringer planlagt ({checked} varianter tjekket)")
+
+    if dry_run:
+        _update_job(sb, job_id, status="completed", actual_count=0, completed_at=_now(),
+                    log_summary=f"DRY-RUN: {total_changes} ville ændres")
+        print(f"✅ DRY-RUN done. {total_changes} ville ændres.")
+        return 0
+    if total_changes == 0:
+        _update_job(sb, job_id, status="completed", actual_count=0, completed_at=_now(), log_summary="Ingen ændringer")
+        print("✅ Ingen ændringer.")
+        return 0
+
+    applied = 0; errors = 0
+    for pid, updates in product_updates:
+        for j in range(0, len(updates), 25):
+            du = _shop_gql(_BULK_UPDATE, {"pid": pid, "variants": updates[j:j + 25]})
+            errs = du["data"]["productVariantsBulkUpdate"]["userErrors"]
+            if errs:
+                errors += len(errs)
+            else:
+                applied += len(updates[j:j + 25])
+        _update_job(sb, job_id, actual_count=applied, log_summary=f"Pusher… {applied}/{total_changes}")
+    error_rate = errors / (applied + errors) if (applied + errors) else 0
+    ok = error_rate <= 0.01
+    _update_job(sb, job_id, status="completed" if ok else "failed", actual_count=applied,
+                failed_count=errors, completed_at=_now(),
+                log_summary=f"{'Done' if ok else 'FAILED'}. {applied} opdateret, {errors} fejl ({error_rate:.2%})")
+    print(f"{'✅ DONE' if ok else '❌ FAILED'}. Applied={applied}, Errors={errors}")
+    return 0 if ok else 1
 
 
 def main():
@@ -93,7 +202,14 @@ def main():
                 log_summary="Henter cache + feed...")
 
     try:
-        # 1. Load data (samme hurtige datasti som dagssyncen)
+        # 0. Mode-check: fictive-vendors (Benuta/Sollux/Kayoom) har hverken vidaXL-feed
+        #    eller rotation-state → kør den Shopify-baserede fictive-gren i stedet.
+        target_cfg = load_pricing_config(sb, vendor=target_vendor, product_type=target_type)
+        if target_cfg and target_cfg.get("mode") == "fictive_discount":
+            print(f"ℹ️  {target_vendor} = fictive_discount → Shopify-baseret bulk")
+            return run_fictive_bulk(sb, job_id, target_vendor, target_type, target_cfg, args.dry_run)
+
+        # 1. Load data (samme hurtige datasti som dagssyncen) — real_discount (vidaXL)
         state = load_pricing_state(sb)
         print(f"✅ {len(state)} rows fra vidaxl_pricing_state")
         cache = load_shop_cache()
