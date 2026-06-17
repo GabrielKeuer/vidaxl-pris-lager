@@ -1,0 +1,53 @@
+name: Kayoom Inventory Sync
+
+on:
+  # Kayoom uploader dagligt (~14:42 dansk tid). Kør to gange dagligt for at fange filen sikkert.
+  schedule:
+    - cron: '30 5,15 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: kayoom-inventory-sync
+  cancel-in-progress: true
+
+jobs:
+  sync-kayoom:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🔄 Sync Kayoom inventory
+        env:
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          KAYOOM_FTP_USER: ${{ secrets.KAYOOM_FTP_USER }}
+          KAYOOM_FTP_PASSWORD: ${{ secrets.KAYOOM_FTP_PASSWORD }}
+        run: |
+          python scripts/sync_kayoom_inventory.py
+
+      - name: 🔔 Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '❌ Kayoom Inventory Sync Failed',
+              body: `Kayoom inventory sync failed at ${new Date().toISOString()}\n\nCheck the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.`,
+              labels: ['kayoom', 'bug', 'automated']
+            })
