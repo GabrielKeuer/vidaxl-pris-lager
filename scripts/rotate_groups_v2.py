@@ -103,7 +103,7 @@ def fetch_state_paginated(sb, group, statuses):
     page = 0; page_size = 1000
     while True:
         res = (sb.table(CONFIG["supabase_state_table"])
-               .select("sku,pricing_group,status,b2b_cost,normal_price,sale_price,warmup_complete_at")
+               .select("sku,pricing_group,status,b2b_cost,normal_price,sale_price,warmup_complete_at,last_normal_period_started_at")
                .eq("pricing_group", group).in_("status", statuses)
                .range(page * page_size, (page + 1) * page_size - 1)
                .execute())
@@ -205,6 +205,10 @@ def compute_rotation(sb, force=False):
             "sku": r["sku"],
             "pricing_group": r["pricing_group"],
             "status": "on_sale",
+            # Bevar eksisterende vaerdi: produktet FORLADER normal-perioden nu,
+            # men kolonnen er NOT NULL og upsert sender en INSERT-row (selv ved
+            # ON CONFLICT UPDATE) -> uden denne fejler den med 23502.
+            "last_normal_period_started_at": r.get("last_normal_period_started_at"),
             "last_status_change_at": now_iso,
         })
         start_count += 1
