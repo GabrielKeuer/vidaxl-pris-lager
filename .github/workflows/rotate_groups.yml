@@ -52,6 +52,7 @@ jobs:
         SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
         SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
       run: |
+        set -o pipefail
         ARGS=""
         if [ "${{ inputs.dry_run }}" = "true" ]; then
           ARGS="$ARGS --dry-run"
@@ -59,11 +60,30 @@ jobs:
           ARGS="$ARGS --live"
         fi
         if [ "${{ inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
+
+        # Fang scriptets exit-kode UDEN at 'set -e' afbryder, saa vi kan skelne:
+        #   0 = rotation gennemfoert
+        #   2 = 25-dages Omnibus-gate (legitimt skip, IKKE en fejl)
+        #   andet = aegte crash -> step skal fejle saa fejl-Slack fyrer.
+        # (Foer: 'python ... | tee' maskerede ALLE exit-koder -> crash saa ud
+        #  som success og ingen alarm. Det skjulte de doede maj/juni-koersler.)
+        set +e
         python scripts/rotate_groups_v2.py $ARGS | tee rotate_output.txt
-        # Capture summary for Slack
+        RC=${PIPESTATUS[0]}
+        set -e
+        echo "rc=$RC"
+        if [ "$RC" = "2" ]; then
+          echo "Gate: rotation sprunget over (<25 dage siden sidst) — ikke en fejl."
+          echo "skipped=true" >> $GITHUB_OUTPUT
+        elif [ "$RC" != "0" ]; then
+          echo "Rotation fejlede med exit $RC"
+          exit $RC
+        fi
+
+        # Opsummering til Slack (parser v2's faktiske output-format).
         ENDED=$(grep -oE 'Ended sale on [0-9]+' rotate_output.txt | grep -oE '[0-9]+' | head -1 || echo "0")
         STARTED=$(grep -oE 'Started sale on [0-9]+' rotate_output.txt | grep -oE '[0-9]+' | head -1 || echo "0")
-        ACTIVE=$(grep -oE 'active=[ABC]' rotate_output.txt | head -1 | cut -d= -f2 || echo "?")
+        ACTIVE=$(grep -oE 'Started sale on [0-9]+ products i group [ABC]' rotate_output.txt | grep -oE 'group [ABC]' | grep -oE '[ABC]$' | head -1 || echo "?")
         echo "ended=$ENDED" >> $GITHUB_OUTPUT
         echo "started=$STARTED" >> $GITHUB_OUTPUT
         echo "active=$ACTIVE" >> $GITHUB_OUTPUT
@@ -80,12 +100,21 @@ jobs:
         git push
 
     - name: Slack notify on success
-      if: ${{ success() && inputs.dry_run != true }}
+      if: ${{ success() && inputs.dry_run != true && steps.rotate.outputs.skipped != 'true' }}
       env:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
       run: |
         curl -s -X POST -H 'Content-Type: application/json' \
           --data "{\"text\": \":arrows_counterclockwise: *VidaXL rotation gennemført (direct API)* — gruppe ${{ steps.rotate.outputs.active }} er nu aktiv. Endte salg på ${{ steps.rotate.outputs.ended }} produkter, startede salg på ${{ steps.rotate.outputs.started }} produkter via Bulk Operations.\"}" \
+          "$SLACK_WEBHOOK_URL"
+
+    - name: Slack notify on gate-skip
+      if: ${{ success() && inputs.dry_run != true && steps.rotate.outputs.skipped == 'true' }}
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      run: |
+        curl -s -X POST -H 'Content-Type: application/json' \
+          --data "{\"text\": \":hourglass_flowing_sand: *VidaXL rotation sprunget over* — mindre end 25 dage siden sidste rotation (Omnibus-gate). Ingen ændringer foretaget.\"}" \
           "$SLACK_WEBHOOK_URL"
 
     - name: Slack notify on failure
