@@ -118,31 +118,54 @@ def main():
     dup_variant_total = sum(len(vs) for vs in dup_skus.values())
     redundant = dup_variant_total - len(dup_skus)  # "ekstra" varianter ud over 1 pr. sku
 
+    from datetime import datetime as _dt
+    import statistics as _st
+
+    def _parse(d):
+        try:
+            return _dt.strptime(d, "%Y-%m-%d")
+        except Exception:
+            return None
+
+    variant_count = Counter(v["pid"] for v in variants)   # varianter pr. produkt
+
     within = cross = 0
     cross_examples = []
-    within_examples = []
     dup_product_ids = set()
     prod_created_hist = Counter()
-    var_created_hist = Counter()
-    # For "redundante" (alt efter den første) variant: hvornår blev den oprettet?
     redundant_var_created = Counter()
+    pair_class = Counter()        # single×single / single×multi / multi×multi (cross-par m. 2 produkter)
+    redundant_is_single = 0       # den redundante (nyere) variant sidder på et single-variant-produkt
+    redundant_status = Counter()
+    older_status = Counter()
+    gap_days = []                 # dage mellem ældste og nyeste variant i en dublet
 
     for sku, vs in dup_skus.items():
         pids = {v["pid"] for v in vs}
         for v in vs:
             dup_product_ids.add(v["pid"])
-            var_created_hist[v["vcreated"]] += 1
-        # sortér efter variant-oprettelse; alt efter den ældste = "redundante"
         vs_sorted = sorted(vs, key=lambda x: x["vcreated"] or "9999")
+        older_status[products.get(vs_sorted[0]["pid"], {}).get("status", "?")] += 1
         for v in vs_sorted[1:]:
             redundant_var_created[v["vcreated"]] += 1
+            if variant_count.get(v["pid"], 0) == 1:
+                redundant_is_single += 1
+            redundant_status[products.get(v["pid"], {}).get("status", "?")] += 1
+        ds = [_parse(v["vcreated"]) for v in vs if _parse(v["vcreated"])]
+        if len(ds) >= 2:
+            gap_days.append((max(ds) - min(ds)).days)
         if len(pids) == 1:
             within += 1
-            if len(within_examples) < 12:
-                within_examples.append((sku, vs_sorted))
         else:
             cross += 1
-            if len(cross_examples) < 12:
+            if len(pids) == 2:
+                counts = sorted(variant_count.get(p, 0) for p in pids)
+                cls = ("single×single" if counts[1] == 1 else
+                       "single×multi" if counts[0] == 1 else "multi×multi")
+                pair_class[cls] += 1
+            else:
+                pair_class[f"{len(pids)} produkter"] += 1
+            if len(cross_examples) < 15:
                 cross_examples.append((sku, vs_sorted))
 
     for pid in dup_product_ids:
@@ -150,10 +173,19 @@ def main():
         if p:
             prod_created_hist[p["created"]] += 1
 
-    print(f"🔁 Dubletter: {len(dup_skus)} SKUs på >1 variant  ({dup_variant_total} varianter, {redundant} redundante)")
-    print(f"   tomme SKUs: {empty}")
-    print(f"   PÅ SAMME produkt (within):  {within} SKUs")
-    print(f"   PÅ TVÆRS af produkter (cross): {cross} SKUs   <-- mest alvorligt (lager/fulfillment)\n")
+    print(f"🔁 Dubletter: {len(dup_skus)} SKUs (within={within}, cross={cross})  tomme={empty}\n")
+
+    print("— PAR-KLASSIFIKATION (variant-antal på de involverede produkter) —")
+    for k, c in pair_class.most_common():
+        print(f"   {k}: {c}")
+    print(f"\n— Den redundante (nyere) variant sidder på et SINGLE-variant-produkt: {redundant_is_single}/{len(dup_skus)} —")
+    print(f"— Nyere-produkt status: {dict(redundant_status)}")
+    print(f"— Ældre-produkt status: {dict(older_status)}")
+    if gap_days:
+        gap_days.sort()
+        print(f"— Dato-gap mellem dubletter (dage): median={_st.median(gap_days)}, "
+              f"min={gap_days[0]}, max={gap_days[-1]}, samme-dag={sum(1 for g in gap_days if g == 0)} —")
+    print()
 
     def _top(counter, n=15, label=""):
         print(f"— {label} (top {n} datoer) —")
@@ -161,33 +193,33 @@ def main():
             print(f"   {k or '(ukendt)'}: {c}")
         print()
 
-    _top(prod_created_hist, 20, "Oprettelsesdato for DUP-PRODUKTER")
-    _top(redundant_var_created, 20, "Oprettelsesdato for de REDUNDANTE varianter (den nyere af et par)")
+    _top(prod_created_hist, 15, "Oprettelsesdato for DUP-PRODUKTER")
+    _top(redundant_var_created, 15, "Oprettelsesdato for de REDUNDANTE (nyere) varianter")
 
-    print("— Eksempler PÅ TVÆRS af produkter (cross) —")
+    print("— Eksempler (cross) m. variant-antal + status —")
     for sku, vs in cross_examples:
-        parts = [f"{products.get(v['pid'],{}).get('handle','?')}@{v['vcreated']}" for v in vs]
+        parts = []
+        for v in vs:
+            p = products.get(v["pid"], {})
+            parts.append(f"{p.get('handle','?')}[{variant_count.get(v['pid'],0)}var,{p.get('status','?')}]@{v['vcreated']}")
         print(f"   SKU {sku}: " + "  |  ".join(parts))
     print()
-    print("— Eksempler PÅ SAMME produkt (within) —")
-    for sku, vs in within_examples:
-        h = products.get(vs[0]["pid"], {}).get("handle", "?")
-        print(f"   SKU {sku} @ {h}: varianter oprettet " + ", ".join(v["vcreated"] for v in vs))
-    print()
 
-    # Maskinlæsbart resumé (sidste linje) til nem opsamling
     print("RESULT_JSON=" + json.dumps({
         "vendor": VENDOR,
         "products": len(products),
         "variants": len(variants),
         "dup_skus": len(dup_skus),
-        "dup_variants": dup_variant_total,
-        "redundant_variants": redundant,
         "within_product": within,
         "cross_product": cross,
-        "empty_skus": empty,
-        "top_product_created": sorted(prod_created_hist.items(), key=lambda kv: -kv[1])[:10],
-        "top_redundant_var_created": sorted(redundant_var_created.items(), key=lambda kv: -kv[1])[:10],
+        "pair_class": dict(pair_class),
+        "redundant_on_single_product": redundant_is_single,
+        "redundant_status": dict(redundant_status),
+        "older_status": dict(older_status),
+        "gap_days_median": _st.median(gap_days) if gap_days else None,
+        "gap_same_day": sum(1 for g in gap_days if g == 0) if gap_days else 0,
+        "top_product_created": sorted(prod_created_hist.items(), key=lambda kv: -kv[1])[:8],
+        "top_redundant_var_created": sorted(redundant_var_created.items(), key=lambda kv: -kv[1])[:8],
     }))
 
 
