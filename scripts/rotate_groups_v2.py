@@ -144,6 +144,16 @@ def compute_rotation(sb, force=False):
     end_rows: SKUs der gaar FRA on_sale TIL normal (i forrige aktive gruppe)
     start_rows: SKUs der gaar FRA normal/warmup TIL on_sale (i ny aktive gruppe)
     """
+    # Mode-bevidst: A/B/C-rotationen gælder KUN real_discount (Omnibus). Er vidaXL
+    # skiftet til fictive_discount (altid på tilbud, fast markup), er der ingen
+    # rotation at lave — fictive priser styres af bulk_repricing/daily-fictive.
+    # Vi rører IKKE rotation_state (ingen gruppe-fremrykning), så hvis vidaXL
+    # senere skifter tilbage til real_discount, fortsætter rotationen hvor den slap.
+    vidaxl_cfg = pricing.load_pricing_config(sb, vendor="vidaXL")
+    if vidaxl_cfg and vidaxl_cfg.get("mode") == "fictive_discount":
+        print("ℹ️  vidaXL = fictive_discount → A/B/C-rotation deaktiveret. Ingen ændringer.")
+        sys.exit(0)
+
     rotation_state = load_rotation_state(sb) or {}
     prev_active = rotation_state.get("active_group")
     last_rotated_at = parse_iso(rotation_state.get("last_rotated_at"))
