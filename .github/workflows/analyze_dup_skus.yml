@@ -1,0 +1,27 @@
+name: Analyze Duplicate SKUs
+
+on:
+  workflow_dispatch:
+    inputs:
+      vendor:
+        description: 'Vendor (default vidaXL)'
+        required: false
+        default: 'vidaXL'
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Analyze duplicate SKUs (read-only)
+        env:
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          DUP_VENDOR: ${{ github.event.inputs.vendor }}
+        run: python scripts/analyze_dup_skus.py
