@@ -169,21 +169,23 @@ def main():
                 "shared": len(prod_skus[p] & shared), "unique": len(prod_skus[p] - shared),
             })
 
-        # Forslag (UDGANGSPUNKT)
+        # Forslag (UDGANGSPUNKT — hub'en finpudser keeper med GSC-trafik ved visning)
         if sc == "identical":
-            keep = prods[0]["handle"]  # ældste
-            rec = f"KEEP ældste '{keep}' (SEO/historik) → 301-redirect + slet de øvrige eksakte kopier"
+            keeper = prods[0]["handle"]  # ældste
+            rec = f"Eksakte kopier (samme SKU-sæt). Behold ét → 301-redirect + slet de øvrige."
         elif sc == "subset":
-            sup = max(prods, key=lambda x: x["variants"])
-            rec = f"KEEP supersæt '{sup['handle']}' ({sup['variants']} var) → redirect + slet delmængde-produkt(er)"
+            keeper = max(prods, key=lambda x: x["variants"])["handle"]
+            rec = "Gamle del-produkter supersedet af ét samlet variant-produkt (single→variant-migration). Behold supersættet → redirect + slet del-produkterne."
         elif sc == "single":
-            rec = f"KEEP ældste '{prods[0]['handle']}' → redirect + slet single-rester"
+            keeper = prods[0]["handle"]
+            rec = "Single-variant-rester der deler SKU. Behold ét → redirect + slet resten."
         else:
-            rec = "REVIEW manuelt — delvist overlap (hvert produkt har unikke SKUs; flyt delte SKUs til ét kanonisk produkt)"
+            keeper = None
+            rec = "Delvist overlap (mega-gruppering på kryds og tværs). Kræver manuel stillingtagen — produkterne er ofte blandet sammen og navnene giver ikke mening."
 
         out_clusters.append({
             "scenario": sc, "n_products": len(pids), "n_shared_skus": len(shared),
-            "shared_skus_sample": sorted(list(shared))[:8],
+            "shared_skus_sample": sorted(list(shared))[:8], "keeper": keeper,
             "products": prods, "recommendation": rec,
         })
 
@@ -211,6 +213,39 @@ def main():
             for p in c["products"]:
                 print(f"     - {p['handle']} | {p['variants']}var | lager={p['inventory']} | {p['created']} | {p['status']} | delt={p['shared']} unik={p['unique']}")
         print()
+
+    # === Skriv til Supabase → fodrer hub'ens Dubletter-fane ===
+    try:
+        import uuid
+        from datetime import datetime, timezone
+        from sync_prices_v2 import get_supabase_client
+        sb = get_supabase_client()
+    except Exception as e:
+        sb = None
+        print(f"⚠ Supabase ikke tilgængelig ({e}) — springer DB-skrivning over")
+    if sb is not None:
+        batch = str(uuid.uuid4())
+        try:
+            sb.table("dup_scans").insert({
+                "id": batch, "vendor": VENDOR, "status": "completed",
+                "completed_at": datetime.now(timezone.utc).isoformat(),
+                "total_products": len(products),
+                "total_variants": sum(len(s) for s in prod_skus.values()),
+                "dup_skus": len(dup_skus), "clusters": len(out_clusters),
+                "by_scenario": dict(scen),
+            }).execute()
+            rows = [{
+                "scan_batch": batch, "vendor": VENDOR, "scenario": c["scenario"],
+                "n_products": c["n_products"], "n_shared_skus": c["n_shared_skus"],
+                "products": c["products"], "keeper_handle": c.get("keeper"),
+                "proposed_action": c["recommendation"], "shared_skus": c["shared_skus_sample"],
+                "status": "pending",
+            } for c in out_clusters]
+            for i in range(0, len(rows), 200):
+                sb.table("dup_clusters").insert(rows[i:i + 200]).execute()
+            print(f"✅ Supabase: scan {batch} + {len(rows)} klynger skrevet")
+        except Exception as e:
+            print(f"⚠ Supabase-skrivning fejlede: {e}")
 
 
 if __name__ == "__main__":

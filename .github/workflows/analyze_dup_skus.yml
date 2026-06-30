@@ -1,6 +1,8 @@
 name: Analyze Duplicate SKUs
 
 on:
+  schedule:
+    - cron: '0 3 1 * *'   # 1. i hver måned 03:00 UTC — automatisk dublet-scan
   workflow_dispatch:
     inputs:
       vendor:
@@ -19,11 +21,13 @@ jobs:
           python-version: '3.10'
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Analyze duplicate SKUs (read-only)
+      - name: Analyze duplicate SKUs (read-only) + skriv til Supabase
         env:
           SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
           SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
-          DUP_VENDOR: ${{ github.event.inputs.vendor }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          DUP_VENDOR: ${{ github.event.inputs.vendor || 'vidaXL' }}
         run: python scripts/analyze_dup_skus.py
       - name: Upload cluster report
         if: always()
