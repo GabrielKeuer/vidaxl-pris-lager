@@ -65,7 +65,10 @@ def make_redirect(from_handle, keep_handle, dry):
     target = f"/products/{keep_handle}"
     if dry:
         return "would-create"
-    d = _shop_gql(M_REDIRECT, {"r": {"path": path, "target": target}})
+    try:
+        d = _shop_gql(M_REDIRECT, {"r": {"path": path, "target": target}})
+    except Exception as e:
+        return f"error:{str(e)[:150]}"
     errs = (d.get("data") or {}).get("urlRedirectCreate", {}).get("userErrors") or []
     if errs:
         msg = "; ".join(e["message"] for e in errs)
