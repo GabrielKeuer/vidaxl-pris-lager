@@ -724,6 +724,34 @@ def main():
         sys.exit("❌ Default pricing-config ikke loaded fra Supabase — afviser at koere med hardcoded fallback")
     print(f"✅ Default pricing config OK ({len(default_cfg['tiers'])} tiers)")
 
+    # === MODE-BEVIDST: følg hubben uanset prismodel ===
+    # Den state/rotations-baserede sync nedenfor gælder real_discount (Omnibus).
+    # Er vidaXL skiftet til fictive_discount (Omnibus OFF), kører vi i stedet den
+    # hurtige fictive-repricing (bulk-export → diff → bulk-push) — SAMME motor som
+    # "Opdater eksisterende" i hubben — så daglige cost-/config-ændringer fra hubben
+    # automatisk slår igennem. Kun reelle ændringer pushes (diff mod live Shopify).
+    vidaxl_cfg = pricing.load_pricing_config(sb, vendor="vidaXL")
+    if vidaxl_cfg and vidaxl_cfg.get("mode") == "fictive_discount":
+        import bulk_repricing  # lokal import — undgår cirkulær import ved modul-load
+        dry = not args.live
+        job_id = None
+        try:
+            ins = sb.table("pricing_bulk_jobs").insert({
+                "vendor": "vidaXL",
+                "product_type": None,
+                "status": "running",
+                "dry_run": dry,
+                "triggered_by": "daily-sync",
+                "started_at": datetime.now(timezone.utc).isoformat(),
+            }).execute()
+            job_id = (ins.data or [{}])[0].get("id")
+        except Exception as e:
+            print(f"⚠ Kunne ikke oprette job-række (kører uden hub-tracking): {e}")
+        print(f"🔁 vidaXL = fictive_discount → daglig fictive-repricing "
+              f"(job={job_id}, {'DRY-RUN' if dry else 'LIVE'})")
+        rc = bulk_repricing.run_fictive_bulk(sb, job_id, "vidaXL", None, vidaxl_cfg, dry_run=dry)
+        sys.exit(rc)
+
     state = load_pricing_state(sb)
     print(f"✅ {len(state)} rows fra vidaxl_pricing_state")
 
