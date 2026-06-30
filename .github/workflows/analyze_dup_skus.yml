@@ -25,3 +25,9 @@ jobs:
           SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
           DUP_VENDOR: ${{ github.event.inputs.vendor }}
         run: python scripts/analyze_dup_skus.py
+      - name: Upload cluster report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dup-clusters
+          path: output/dup_clusters.json
