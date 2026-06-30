@@ -104,51 +104,174 @@ def _shop_gql(query, variables=None):
     raise Exception("Max retries")
 
 
-_FETCH_VENDOR_PRODUCTS = """
-query($q: String!, $cursor: String) {
-  products(first: 50, query: $q, after: $cursor) {
-    pageInfo { hasNextPage endCursor }
-    edges { node { id handle
-      variants(first: 100) { edges { node { id price compareAtPrice
-        inventoryItem { unitCost { amount } } } } } } } } }
+def _gid_num(gid):
+    """gid://shopify/.../123 -> 123 (int) eller None."""
+    try:
+        return int(str(gid).rsplit("/", 1)[-1])
+    except (ValueError, TypeError, AttributeError):
+        return None
+
+
+# === BULK OPERATION QUERY (server-side katalog-eksport) =====================
+# I stedet for at paginere ~3000 sider sekventielt (rate-limit-følsomt) beder vi
+# Shopify eksportere ALLE vendor-produkter+varianter til én JSONL-fil server-side.
+# Samme mekanik som Matrixify. Bulk QUERY er en separat type fra bulk MUTATION,
+# så den daglige syncs mutation-bulk konflikter ikke med vores read-bulk.
+
+_BULK_Q_RUN = """
+mutation bulkOperationRunQuery($query: String!) {
+  bulkOperationRunQuery(query: $query) {
+    bulkOperation { id status }
+    userErrors { field message }
+  }
+}
 """
-_BULK_UPDATE = """
-mutation($pid: ID!, $variants: [ProductVariantsBulkInput!]!) {
-  productVariantsBulkUpdate(productId: $pid, variants: $variants) { userErrors { message } } }
+_BULK_Q_STATUS = """
+query { currentBulkOperation(type: QUERY) { id status errorCode objectCount url } }
 """
+
+
+def _wait_current_query_done(poll, max_wait_min):
+    """Vent til en evt. kørende QUERY-bulk-op er færdig (kun én ad gangen pr. app+shop)."""
+    waited = 0
+    while waited <= max_wait_min * 60:
+        s = _shop_gql(_BULK_Q_STATUS)["data"]["currentBulkOperation"]
+        if not s or s["status"] not in ("CREATED", "RUNNING"):
+            return
+        time.sleep(poll); waited += poll
+    raise Exception("Tidligere bulk-query blev ved med at køre — gav op")
+
+
+def _bulk_export_vendor_products(vendor, ptype, poll=15, max_wait_min=45):
+    """Eksportér alle (vendor[, product_type])-varianter via Bulk Operation Query.
+
+    Returnerer en flad liste af variant-dicts: {id, sku, price, compareAtPrice,
+    cost, handle, pid}. Robust: venter på ledig query-slot, poller til COMPLETED,
+    streamer JSONL-resultatet linje for linje (parent-produkt før child-variant).
+    """
+    q_filter = f"vendor:'{vendor}'" + (f" AND product_type:'{ptype}'" if ptype else "")
+    inner = (
+        "{ products(query: %s) { edges { node { id handle "
+        "variants { edges { node { id sku price compareAtPrice "
+        "inventoryItem { unitCost { amount } } } } } } } } }" % json.dumps(q_filter)
+    )
+
+    # Submit (retry hvis en query-bulk allerede kører)
+    res = None
+    for attempt in range(1, 13):
+        d = _shop_gql(_BULK_Q_RUN, {"query": inner})
+        res = d["data"]["bulkOperationRunQuery"]
+        errs = res.get("userErrors") or []
+        if not errs:
+            break
+        if any("already in progress" in str(e).lower() for e in errs) and attempt < 12:
+            print(f"  ⏳ En bulk-query kører allerede — venter ({attempt})...")
+            _wait_current_query_done(poll, max_wait_min); continue
+        raise Exception(f"bulkOperationRunQuery: {errs}")
+    op_id = res["bulkOperation"]["id"]
+    print(f"  🚀 Bulk-export startet: {op_id}")
+
+    # Poll til færdig
+    start = time.time(); url = None; last = None
+    while True:
+        time.sleep(poll)
+        s = _shop_gql(_BULK_Q_STATUS)["data"]["currentBulkOperation"]
+        if not s:
+            continue
+        if s["status"] != last:
+            print(f"     [{int(time.time()-start):>4}s] status={s['status']} objectCount={s.get('objectCount')}")
+            last = s["status"]
+        if s["status"] == "COMPLETED":
+            url = s.get("url"); break
+        if s["status"] in ("FAILED", "CANCELED", "EXPIRED"):
+            raise Exception(f"Bulk-export endte {s['status']} errorCode={s.get('errorCode')}")
+        if time.time() - start > max_wait_min * 60:
+            raise Exception(f"Bulk-export timeout efter {max_wait_min} min")
+
+    if not url:
+        print("  📦 Bulk-export: tomt resultat (ingen produkter)")
+        return []
+
+    # Download + parse JSONL (parent-produkt-linje før child-variant-linjer)
+    handle_by_pid = {}
+    variants = []
+    for attempt in range(1, 4):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url), timeout=300) as resp:
+                for raw in resp:
+                    line = raw.decode("utf-8").strip()
+                    if not line:
+                        continue
+                    obj = json.loads(line)
+                    oid = obj.get("id", "") or ""
+                    if "/Product/" in oid:
+                        handle_by_pid[oid] = obj.get("handle") or ""
+                    elif "/ProductVariant/" in oid:
+                        inv = (obj.get("inventoryItem") or {}).get("unitCost") or {}
+                        variants.append({
+                            "id": oid,
+                            "sku": (obj.get("sku") or "").strip(),
+                            "price": obj.get("price"),
+                            "compareAtPrice": obj.get("compareAtPrice"),
+                            "cost": float(inv.get("amount") or 0),
+                            "pid": obj.get("__parentId"),
+                        })
+            break
+        except Exception as e:
+            if attempt < 3:
+                print(f"  ⚠ Download-forsøg {attempt} fejlede ({str(e)[:80]}) — prøver igen")
+                time.sleep(2 ** attempt); handle_by_pid = {}; variants = []
+            else:
+                raise
+    for v in variants:
+        v["handle"] = handle_by_pid.get(v["pid"], "")
+    print(f"  📦 Bulk-export: {len(handle_by_pid)} produkter, {len(variants)} varianter")
+    return variants
 
 
 def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
-    q = f"vendor:{vendor}" + (f" AND product_type:'{ptype}'" if ptype else "")
-    cursor = None; product_updates = []; checked = 0; total_changes = 0
-    print(f"🔎 Henter '{vendor}'-produkter fra Shopify (fictive mode)...")
-    while True:
-        d = _shop_gql(_FETCH_VENDOR_PRODUCTS, {"q": q, "cursor": cursor})
-        pr = d["data"]["products"]
-        for e in pr["edges"]:
-            n = e["node"]; pid = n["id"]; handle = n["handle"]; updates = []
-            for ve in n["variants"]["edges"]:
-                v = ve["node"]; checked += 1
-                uc = (v.get("inventoryItem") or {}).get("unitCost") or {}
-                cost = float(uc.get("amount") or 0)
-                if cost <= 0:
-                    continue
-                np_, nc_ = resolve_variant_pricing(cost, cfg, seed=handle, on_sale=True)
-                np_ = int(np_); nc_ = int(nc_) if nc_ else None
-                cur_p = int(round(float(v["price"]))) if v.get("price") else 0
-                cur_c = int(round(float(v["compareAtPrice"]))) if v.get("compareAtPrice") else None
-                if np_ == cur_p and nc_ == cur_c:
-                    continue
-                u = {"id": v["id"], "price": str(np_), "compareAtPrice": str(nc_) if nc_ else None}
-                updates.append(u)
-            if updates:
-                product_updates.append((pid, updates)); total_changes += len(updates)
-        if pr["pageInfo"]["hasNextPage"]:
-            cursor = pr["pageInfo"]["endCursor"]
-        else:
-            break
+    """Fictive-mode bulk (Benuta/Sollux/Kayoom + vidaXL-fictive).
+
+    Henter vendorens produkter fra Shopify, beregner (pris, fiktiv førpris) pr.
+    variant via resolve_variant_pricing(seed=handle), og pusher KUN ændringer.
+
+    FART: push'es gennem push_to_shopify (auto Niveau 2/3). Store batches kører
+    via Shopify Bulk Operations (server-side, ét async job, skalerer til 100k+)
+    i stedet for sekventielle 25-ad-gangen mutations — derfor minutter, ikke
+    timer. Rows bygges i samme format som den daglige sync (_build_by_product):
+    hver fictive variant er "altid på tilbud" → on_sale-row med Compare At
+    Action SET (fiktiv førpris) eller CLEAR (ingen rabat).
+    """
+    on_sale_rows = []      # rows til push_to_shopify
+    variants_map = {}      # sku -> [variant_id, product_id] (numeriske)
+    checked = 0
+    print(f"🔎 Bulk-eksporterer '{vendor}'-produkter fra Shopify (fictive mode)...")
+    for v in _bulk_export_vendor_products(vendor, ptype):
+        checked += 1
+        sku = v["sku"]
+        if not sku or v["cost"] <= 0:
+            continue
+        np_, nc_ = resolve_variant_pricing(v["cost"], cfg, seed=v["handle"], on_sale=True)
+        np_ = int(np_); nc_ = int(nc_) if nc_ else None
+        cur_p = int(round(float(v["price"]))) if v.get("price") else 0
+        cur_c = int(round(float(v["compareAtPrice"]))) if v.get("compareAtPrice") else None
+        if np_ == cur_p and nc_ == cur_c:
+            continue
+        vid_num = _gid_num(v["id"]); pid_num = _gid_num(v["pid"])
+        if vid_num is None or pid_num is None:
+            continue
+        variants_map[sku] = [vid_num, pid_num]
+        on_sale_rows.append({
+            "Variant SKU": sku,
+            "Variant Price": np_,
+            "Compare At Action": "SET" if nc_ else "CLEAR",
+            "Set Compare At": nc_ if nc_ else "",
+            "Variant Command": "UPDATE",
+        })
+
+    total_changes = len(on_sale_rows)
     _update_job(sb, job_id, preview_count=total_changes,
-                log_summary=f"Planlagt {total_changes} variant-ændringer ({len(product_updates)} produkter, {checked} tjekket)")
+                log_summary=f"Planlagt {total_changes} variant-ændringer ({checked} tjekket)")
     print(f"📊 fictive: {total_changes} ændringer planlagt ({checked} varianter tjekket)")
 
     if dry_run:
@@ -161,16 +284,19 @@ def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
         print("✅ Ingen ændringer.")
         return 0
 
-    applied = 0; errors = 0
-    for pid, updates in product_updates:
-        for j in range(0, len(updates), 25):
-            du = _shop_gql(_BULK_UPDATE, {"pid": pid, "variants": updates[j:j + 25]})
-            errs = du["data"]["productVariantsBulkUpdate"]["userErrors"]
-            if errs:
-                errors += len(errs)
-            else:
-                applied += len(updates[j:j + 25])
-        _update_job(sb, job_id, actual_count=applied, log_summary=f"Pusher… {applied}/{total_changes}")
+    # Push via Bulk Operations (auto Niveau 2/3 i push_to_shopify). progress_cb
+    # kaldes med (produkter_behandlet, produkter_total) — vi skalerer til
+    # variant-total så hubbens progressbar (actual_count/preview_count) passer.
+    def _progress(count, tp):
+        if tp:
+            est = min(int(count / tp * total_changes), total_changes)
+            _update_job(sb, job_id, actual_count=est,
+                        log_summary=f"Pusher til Shopify… {count}/{tp} produkter")
+
+    stats = push_to_shopify([], on_sale_rows, variants_map, progress_cb=_progress)
+    print(f"📊 STATS: {stats}")
+    applied = stats.get("variants_updated", 0)
+    errors = stats.get("errors", 0)
     error_rate = errors / (applied + errors) if (applied + errors) else 0
     ok = error_rate <= 0.01
     _update_job(sb, job_id, status="completed" if ok else "failed", actual_count=applied,
