@@ -135,8 +135,10 @@ def main():
             elif r == "exists":
                 st["redir_exists"] += 1
             elif r.startswith("error"):
+                # Slet ALDRIG hvis redirect ikke kunne oprettes -> undgå 404 uden redirect
                 st["errors"] += 1
-                print(f"  [{i}] redirect-fejl {dh}: {r}")
+                print(f"  [{i}] redirect-fejl {dh}: {r} — SPRINGER sletning over (undgår 404)")
+                continue
             dr = delete_product(dp["id"], dry)
             if dr == "deleted" or dr == "would-delete":
                 st["deleted"] += 1
