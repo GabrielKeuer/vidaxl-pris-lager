@@ -301,7 +301,10 @@ def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
     ok = error_rate <= 0.01
     samples = stats.get("error_samples") or []
     sample_str = "; ".join(f"{c}× {m}" for m, c in samples[:3])
+    dups = stats.get("skipped_duplicate", 0)
     log = f"{'Done' if ok else 'FAILED'}. {applied} opdateret, {errors} fejl ({error_rate:.2%})"
+    if dups:
+        log += f", {dups} dup-SKU sprunget over"
     if sample_str:
         log += f" — {sample_str}"
     _update_job(sb, job_id, status="completed" if ok else "failed", actual_count=applied,

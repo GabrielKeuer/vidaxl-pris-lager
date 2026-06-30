@@ -340,9 +340,18 @@ def _build_by_product(today_rows, on_sale_rows, variants_map, stats):
     EN mutation (vs. de gamle to mutations pr. variant).
     """
     by_product = defaultdict(list)
+    _seen = defaultdict(set)  # product_id -> set(variant_id) for dedup
 
     def _add(sku, vm, vinput, cost):
         variant_id, product_id = vm
+        # Dedup: samme variant-id må KUN optræde én gang pr. produkt i et
+        # productVariantsBulkUpdate-kald, ellers afviser Shopify hele produktet
+        # med "Duplicated input value". Sker fx ved duplikerede SKUs i kataloget
+        # (to varianter på samme produkt deler SKU → kollapser til samme id).
+        if variant_id in _seen[product_id]:
+            stats["skipped_duplicate"] = stats.get("skipped_duplicate", 0) + 1
+            return
+        _seen[product_id].add(variant_id)
         v = {"id": f"gid://shopify/ProductVariant/{variant_id}"}
         v.update(vinput)
         if cost is not None:
