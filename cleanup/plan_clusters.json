@@ -1,0 +1,5054 @@
+[
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-sort-75-x-190-cm-staal-2",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-sort-75-190-cm-staal-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-80-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-80-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-100-210-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-100-x-210-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "sengestel-med-madras-lysegraa-90-x-190-cm-stof-3",
+  "deletes": [
+   "sengestel-med-madras-lysegraa-90-x-200-cm-stof-2",
+   "sengestel-med-madras-lysegraa-100-x-200-cm-stof",
+   "sengestel-med-madras-blcak-90-x-200-cm-stof",
+   "sengestel-med-madras-moerkegraa-100-x-200-cm-stof-2",
+   "sengestel-med-madras-lysegraa-140-x-200-cm-stof-2",
+   "sengestel-med-madras-moerkegraa-90-x-200-cm-stof-2",
+   "sengestel-med-madras-blcak-100-x-200-cm-stof",
+   "sengestel-med-madras-moerkegraa-140-x-200-cm-stof-2",
+   "sengestel-med-madras-moerkegraa-140-x-190-cm-stof",
+   "sengestel-med-madras-blcak-120-x-200-cm-stof",
+   "sengestel-med-madras-blcak-140-x-200-cm-stof",
+   "sengestel-med-madras-moerkegraa-120-x-200-cm-stof-2",
+   "sengestel-med-opbevaring-moerkegraa-160-x-200-cm-stof",
+   "sengestel-med-opbevaring-lysegraa-160-x-200-cm-stof",
+   "sengestel-med-opbevaring-blcak-160-x-200-cm-stof",
+   "sengestel-med-opbevaring-lysegraa-180-x-200-cm-stof",
+   "sengestel-med-opbevaring-moerkegraa-180-x-200-cm-stof",
+   "sengestel-med-opbevaring-blcak-180-x-200-cm-stof",
+   "sengestel-med-opbevaring-moerkegraa-160-200-cm-stof",
+   "sengestel-med-madras-moerkegraa-90-200-cm-stof-2",
+   "sengestel-med-madras-moerkegraa-140-200-cm-stof-2",
+   "sengestel-med-opbevaring-lysegraa-160-200-cm-stof",
+   "sengestel-med-madras-lysegraa-140-200-cm-stof-2",
+   "sengestel-med-madras-blcak-100-200-cm-stof",
+   "sengestel-med-madras-moerkegraa-120-200-cm-stof-2",
+   "sengestel-med-madras-blcak-140-200-cm-stof",
+   "sengestel-med-madras-blcak-120-200-cm-stof",
+   "sengestel-med-madras-moerkegraa-100-200-cm-stof-2",
+   "sengestel-med-opbevaring-blcak-180-200-cm-stof",
+   "sengestel-med-madras-moerkebrun-90-x-190-cm-stof-3",
+   "sengestel-med-madras-blcak-90-x-190-cm-stof",
+   "sengestel-med-madras-moerkebrun-90-x-200-cm-stof",
+   "sengestel-med-madras-graabrun-100-x-200-cm-stof-2",
+   "sengestel-med-madras-moerkebrun-100-x-200-cm-stof-3",
+   "sengestel-med-madras-moerkegraa-90-x-190-cm-stof-2",
+   "sengestel-med-madras-blaa-90-x-200-cm-stof-2",
+   "sengestel-med-madras-blaa-140-x-190-cm-stof",
+   "sengestel-med-madras-creme-140-x-190-cm-stof",
+   "sengestel-med-madras-moerkebrun-140-x-190-cm-stof",
+   "sengestel-med-madras-blaa-120-x-200-cm-stof-3",
+   "sengestel-med-opbevaring-blaa-160-x-200-cm-stof",
+   "sengestel-med-madras-lysegraa-120-x-200-cm-stof-2",
+   "sengestel-med-opbevaring-lysegraa-200-x-200-cm-stof",
+   "sengestel-med-madras-blcak-140-x-190-cm-stof",
+   "sengestel-med-opbevaring-creme-160-x-200-cm-stof",
+   "sengestel-med-opbevaring-moerkegraa-200-x-200-cm-stof",
+   "sengestel-med-opbevaring-moerkebrun-200-x-200-cm-stof",
+   "sengestel-med-opbevaring-creme-180-x-200-cm-stof",
+   "sengestel-med-opbevaring-graabrun-160-x-200-cm-stof",
+   "sengestel-med-opbevaring-graabrun-180-x-200-cm-stof",
+   "sengestel-med-opbevaring-blaa-200-x-200-cm-stof",
+   "sengestel-med-opbevaring-blcak-200-x-200-cm-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-180-220-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-180-x-220-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-120-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-120-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-100-x-200-cm-skum-2",
+  "deletes": [
+   "madras-hvid-100-200-cm-skum-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-197-147-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-197-x-147-x-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "skrivebord-med-opbevaring-med-skuffe-2-pcs-hvid-70-x-40-x-76-cm",
+  "deletes": [
+   "skrivebord-med-opbevaring-2-pcs-sonoma-eg-455-x-34-x-127-cm",
+   "skrivebord-med-opbevaring-2-pcs-roeget-eg-70-x-40-x-76-cm",
+   "skrivebord-med-opbevaring-med-skuffe-2-pcs-hvid-80-x-40-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-roeget-eg-80-x-40-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-sonoma-eg-70-x-40-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-sonoma-eg-80-x-40-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-roeget-eg-90-x-40-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-sonoma-eg-90-x-40-x-76-cm",
+   "skrivebord-med-opbevaring-med-skuffe-2-pcs-hvid-90-x-40-x-76-cm",
+   "skrivebord-med-opbevaring-med-hylde-2-pcs-hvid-100-x-40-x-76-cm-2",
+   "skrivebord-med-opbevaring-2-pcs-sonoma-eg-60-x-50-x-76-cm",
+   "skrivebord-med-opbevaring-med-skuffe-2-pcs-hvid-70-x-50-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-roeget-eg-80-x-50-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-sonoma-eg-80-x-50-x-76-cm",
+   "skrivebord-med-opbevaring-med-skuffe-2-pcs-hvid-80-x-50-x-76-cm",
+   "skrivebord-med-opbevaring-med-skuffe-2-pcs-hvid-90-x-50-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-sonoma-eg-70-x-50-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-sonoma-eg-90-x-50-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-roeget-eg-90-x-50-x-76-cm",
+   "skrivebord-med-opbevaring-med-hylde-2-pcs-hvid-100-x-50-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-roeget-eg-100-x-50-x-76-cm",
+   "skrivebord-med-opbevaring-2-pcs-sonoma-eg-100-x-50-x-76-cm"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-200-120-cm-skum",
+  "deletes": [
+   "madras-hvid-200-x-120-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-2-pcs-hvid-graa-80-x-200-cm-strikket-stof",
+  "deletes": [
+   "madras-2-pcs-hvid-graa-80-200-cm-strikket-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-135-x-190-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-135-190-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-150-200-cm-trae",
+  "deletes": [
+   "sengestel-hvid-150-x-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "badevaerelsesskab-30x30x100-cm-konstrueret-trae-5",
+  "deletes": [
+   "badevaerelsesskab-30x30x100-cm-konstrueret-trae-6",
+   "badevaerelsesskab-30x30x100-cm-konstrueret-trae-9",
+   "badevaerelsesskab-30x30x100-cm-konstrueret-trae-etrae-1",
+   "badevaerelsesskab-30x30x100-cm-konstrueret-trae-16",
+   "badevaerelsesskab-30x30x100-cm-konstrueret-trae-look-1"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-sort-90-190-cm-staal-3",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-sort-90-x-190-cm-staal-3"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "sengeramme-med-madras-med-madras-lysegraa-80-x-200-cm-floejl-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-moerkegraa-80-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-lysegraa-90-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegraa-90-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-sort-80-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-sort-90-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-sort-100-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegroen-90-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegraa-100-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-sort-120-x-190-cm-floejl",
+   "sengeramme-med-madras-med-madras-lysegraa-100-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-lysegraa-120-x-190-cm-floejl",
+   "sengeramme-med-madras-med-madras-lysegraa-120-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegraa-120-x-190-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegraa-120-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-lysegraa-140-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegraa-140-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-sort-160-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegraa-180-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegraa-160-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-lysegraa-160-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegroen-100-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-blaa-120-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-sort-140-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegroen-140-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-blaa-140-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-lyseroed-140-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegroen-160-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-blaa-160-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-lyseroed-160-x-200-cm-floejl",
+   "sengeramme-med-madras-lys-graa-og-hvid-og-lys-graa-180-x-200-cm",
+   "sengeramme-med-madras-med-madras-blaa-180-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-sort-180-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegroen-200-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegroen-180-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-lysegraa-200-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-blaa-200-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-moerkegraa-200-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-sort-200-x-200-cm-floejl",
+   "sengeramme-med-madras-med-madras-lyseroed-200-x-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-x-200-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-200-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "sengestel-med-madras-lysegraa-80-x-200-cm-stof",
+  "deletes": [
+   "sengestel-med-madras-lysegraa-90-x-190-cm-stof",
+   "sengestel-med-madras-sort-80-x-200-cm-stof",
+   "sengestel-med-madras-moerkegraa-90-x-190-cm-stof",
+   "sengestel-med-madras-lysegraa-90-x-200-cm-stof",
+   "sengestel-med-madras-sort-90-x-190-cm-stof",
+   "sengestel-med-madras-lysegraa-140-x-200-cm-stof",
+   "sengestel-med-madras-moerkegraa-140-x-200-cm-stof",
+   "sengestel-med-madras-sort-140-x-200-cm-stof",
+   "sengestel-med-madras-lysegraa-160-x-200-cm-stof",
+   "sengestel-med-madras-moerkegraa-160-x-200-cm-stof",
+   "sengestel-med-madras-lysegraa-180-x-200-cm-stof",
+   "sengestel-med-madras-sort-180-x-200-cm-stof",
+   "sengestel-med-madras-moerkegraa-180-x-200-cm-stof",
+   "sengestel-med-madras-moerkegraa-200-x-200-cm-stof",
+   "sengestel-med-madras-creme-80-x-200-cm-stof",
+   "sengestel-med-madras-sort-100-x-200-cm-stof",
+   "sengestel-med-madras-graabrun-80-x-200-cm-stof",
+   "sengestel-med-madras-sort-160-x-200-cm-stof",
+   "sengestel-med-madras-moerkebrun-140-x-200-cm-stof",
+   "sengestel-med-madras-blaa-140-x-200-cm-stof",
+   "sengestel-med-madras-graabrun-140-x-200-cm-stof",
+   "sengestel-med-madras-creme-140-x-200-cm-stof",
+   "sengestel-med-madras-moerkebrun-180-x-200-cm-stof",
+   "sengestel-med-madras-creme-160-x-200-cm-stof",
+   "sengestel-med-madras-blaa-160-x-200-cm-stof",
+   "sengestel-med-madras-graabrun-180-x-200-cm-stof",
+   "sengestel-med-madras-moerkebrun-200-x-200-cm-stof",
+   "sengestel-med-madras-lysegraa-200-x-200-cm-stof",
+   "sengestel-med-madras-sort-200-x-200-cm-stof",
+   "sengestel-med-madras-graabrun-200-x-200-cm-stof",
+   "sengestel-med-madras-creme-180-x-200-cm-stof",
+   "sengestel-med-madras-creme-200-x-200-cm-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-200-x-100-cm-skum",
+  "deletes": [
+   "madras-hvid-200-100-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-150-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-150-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-moerkegraa-180-200-cm-floejl",
+  "deletes": [
+   "sengestel-moerkegraa-180-x-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-140-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-140-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "hovedgaerde-kabinet-med-led-gammelt-trae-120-x-17-x-102-cm",
+  "deletes": [
+   "hovedgaerde-kabinet-med-led-gammelt-trae-120-17-102-cm"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "vaskeskab-med-indbygget-handvask-konstrueret-trae-hvid-1",
+  "deletes": [
+   "vaskeskab-med-indbygget-handvask-konstrueret-trae-sort-1",
+   "vaskeskab-med-indbygget-handvask-konstrueret-trae-sonoma-eg-1",
+   "vaskeskab-med-indbygget-handvask-konstrueret-trae-betongra-3",
+   "underskab-til-badevaerelse-med-indbygget-handvask-antikt-traelook-gammelt-trae",
+   "vaskeskab-med-doer-sort-eg-80-x-385-x-46-cm-konstrueret-trae-2",
+   "vaskeskab-med-doer-sort-eg-90-x-385-x-46-cm-konstrueret-trae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-x-187-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-187-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-210-140-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-210-x-140-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "manuel-udtraekbar-markise-orange-og-brun-300x250-cm",
+  "deletes": [
+   "manuel-udtraekkelig-markise-gul-og-orange-300x250-cm",
+   "manuel-sammenrullelig-markise-flerfarvet-stribe-300x250-cm",
+   "manuel-udtaekkelig-markise-sort-300x250-cmmarkise-udskiftningsstof-til-3x25-m-ramme-sort",
+   "manuel-udtaekkelig-markise-flerfarvet-stribe-300x250-cm-2",
+   "manuel-udtaekkelig-markise-roed-300x250-cmmarkise-udskiftningsstof-til-3x25-m-ramme-roed-2",
+   "manuel-udtaekkelig-markise-hvid-300x250-cmmarkise-udskiftningsstof-til-3x25-m-ramme-hvid",
+   "manuel-udtraekkelig-markise-lysegraa-300x250-cmmarkise-udskiftningsstof-til-3x25-m-ramme-lysegraa",
+   "manuel-udtaekkelig-markise-gul-og-orange-350x250-cm",
+   "manuel-udtaekkelig-markise-orange-og-brun-350x250-cm-3",
+   "manuel-udtaekkelig-markise-roed-og-hvid-stripe-350x250-cm",
+   "manuel-udtraekkelig-markise-flerfarvet-stribe-350x250-cm",
+   "manuel-udtaekkelig-markise-sort-350x250-cmmarkise-udskiftningsstof-til-35x25-m-ramme-sort",
+   "manuel-udtraekkelig-markise-flerfarvet-stripe-350x250-cm",
+   "manuel-udtaekkelig-markise-lysegraa-350x250-cmmarkise-erstatningsstof-til-35x25-m-ramme-lysegraa",
+   "manuel-utraekkelig-markise-hvid-350x250-cmmarkise-erstatningsstof-til-35x25-m-ramme-hvid",
+   "manuel-udtaekkelig-markise-groen-og-gul-350x250-cmmarkise-erstatningsstof-til-35x25-m-ramme-groen-og-gul-3",
+   "manuel-udtaekkelig-markise-roed-350x250-cmmarkise-erstatningsstof-til-35x25-m-stativ-roed",
+   "manuel-udtaekkelig-markise-gul-og-orange-500x300-cm-3",
+   "manuel-udtaekkelig-markise-i-orange-og-brun-500x300-cm",
+   "manuel-udtaekkelig-markise-flerfarvet-stripe-500x300-cm"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-med-opbevaring-blcak-140-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-med-opbevaring-blcak-140-x-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-100-x-200-cm-skum-3",
+  "deletes": [
+   "madras-hvid-graa-100-200-cm-skum-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-200-x-160-cm-skum",
+  "deletes": [
+   "madras-hvid-200-160-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-sort-eg-100-x-200-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-sort-eg-100-200-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-x-87-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-87-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "box-spring-seng-med-madras-lysegraa-80-x-200-cm-stof-7",
+  "deletes": [
+   "box-spring-seng-med-madras-moerkegraa-80-x-200-cm-stof-12",
+   "box-spring-seng-med-madras-lysegraa-100-x-200-cm-stof-14",
+   "box-spring-seng-med-madras-med-hovedgaerde-blaa-100-x-200-cm-stof-8",
+   "box-spring-seng-med-madras-moerkebrun-100-x-200-cm-stof-11",
+   "box-spring-seng-med-madras-lysegraa-120-x-200-cm-stof-10",
+   "box-spring-seng-med-madras-med-hovedgaerde-blaa-120-x-190-cm-stof-6",
+   "box-spring-seng-med-madras-lysegraa-120-x-190-cm-stof-10",
+   "box-spring-seng-med-madras-lysegraa-200-x-200-cm-stof-12",
+   "box-spring-seng-med-madras-lysegraa-160-x-200-cm-stof-7",
+   "box-spring-seng-med-madras-moerkebrun-120-x-190-cm-stof-7",
+   "box-spring-seng-med-madras-med-hovedgaerde-blaa-120-x-200-cm-stof-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-200-x-200-cm-trae",
+  "deletes": [
+   "sengestel-brun-200-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-180-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-180-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-100-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-100-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-100-x-200-cm-polyester",
+  "deletes": [
+   "madras-hvid-100-200-cm-polyester"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-sort-90-x-200-cm-staal-4",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-sort-90-200-cm-staal-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "utraekkelig-dag-seng-hvid-180-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "utraekkelig-dag-seng-hvid-180-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-80-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-80-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-200-200-cm-skum-2",
+  "deletes": [
+   "madras-hvid-200-x-200-cm-skum-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "trae-hovedgaerde-gyldenbrun-1605-x-3-x-80-cm-massivt-fyrretrae",
+  "deletes": [
+   "trae-hovedgaerde-gyldenbrun-1605-3-80-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-90-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-hvid-90-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-2-pcs-hvid-graa-70-x-200-cm-strikket-stof",
+  "deletes": [
+   "madras-2-pcs-hvid-graa-70-200-cm-strikket-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-90-x-220-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "gulv-seng-ramme-hvid-90-220-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-147-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-x-147-x-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-120-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-120-x-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-14",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-14"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-160-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-160-x-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-betongraa-120-x-190-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-betongraa-120-190-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-x-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-x-200-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-200-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-med-opbevaring-moerkegraa-90-x-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-med-opbevaring-moerkegraa-90-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-140-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-140-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-150-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-150-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "utraekkelig-markise-blaa-og-hvid-400x200-cm-400-x-200-cm-4x2-m",
+  "deletes": [
+   "utraekkelig-markise-creme-og-antracit-250-x-200-cm-25-x-2-m",
+   "utraekkelig-markise-creme-og-hvid-250-x-200-cm-25-x-2-m",
+   "utraekkelig-markise-creme-og-hvid-polyester-og-metal",
+   "utraekkelig-markise-anthracit-og-hvid-7",
+   "utraekkelig-markise-creme-og-antracit-4-x-2-m",
+   "utraekkelig-markise-blaa-og-hvid-og-anthracit",
+   "utraekkelig-markise-anthracit-og-hvid-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-190-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-190-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-moerkegraa-120-x-200-cm-corduroy-stof",
+  "deletes": [
+   "sengestel-moerkegraa-120-200-cm-corduroy-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-90-200-cm-skum-3",
+  "deletes": [
+   "madras-hvid-graa-90-x-200-cm-skum-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-140-200-cm-skum-2",
+  "deletes": [
+   "madras-hvid-140-x-200-cm-skum-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-150-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-150-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-90-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-90-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-120-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-120-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-x-190-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-190-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-200-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-200-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-80-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-80-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-moerkegraa-90-x-200-cm-stof-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-moerkegraa-90-200-cm-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-180-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-180-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-90-x-210-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-90-210-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-220-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-220-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "sengekufferter-hvid-100x36-5x16-5-cm-lagdelt-trae",
+  "deletes": [
+   "sengeskuffer-i-sonoma-eg-100x36-5x16-5-cm-i-konstrueret-trae",
+   "sengekufferter-betongra-100x36-5x16-5-cm-trae",
+   "sengeskuffer-roget-eg-100x36-5x16-5-cm-bygget-i-trae",
+   "sengeskuffer-gra-sonoma-100x36-5x16-5-cm-konstrueret-trae",
+   "sengeskuffer-i-gammelt-trae-100x36-5x16-5-cm-lavet-af-konstrueret-trae",
+   "sengeskuffer-hvid-200x36-5x16-5-cm-konstrueret-trae",
+   "sengeskuffer-sorte-200x36-5x16-5-cm-konstrueret-trae",
+   "sengeskuffer-sonoma-eg-200x36-5x16-5-cm-konstrueret-trae",
+   "sengeskuffer-sorte-80x36-5x16-5-cm-konstrueret-trae",
+   "sengekufferter-gra-sonoma-80x36-5x16-5-cm-konstrueret-trae",
+   "sengeskuffer-hvid-90x36-5x16-5-cm-kunstigt-trae",
+   "sengeskuffer-sort-90x36-5x16-5-cm-ingeniortrae",
+   "sengeskuffer-hvid-120x36-5x16-5-cm-konstrueret-trae",
+   "sengekufferter-gra-sonoma-120x36-5x16-5-cm-konstrueret-trae",
+   "senkuffer-old-wood-120x36-5x16-5-cm-ingeniortrae",
+   "sengeskuffer-artisan-eg-120x36-5x16-5-cm-konstrueret-trae",
+   "sengeskuffer-sort-75x36-5x16-5-cm-lavet-af-trae",
+   "bokseskuffer-i-sonoma-eg-75x36-5x16-5-cm-i-konstrueret-trae",
+   "sengekufferter-i-betongra-75x36-5x16-5-cm-lavet-af-trae",
+   "sengekufferter-gra-sonoma-75x36-5x16-5-cm-i-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-97-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-x-97-x-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "skrivebord-med-opbevaring-2-pcs-hvid-785-x-37-x-1545-cm",
+  "deletes": [
+   "skrivebord-med-opbevaring-med-hylde-med-doer-2-pcs-graa-sonoma-eg"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-90-200-cm-skum",
+  "deletes": [
+   "madras-hvid-graa-90-x-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "utraekkelig-dag-seng-brun-180-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "utraekkelig-dag-seng-brun-180-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-80-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-brun-80-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "senge-med-laerkestruktur-brun-80-x-190-cm-massivt-boegetrae",
+  "deletes": [
+   "senge-med-laerkestruktur-brun-80-190-cm-massivt-boegetrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-100-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-100-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-75-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-75-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-140-200-cm-skum-3",
+  "deletes": [
+   "madras-hvid-graa-140-x-200-cm-skum-3"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "udendors-standerlamper-3-stk-aluminium-sort-110-cm-1",
+  "deletes": [
+   "udendors-standerlamper-3-stk-aluminium-sort-110-cm"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "madras-hvid-graa-90-190-cm-skum",
+  "deletes": [
+   "madras-hvid-graa-120-x-200-cm-skum-2",
+   "madras-hvid-graa-140-x-200-cm-skum-2",
+   "madras-hvid-graa-90-x-200-cm-skum-2",
+   "madras-hvid-graa-180-x-200-cm-skum-2",
+   "madras-hvid-graa-100-x-200-cm-skum-2",
+   "madras-hvid-graa-160-x-200-cm-skum-2",
+   "madras-hvid-graa-90-x-190-cm-skum",
+   "madras-hvid-graa-90-200-cm-skum-2",
+   "madras-hvid-graa-160-200-cm-skum-2",
+   "madras-hvid-graa-100-200-cm-skum-2",
+   "madras-hvid-graa-120-200-cm-skum-2",
+   "madras-hvid-graa-140-200-cm-skum-2",
+   "madras-hvid-graa-180-200-cm-skum-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-140-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-140-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "sengeborde-2-stk-40x35x47-5-cm-konstrueret-trae-6",
+  "deletes": [
+   "sengeborde-2-stk-40x35x47-5-cm-konstrueret-trae-etrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-220-x-100-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-220-100-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-150-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-150-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-x-200-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-200-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-200-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-200-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-x-190-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-190-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-80-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-80-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-150-x-200-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-150-200-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-sort-100-200-cm-floejl-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-sort-100-x-200-cm-floejl-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-140-x-200-cm-skum-5",
+  "deletes": [
+   "madras-hvid-graa-140-200-cm-skum-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-140-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-140-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-150-x-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-150-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-150-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-150-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "hovedgaerde-skab-artisan-eg-220-19-1015-cm-konstrueret-trae",
+  "deletes": [
+   "hovedgaerde-skab-artisan-eg-220-x-19-x-1015-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "sengegavl-linjedesign-lysegra-100-cm-stof",
+  "deletes": [
+   "senggavl-linje-design-morkegra-100-cm-stof",
+   "sengegavl-linjes-design-sort-100-cm-stof",
+   "sengegavl-linjer-design-grabrun-100-cm-stof",
+   "sengegavl-linjer-design-creme-100-cm-stof",
+   "sengegavl-linjer-design-bla-100-cm-stof",
+   "sengegavl-linjer-design-morkegra-140-cm-stof",
+   "sengegavl-linjer-design-lysegra-200-cm-stof",
+   "sengegavl-linje-design-morkegra-200-cm-stof",
+   "sengegavl-linjer-design-sort-200-cm-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-x-157-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-157-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-moerkegraa-200-x-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-moerkegraa-200-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-150-x-200-cm-trae",
+  "deletes": [
+   "sengestel-brun-150-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-14",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-14"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-150-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-hvid-150-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-150-x-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-150-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-200-x-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-200-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-135-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-135-x-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-x-187-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-187-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-sort-eg-90-x-190-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-sort-eg-90-190-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-lysegraa-160-x-200-cm-floejl",
+  "deletes": [
+   "sengestel-lysegraa-160-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-150-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-150-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-150-x-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-150-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-140-200-cm-skum-4",
+  "deletes": [
+   "madras-hvid-graa-140-x-200-cm-skum-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-200-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-200-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-180-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-180-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-135-x-190-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-135-190-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-135-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-135-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-200-90-cm-skum",
+  "deletes": [
+   "madras-hvid-200-x-90-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-x-147-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-147-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-200-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-brun-200-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-lysegraa-180-200-cm-floejl",
+  "deletes": [
+   "sengestel-lysegraa-180-x-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-140-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-brun-140-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-150-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-150-x-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-150-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-150-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-200-x-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-200-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-135-x-190-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-135-190-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-100-220-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-100-x-220-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-sort-eg-140-x-190-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-sort-eg-140-190-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-naturfarvet-100-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-naturfarvet-100-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-75-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-75-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-100-x-210-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-brun-100-210-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-15",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-15"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "utraekkelig-markise-blaa-og-hvid-350x200-cm",
+  "deletes": [
+   "utraekkelig-markise-creme-250x200-cm",
+   "utraekkelig-markise-anthracit-og-hvid-350x200-cm",
+   "utraekkelig-markise-creme-350x200-cm",
+   "utraekkelig-markise-creme-400x200-cm",
+   "utraekkelig-markise-bordeaux-350x200-cm",
+   "utraekkelig-markise-anthracit-og-hvid-400x200-cm",
+   "utraekkelig-markise-blaa-og-hvid-400x200-cm",
+   "utraekkelig-markise-orange-og-hvid-350x250-cm-polyester",
+   "utraekkelig-markise-antracit-350x250-cm",
+   "utraekkelig-markise-bordeaux-roed-350x250-cm",
+   "utraekkelig-markise-orange-og-brun-350x250-cm",
+   "utraekkelig-markise-blaa-og-hvid-350x250-cm",
+   "utraekkelig-markise-gul-og-orange-350x250-cm",
+   "utraekkelig-markise-anthracit-og-hvid-350x250-cm",
+   "utraekkelig-markise-marineblaa-350x250-cm",
+   "utraekkelig-markise-sort-350x250-cm-polyester",
+   "utraekkelig-markise-lysegraa-350x250-cm-stof",
+   "utraekkelig-markise-hvid-350x250-cm-stof",
+   "utraekkelig-markise-roed-350x250-cm-stof",
+   "utraekkelig-markise-antracit-400x300-cm-aluminium-og-polyester",
+   "utraekkelig-markise-blaa-og-hvid-400x300-cm",
+   "utraekkelig-markise-roed-og-hvid-stribe-350x250-cm",
+   "utraekkelig-markise-creme-400x300-cm-polyester-og-aluminium",
+   "utraekkelig-markise-marineblaa-350x250-cm-3",
+   "manuel-utraekkelig-markise-orange-og-brun-400-x-300-cm",
+   "utraekkelig-markise-roed-og-hvid-stribe-400x300-cm",
+   "utraekkelig-markise-groen-og-gul-350x250-cm",
+   "manuel-utraekbar-markise-i-antracitgraa-og-hvid-400x300-cm",
+   "utraekkelig-markise-sort-400x300-cm-aluminium-og-polyester",
+   "utraekkelig-markise-gul-og-hvid-400x300-cm-polyesterstof",
+   "utraekkelig-markise-marineblaa-400x300-cm-2",
+   "utraekkelig-markise-gul-og-orange-400x300-cm-polyester-dug",
+   "utraekkelig-markise-bordeaux-roed-400x300-cm-polyester-og-metal",
+   "utraekkelig-markise-marineblaa-400x300-cm-metal-og-stof",
+   "utraekkelig-markise-lysegraa-400x300-cm",
+   "utraekkelig-markise-roed-400x300-cm",
+   "utraekkelig-markise-hvid-400x300-cm",
+   "utraekkelig-markise-beige-400x300-cm",
+   "utraekkelig-markise-gul-og-orange-450x300-cm-stof-og-metal",
+   "utraekkelig-markise-antracit-450x300-cm",
+   "utraekkelig-markise-marineblaa-450x300-cm",
+   "utraekkelig-markise-groen-og-gul-400x300-cm",
+   "utraekkelig-markise-orange-og-hvid-450x300-cm",
+   "utraekkelig-markise-orange-og-hvid-500x300-cm",
+   "utraekkelig-markise-blaa-og-hvid-450x300-cm",
+   "utraekkelig-markise-blaa-og-hvid-500x300-cm",
+   "utraekkelig-markise-orange-og-brun-500x300-cm",
+   "utraekkelig-markise-orange-og-brun-450x300-cm",
+   "utraekkelig-markise-marineblaa-500x300-cm-polyesterstof-og-staal",
+   "utraekkelig-markise-gul-og-orange-500x300-cm",
+   "utraekkelig-markise-hvid-450x300-cm-polyester-og-metal"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-x-97-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-97-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-180-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-180-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-15",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-15"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-120-x-200-cm-skum-3",
+  "deletes": [
+   "madras-hvid-graa-120-200-cm-skum-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-210-x-90-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-210-90-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-x-190-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-190-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-80-220-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-80-x-220-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-90-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-90-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-90-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-90-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-blaa-160-x-200-cm-skum",
+  "deletes": [
+   "madras-hvid-blaa-160-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-135-x-190-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-135-190-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-160-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-160-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-80-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-80-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-150-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-brun-150-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-200-x-200-cm-skum",
+  "deletes": [
+   "madras-hvid-200-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-75-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-brun-75-x-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-135-190-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-135-x-190-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-140-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-140-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-120-x-190-cm-trae",
+  "deletes": [
+   "sengestel-brun-120-190-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-90-220-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-brun-90-x-220-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-med-opbevaring-moerkegraa-120-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-med-opbevaring-moerkegraa-120-x-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-naturfarvet-90-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-naturfarvet-90-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-140-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-140-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-190-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-190-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-90-200-cm-skum",
+  "deletes": [
+   "madras-hvid-90-x-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-150-x-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-150-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-blaa-180-x-200-cm-skum",
+  "deletes": [
+   "madras-hvid-blaa-180-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-150-x-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-150-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-100-x-200-cm-skum",
+  "deletes": [
+   "madras-hvid-graa-100-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-x-167-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-167-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-90-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-90-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-90-200-cm-strikket-stof",
+  "deletes": [
+   "madras-hvid-graa-90-x-200-cm-strikket-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-sort-eg-75-x-190-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-sort-eg-75-190-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-lysegraa-160-200-cm-floejl-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-lysegraa-160-x-200-cm-floejl-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-naturfarvet-160-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-naturfarvet-160-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-betongraa-90-200-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-betongraa-90-x-200-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-80-x-220-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-brun-80-220-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-14",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-14"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-140-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-140-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-200-x-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-200-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "udvidelig-sengestel-til-boern-other-brun-80-x-130-165-200-cm",
+  "deletes": [
+   "udvidelig-sengestel-til-boern-other-brun-80-130-165-200-cm"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "hovedgaerde-med-led-strimmellys-lysegraa-80-cm-floejl",
+  "deletes": [
+   "led-hovedgavl-button-tuftet-lysegraa-100-cm-floejl",
+   "led-hovedgaerde-med-knapper-moerkegraa-80-cm-floejl",
+   "hovedgaerde-med-led-strimmellys-lysegraa-100-cm-floejl",
+   "hovedgaerde-med-led-strimmellys-med-hovedgaerde-graa-100-cm-floejl",
+   "hovedgaerde-med-led-strimmellys-med-hovedgaerde-graa-80-cm-floejl-2",
+   "hovedgaerde-med-led-strimmellys-med-hovedgaerde-sort-80-cm-floejl",
+   "hovedgaerde-med-led-strimmellys-med-hovedgaerde-groen-80-cm-floejl",
+   "hovedgaerde-med-led-strimmellys-indstillelig-sort-100-cm-floejl",
+   "hovedgaerde-med-led-strimmellys-indstillelig-groen-100-cm-floejl",
+   "hovedgaerde-med-led-strimmellys-med-hovedgaerde-blaa-100-cm-floejl",
+   "hovedgaerde-med-led-strimmellys-lysegraa-72-cm-floejl",
+   "hovedgaerde-med-led-strimmellys-indstillelig-sort-100-cm-floejl-2",
+   "hovedgaerde-med-led-strimmellys-lysegraa-80-cm-floejl-2",
+   "hovedgaerde-med-led-strimmellys-med-hovedgaerde-graa-100-cm-floejl-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-90-x-210-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "gulv-seng-ramme-hvid-90-210-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-x-147-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-147-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-90-x-200-cm-skum-4",
+  "deletes": [
+   "madras-hvid-graa-90-200-cm-skum-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-160-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-160-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-x-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "senge-med-laerkestruktur-brun-140-x-190-cm-massivt-boegetrae",
+  "deletes": [
+   "senge-med-laerkestruktur-brun-140-190-cm-massivt-boegetrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-200-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-200-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-blaa-120-200-cm-skum",
+  "deletes": [
+   "madras-hvid-blaa-120-x-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-160-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-160-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-80-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-80-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-150-x-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-150-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "massagestol-stof-12",
+  "deletes": [
+   "massagestol-stof-14",
+   "massagestol-stof-17",
+   "massagestol-stof-farvet-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-hvid-90-x-200-cm-staal",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-hvid-90-200-cm-staal"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-180-x-200-cm-skum-2",
+  "deletes": [
+   "madras-hvid-180-200-cm-skum-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-197-x-147-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-197-147-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-120-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-120-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-x-207-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-207-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-sort-eg-90-x-200-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-sort-eg-90-200-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-200-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-200-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-197-147-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-197-x-147-x-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-14",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-14"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-x-207-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-207-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-90-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-90-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-med-opbevaring-moerkegraa-140-x-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-med-opbevaring-moerkegraa-140-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-100-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-100-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-160-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-160-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-200-x-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-200-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-80-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-80-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "bogreoler-stabelbare-2-stk-30x30x80-cm-konstrueret-trae-eg",
+  "deletes": [
+   "bogreoler-stabelbare-2-stk-30x30x80-cm-etraesfinish",
+   "bogreoler-stabelbare-2-stk-30x30x80cm-konstrueret-trae",
+   "bogreoler-stabelbare-2-stk-30x30x80-cm-antikt-trae",
+   "bogreoler-stabelbare-2-stk-30x30x80-cm-egetraesfarvet",
+   "bogreoler-stabelbare-2-stk-30x30x80-cm",
+   "bogreoler-stabelbare-2-stk-30x30x80-cm-1"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-lysegraa-160-x-200-cm-corduroy-stof",
+  "deletes": [
+   "sengestel-lysegraa-160-200-cm-corduroy-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "hovedgaerdeoerer-2-pcs-graa-40-x-16-x-5-cm-kunstlaeder",
+  "deletes": [
+   "hovedgaerdeoerer-2-pcs-graa-40-16-5-cm-kunstlaeder"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-200-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-200-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-120-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-120-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "lamelbund-brun-90-190-cm-massivt-boegetrae",
+  "deletes": [
+   "lamelbund-brun-90-x-190-cm-massivt-boegetrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-200-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-200-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-140-x-200-cm-polyester",
+  "deletes": [
+   "madras-hvid-140-200-cm-polyester"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-90-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-90-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "bogreol-rumdeler-69-5x29x69-5-cm-konstrueret-trae",
+  "deletes": [
+   "bogreol-rumdeler-69-5x29x137-5-cm-konstrueret-trae-roget-eg",
+   "bogreol-rumdeler-69-5x29x137-5-cm-konstrueret-trae-gra-sonoma-eg",
+   "bogreol-rumdeler-69-5x29x137-5-cm-konstrueret-trae-betongra",
+   "bogreol-rumdeler-69-5x29x137-5-cm-konstrueret-trae-hvid",
+   "bogreol-rumdeler-69-5x29x137-5-cm-konstrueret-trae-sonoma-eg",
+   "bogreol-rumdeler-69-5x29x137-5-cm-konstrueret-trae-antikt-trae-gammelt-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-90-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-90-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-90-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-90-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "sidebord-50x50x35-cm-konstrueret-trae",
+  "deletes": [
+   "sort-egebord-50x50x35-cm-lavet-af-ingeniortrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-moerkegraa-140-x-200-cm-corduroy-stof-2",
+  "deletes": [
+   "sengestel-moerkegraa-140-200-cm-corduroy-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-220-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-220-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-120-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-120-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-lysegraa-80-x-200-cm-corduroy-stof",
+  "deletes": [
+   "sengestel-lysegraa-80-200-cm-corduroy-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-220-x-180-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-220-180-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "hovedgaerde-brun-1405-3-80-cm-massivt-fyrretrae",
+  "deletes": [
+   "hovedgaerde-brun-1405-x-3-x-80-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-120-x-200-cm-skum-4",
+  "deletes": [
+   "madras-hvid-graa-120-200-cm-skum-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-hvid-75-x-190-cm-staal-2",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-hvid-75-190-cm-staal-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-200-x-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-200-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-x-167-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-167-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-sort-90-x-190-cm-staal",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-sort-90-190-cm-staal"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-160-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-160-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-x-200-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-200-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-sort-eg-90-x-200-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-sort-eg-90-200-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-80-x-210-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-brun-80-210-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-100-x-200-cm-skum",
+  "deletes": [
+   "madras-hvid-100-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-x-187-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-187-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-197-97-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-197-x-97-x-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-140-200-cm-skum",
+  "deletes": [
+   "madras-hvid-140-x-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-180-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-180-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-100-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-100-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-90-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-90-x-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "senge-med-laerkestruktur-brun-100-190-cm-massivt-boegetrae",
+  "deletes": [
+   "senge-med-laerkestruktur-brun-100-x-190-cm-massivt-boegetrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "udvidelig-sengestel-til-boern-other-hvid-80-x-130-165-200-cm",
+  "deletes": [
+   "udvidelig-sengestel-til-boern-other-hvid-80-130-165-200-cm"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-sort-80-x-200-cm-staal-3",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-sort-80-200-cm-staal-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-gammelt-trae-75-x-190-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-gammelt-trae-75-190-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-180-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-180-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-100-x-200-cm-strikket-stof",
+  "deletes": [
+   "madras-hvid-graa-100-200-cm-strikket-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "senge-med-laerkestruktur-brun-120-x-190-cm-massivt-boegetrae-2",
+  "deletes": [
+   "senge-med-laerkestruktur-brun-120-190-cm-massivt-boegetrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-100-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-100-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-x-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-x-190-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-190-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-220-90-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-220-x-90-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "udvidelig-sengestel-til-boern-other-hvid-80-x-130-165-200-cm-2",
+  "deletes": [
+   "udvidelig-sengestel-til-boern-other-hvid-80-130-165-200-cm-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-x-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-sort-120-x-200-cm-floejl-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-sort-120-200-cm-floejl-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-x-97-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-97-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-180-200-cm-skum",
+  "deletes": [
+   "madras-hvid-graa-180-x-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-90-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-90-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-197-x-127-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-197-127-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-140-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-140-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-197-x-97-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-197-97-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-220-x-160-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-220-160-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-80-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-80-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-gammelt-trae-90-x-190-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-gammelt-trae-90-190-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-blaa-140-200-cm-skum",
+  "deletes": [
+   "madras-hvid-blaa-140-x-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-x-157-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-157-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-75-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-75-x-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-160-220-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-160-x-220-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-lysegraa-100-x-200-cm-corduroy-stof",
+  "deletes": [
+   "sengestel-lysegraa-100-200-cm-corduroy-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "hovedgaerde-kabinet-med-led-med-hylde-sort-eg-122-17-102-cm",
+  "deletes": [
+   "hovedgaerde-kabinet-med-led-med-hylde-sort-eg-122-x-17-x-102-cm"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "senge-med-laerkestruktur-brun-90-190-cm-massivt-boegetrae",
+  "deletes": [
+   "senge-med-laerkestruktur-brun-90-x-190-cm-massivt-boegetrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "skostativer-stabelbare-2-stk-60x30x30-5-cm",
+  "deletes": [
+   "skostativer-stabelbare-2-stk-60x30x30-5-cm-etraesfarve",
+   "skostativer-stabelbare-2-stk-60x30x30-5-cm-1",
+   "skostativer-stabelbare-2-stk-60x30x30-5-cm-antikt-trae",
+   "skostativer-stabelbare-2-stk-60x30x30-5-cm-eg",
+   "skostativer-stabelbare-2-stk-60x30x30-5-cm-2",
+   "skostativer-stabelbare-2-stk-60x30x30-5-cm-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-moerkegraa-120-x-200-cm-floejl-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-moerkegraa-120-200-cm-floejl-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-210-x-180-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-210-180-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-160-x-200-cm-skum-2",
+  "deletes": [
+   "madras-hvid-160-200-cm-skum-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-90-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-90-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-100-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-100-x-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-90-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-90-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "vaeghaengte-sengeborde-2-stk-50x36x25-cm-2",
+  "deletes": [
+   "vaeghaengte-sengeborde-2-stk-35x35x20-cm-6",
+   "vaeghaengte-sengeborde-2-stk-35x35x20-cm-etraesfarve-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "senge-med-laerkestruktur-brun-90-190-cm-massivt-boegetrae-3",
+  "deletes": [
+   "senge-med-laerkestruktur-brun-90-x-190-cm-massivt-boegetrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-200-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-200-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "lamelbund-brun-80-x-190-cm-massivt-boegetrae",
+  "deletes": [
+   "lamelbund-brun-80-190-cm-massivt-boegetrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-180-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-180-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-med-opbevaring-moerkegraa-80-x-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-med-opbevaring-moerkegraa-80-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-14",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-14"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-moerkegraa-100-200-cm-corduroy-stof",
+  "deletes": [
+   "sengestel-moerkegraa-100-x-200-cm-corduroy-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-75-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-75-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-90-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-90-x-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-x-190-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-190-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-120-200-cm-polyester",
+  "deletes": [
+   "madras-hvid-120-x-200-cm-polyester"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "udvidelig-sengestel-til-boern-other-hvid-80-x-130-165-200-cm-3",
+  "deletes": [
+   "udvidelig-sengestel-til-boern-other-hvid-80-130-165-200-cm-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-200-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-200-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-x-167-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-167-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-100-x-200-cm-skum-4",
+  "deletes": [
+   "madras-hvid-graa-100-200-cm-skum-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-moerkeblaa-90-x-200-cm-floejl",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-moerkeblaa-90-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-x-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "skoreoler-2-stk-52-5x30x50-cm",
+  "deletes": [
+   "skoreoler-2-stk-52-5x30x50-cm-2",
+   "skoreoler-2-stk-52-5x30x50-cm-etrae",
+   "skoreoler-2-stk-52-5x30x50-cm-3",
+   "skoreoler-2-stk-52-5x30x50-cm-etraesfarve",
+   "skoskabe-2-stk-52x30x50-cm-antikt-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "lamelbund-brun-90-190-cm-massivt-boegetrae-2",
+  "deletes": [
+   "lamelbund-brun-90-x-190-cm-massivt-boegetrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-190-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-190-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-100-220-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-brun-100-x-220-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-100-x-220-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "gulv-seng-ramme-hvid-100-220-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-75-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-brun-75-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-x-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-197-142-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-197-x-142-x-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-120-x-200-cm-skum",
+  "deletes": [
+   "madras-hvid-graa-120-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-197-x-97-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-197-97-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-moerkegraa-180-200-cm-corduroy-stof",
+  "deletes": [
+   "sengestel-moerkegraa-180-x-200-cm-corduroy-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-90-x-220-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-90-220-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-140-x-200-cm-trae",
+  "deletes": [
+   "sengestel-brun-140-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-180-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-180-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-190-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-190-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-x-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-200-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-hvid-200-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-x-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-x-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-220-160-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-220-x-160-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "kaffebord-med-hylde-gra-sonoma-90x50x40-cm-konstrueret-trae",
+  "deletes": [
+   "sofabord-med-hylde-i-gammelt-trae-90x50x40-cm-konstrueret-trae",
+   "sofabord-med-hylde-i-artisan-eg-90x50x40-cm-lavet-af-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-x-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-200-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-200-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "senge-med-laerkestruktur-brun-120-x-190-cm-massivt-boegetrae",
+  "deletes": [
+   "senge-med-laerkestruktur-brun-120-190-cm-massivt-boegetrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-200-x-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-200-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-190-140-cm-skum",
+  "deletes": [
+   "madras-hvid-190-x-140-cm-skum"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "8-delt-havemobel-saet-med-puder-sort-poly-rattan-1",
+  "deletes": [
+   "9-delers-havemobelsaet-med-puder-sort-poly-rattan"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-sort-80-x-200-cm-staal",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-sort-80-200-cm-staal"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-207-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-x-207-x-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-160-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-160-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-moerkegraa-120-x-190-cm-stof-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-moerkegraa-120-190-cm-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-moerkegraa-90-x-190-cm-stof-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-moerkegraa-90-190-cm-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-140-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-140-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-197-x-127-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-197-127-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-180-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-180-x-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-200-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-200-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-160-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-160-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-200-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-200-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-moerkegraa-80-x-200-cm-polyester",
+  "deletes": [
+   "sengestel-med-madras-moerkegraa-80-200-cm-polyester"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-hvid-80-x-200-cm-staal-2",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-hvid-80-200-cm-staal-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-150-x-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-150-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-hvid-90-190-cm-staal-2",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-hvid-90-x-190-cm-staal-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-200-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-200-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-197-x-147-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-197-147-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-80-200-cm-trae",
+  "deletes": [
+   "sengestel-brun-80-x-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-210-x-180-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-210-180-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-moerkegraa-160-x-200-cm-corduroy-stof",
+  "deletes": [
+   "sengestel-moerkegraa-160-200-cm-corduroy-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-120-x-200-cm-skum-2",
+  "deletes": [
+   "madras-hvid-120-200-cm-skum-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-200-cm-massivt-fyrretrae-14",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-x-200-cm-massivt-fyrretrae-14"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-90-x-200-cm-skum-5",
+  "deletes": [
+   "madras-hvid-graa-90-200-cm-skum-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-190-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-x-190-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-160-x-200-cm-trae",
+  "deletes": [
+   "sengestel-brun-160-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-150-x-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-150-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-hvid-75-x-190-cm-staal",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-hvid-75-190-cm-staal"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-180-200-cm-trae",
+  "deletes": [
+   "sengestel-hvid-180-x-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-140-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-140-x-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-x-190-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-190-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-90-x-210-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-brun-90-210-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-150-x-200-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-150-200-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-140-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-140-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-med-opbevaring-moerkegraa-100-x-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-med-opbevaring-moerkegraa-100-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-sort-120-x-190-cm-stof-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-sort-120-190-cm-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-135-x-190-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-135-190-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-2-pcs-hvid-graa-70-x-190-cm-strikket-stof",
+  "deletes": [
+   "madras-2-pcs-hvid-graa-70-190-cm-strikket-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-hvid-90-x-200-cm-staal-2",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-hvid-90-200-cm-staal-2"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "sengeramme-uden-madras-massivt-fyrretrae-103",
+  "deletes": [
+   "sengeramme-uden-madras-massivt-fyrretrae-104",
+   "sengeramme-uden-madras-massivt-fyrretrae-107",
+   "sengeramme-uden-madras-massivt-fyrretrae-108"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-147-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-x-147-x-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-135-x-190-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-135-190-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-75-x-190-cm-trae",
+  "deletes": [
+   "sengestel-brun-75-190-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-sort-100-x-200-cm-stof-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-sort-100-200-cm-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-x-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-80-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-80-x-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-100-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-100-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-naturfarvet-90-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-naturfarvet-90-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-x-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-x-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-90-x-190-cm-trae",
+  "deletes": [
+   "sengestel-brun-90-190-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-180-x-200-cm-trae",
+  "deletes": [
+   "sengestel-brun-180-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-220-x-90-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-220-90-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-moerkegraa-90-x-200-cm-corduroy-stof-2",
+  "deletes": [
+   "sengestel-moerkegraa-90-200-cm-corduroy-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-naturfarvet-140-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-naturfarvet-140-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-160-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-160-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-150-x-200-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-150-200-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-moerkegraa-120-190-cm-floejl-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-moerkegraa-120-x-190-cm-floejl-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-135-190-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-135-x-190-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-197-x-82-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-197-82-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-160-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-hvid-160-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-160-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-160-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-140-x-190-cm-trae",
+  "deletes": [
+   "sengestel-brun-140-190-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-200-x-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-200-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-210-100-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-210-x-100-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-moerkegraa-120-x-200-cm-stof-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-moerkegraa-120-200-cm-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-x-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-hvid-80-x-200-cm-staal",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-hvid-80-200-cm-staal"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-80-210-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "gulv-seng-ramme-hvid-80-x-210-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-190-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-190-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-140-190-cm-skum",
+  "deletes": [
+   "madras-hvid-140-x-190-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-150-x-200-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-150-200-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-lysegraa-200-x-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-lysegraa-200-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-lysegraa-180-x-200-cm-corduroy-stof",
+  "deletes": [
+   "sengestel-lysegraa-180-200-cm-corduroy-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-150-x-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-150-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-14",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-14"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-197-x-142-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-197-142-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-90-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-90-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-190-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-190-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-180-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-180-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-200-x-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-200-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-210-x-80-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-210-80-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-90-200-cm-skum-2",
+  "deletes": [
+   "madras-hvid-90-x-200-cm-skum-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-80-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-80-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-90-x-200-cm-trae",
+  "deletes": [
+   "sengestel-hvid-90-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-220-x-180-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-220-180-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-140-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-hvid-140-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-100-x-200-cm-skum-5",
+  "deletes": [
+   "madras-hvid-graa-100-200-cm-skum-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-x-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-200-200-cm-trae",
+  "deletes": [
+   "sengestel-hvid-200-x-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-140-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-140-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-200-x-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-200-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-90-x-200-cm-trae",
+  "deletes": [
+   "sengestel-brun-90-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-200-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-200-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-2-pcs-hvid-graa-60-x-200-cm-strikket-stof",
+  "deletes": [
+   "madras-2-pcs-hvid-graa-60-200-cm-strikket-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-200-x-200-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-200-200-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-80-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-brun-80-x-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-naturfarvet-200-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-naturfarvet-200-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-200-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-200-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-160-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-160-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-sort-eg-75-x-190-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-sort-eg-75-190-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "vaeghaengte-sengeborde-2-stk-35x35x20-cm-9",
+  "deletes": [
+   "vaeghaengte-sengeborde-2-stk-35x35x20-cm-14",
+   "vaeghaengte-sengeborde-2-stk-35x35x20-cm-etraesfarve-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-200-x-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-200-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-135-x-190-cm-trae",
+  "deletes": [
+   "sengestel-brun-135-190-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "hovedgaerde-skab-sort-eg-220-19-1015-cm-konstrueret-trae",
+  "deletes": [
+   "hovedgaerde-skab-sort-eg-220-x-19-x-1015-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-lysegraa-90-x-200-cm-corduroy-stof-2",
+  "deletes": [
+   "sengestel-lysegraa-90-200-cm-corduroy-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-artisan-eg-90-200-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-artisan-eg-90-x-200-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-sort-90-x-200-cm-staal",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-sort-90-200-cm-staal"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-sort-90-x-200-cm-staal-2",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-sort-90-200-cm-staal-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-135-x-190-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-135-190-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-blaa-100-x-200-cm-skum",
+  "deletes": [
+   "madras-hvid-blaa-100-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-210-x-80-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-210-80-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "udvidelig-sengestel-til-boern-andet-brun-80-x-130-165-200-cm",
+  "deletes": [
+   "udvidelig-sengestel-til-boern-andet-brun-80-130-165-200-cm"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "utraekkelig-dagbed-uden-madras-voksebrun-2x80x200",
+  "deletes": [
+   "utraekkelig-dagbed-uden-madras-voksebrun-2x80x200-cm"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-180-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-180-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-160-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-160-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-190-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-x-190-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-150-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-150-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-190-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-190-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-med-opbevaring-lysegraa-100-x-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-med-opbevaring-lysegraa-100-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-140-x-220-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-140-220-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-140-200-cm-skum",
+  "deletes": [
+   "madras-hvid-graa-140-x-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-135-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-135-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-180-x-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-180-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-x-207-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-207-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-97-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-x-97-x-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-90-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-90-x-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-moerkegraa-160-200-cm-floejl",
+  "deletes": [
+   "sengestel-moerkegraa-160-x-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-150-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-150-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-lysegraa-80-200-cm-stof-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-lysegraa-80-x-200-cm-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-200-x-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-200-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-160-200-cm-skum",
+  "deletes": [
+   "madras-hvid-graa-160-x-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-190-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-190-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-200-80-cm-skum",
+  "deletes": [
+   "madras-hvid-200-x-80-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-naturfarvet-90-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-naturfarvet-90-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "hovedgaerde-kabinet-med-led-artisan-eg-121-x-17-x-102-cm",
+  "deletes": [
+   "hovedgaerde-kabinet-med-led-artisan-eg-121-17-102-cm"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-lysegraa-90-190-cm-floejl-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-lysegraa-90-x-190-cm-floejl-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-80-x-210-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-80-210-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-sort-90-x-200-cm-stof-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-sort-90-200-cm-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-med-opbevaring-lysegraa-90-x-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-med-opbevaring-lysegraa-90-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-140-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-140-x-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-lysegraa-120-200-cm-corduroy-stof",
+  "deletes": [
+   "sengestel-lysegraa-120-x-200-cm-corduroy-stof"
+  ]
+ },
+ {
+  "scenario": "subset",
+  "keep": "vaegskabe-2-stk-80x30x30-cm-massivt-fyrretrae",
+  "deletes": [
+   "vaegskabe-2-stk-80x30x30-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-x-187-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-187-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-200-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-200-200-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-x-167-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-167-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-190-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-190-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-8",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-8"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-150-200-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-150-x-200-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-11",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-11"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-90-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-90-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-140-x-200-cm-trae",
+  "deletes": [
+   "sengestel-hvid-140-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-150-x-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-150-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-x-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-210-x-90-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-210-90-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-160-x-200-cm-trae",
+  "deletes": [
+   "sengestel-hvid-160-200-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-sort-eg-135-x-190-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-sort-eg-135-190-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-210-x-100-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-210-100-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-14",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-14"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-gammelt-trae-90-x-200-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-gammelt-trae-90-200-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-lysegraa-120-x-190-cm-stof-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-lysegraa-120-190-cm-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-200-140-cm-skum",
+  "deletes": [
+   "madras-hvid-200-x-140-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-moerkegraa-90-200-cm-stof",
+  "deletes": [
+   "sengestel-moerkegraa-90-x-200-cm-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-sort-eg-120-x-190-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-sort-eg-120-190-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-9",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-9"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-moerkegraa-180-x-200-cm-stof-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-moerkegraa-180-200-cm-stof-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-blaa-90-x-200-cm-skum",
+  "deletes": [
+   "madras-hvid-blaa-90-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-100-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-100-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-190-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-190-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-100-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-100-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-13",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-13"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "hovedgaerde-skab-gammelt-trae-220-19-1015-cm-konstrueret-trae",
+  "deletes": [
+   "hovedgaerde-skab-gammelt-trae-220-x-19-x-1015-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-hvid-90-x-200-cm-staal-4",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-hvid-90-200-cm-staal-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-med-opbevaring-lysegraa-140-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-med-opbevaring-lysegraa-140-x-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-120-x-190-cm-massivt-fyrretrae-4",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-120-190-cm-massivt-fyrretrae-4"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-sort-eg-90-200-cm-konstrueret-trae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-sort-eg-90-x-200-cm-konstrueret-trae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-1555-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-x-1555-x-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-med-opbevaring-moerkegraa-140-x-190-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-med-opbevaring-moerkegraa-140-190-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-140-x-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-140-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-220-140-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-220-x-140-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "dagsengramme-med-hovedgaerde-hvid-90-x-190-cm-staal",
+  "deletes": [
+   "dagsengramme-med-hovedgaerde-hvid-90-190-cm-staal"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-200-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-200-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-10",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-10"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-75-x-190-cm-massivt-fyrretrae-5",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-75-190-cm-massivt-fyrretrae-5"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-90-x-190-cm-trae",
+  "deletes": [
+   "sengestel-hvid-90-190-cm-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-140-190-cm-trae-2",
+  "deletes": [
+   "sengestel-brun-140-x-190-cm-trae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "senge-med-laerkestruktur-brun-140-x-190-cm-massivt-boegetrae-2",
+  "deletes": [
+   "senge-med-laerkestruktur-brun-140-190-cm-massivt-boegetrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-140-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-140-x-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-lysegraa-140-x-200-cm-corduroy-stof",
+  "deletes": [
+   "sengestel-lysegraa-140-200-cm-corduroy-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-200-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-200-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-140-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-hvid-140-x-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-naturfarvet-180-x-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-naturfarvet-180-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-180-x-200-cm-massivt-fyrretrae-12",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-180-200-cm-massivt-fyrretrae-12"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-x-190-cm-massivt-fyrretrae-14",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-190-cm-massivt-fyrretrae-14"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengeramme-med-madras-med-madras-sort-160-x-200-cm-floejl-2",
+  "deletes": [
+   "sengeramme-med-madras-med-madras-sort-160-200-cm-floejl-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-200-180-cm-skum",
+  "deletes": [
+   "madras-hvid-200-x-180-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-moerkegraa-80-x-200-cm-corduroy-stof",
+  "deletes": [
+   "sengestel-moerkegraa-80-200-cm-corduroy-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-140-x-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-140-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-90-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-90-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-artisan-eg-75-190-cm-konstrueret-trae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-artisan-eg-75-x-190-cm-konstrueret-trae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-190-cm-massivt-fyrretrae-7",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-190-cm-massivt-fyrretrae-7"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-220-x-140-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-220-140-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-brun-100-210-cm-massivt-fyrretrae",
+  "deletes": [
+   "gulv-seng-ramme-brun-100-x-210-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-graa-80-x-200-cm-strikket-stof",
+  "deletes": [
+   "madras-hvid-graa-80-200-cm-strikket-stof"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-80-200-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-80-x-200-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-197-x-97-x-30-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-197-97-30-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-200-x-220-cm-massivt-fyrretrae-2",
+  "deletes": [
+   "gulv-seng-ramme-hvid-200-220-cm-massivt-fyrretrae-2"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-220-x-100-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-220-100-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-brun-135-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-brun-135-x-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-140-220-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-140-x-220-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-80-x-200-cm-skum",
+  "deletes": [
+   "madras-hvid-80-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-150-200-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-150-x-200-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-massiv-fyrretrae-207-x-87-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-massiv-fyrretrae-207-87-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "gulv-seng-ramme-hvid-100-x-210-cm-massivt-fyrretrae-3",
+  "deletes": [
+   "gulv-seng-ramme-hvid-100-210-cm-massivt-fyrretrae-3"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "madras-hvid-160-x-200-cm-skum",
+  "deletes": [
+   "madras-hvid-160-200-cm-skum"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-madras-med-opbevaring-lysegraa-120-x-200-cm-floejl",
+  "deletes": [
+   "sengestel-med-madras-med-opbevaring-lysegraa-120-200-cm-floejl"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-90-x-190-cm-massivt-fyrretrae-15",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-90-190-cm-massivt-fyrretrae-15"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-135-x-190-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-135-190-cm-massivt-fyrretrae-6"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-hvid-160-x-200-cm-massivt-fyrretrae-15",
+  "deletes": [
+   "sengestel-med-hovedgaerde-hvid-160-200-cm-massivt-fyrretrae-15"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-hvid-207-x-1555-x-17-cm-massivt-fyrretrae",
+  "deletes": [
+   "sengestel-hvid-207-1555-17-cm-massivt-fyrretrae"
+  ]
+ },
+ {
+  "scenario": "identical",
+  "keep": "sengestel-med-hovedgaerde-brun-90-x-200-cm-massivt-fyrretrae-6",
+  "deletes": [
+   "sengestel-med-hovedgaerde-brun-90-200-cm-massivt-fyrretrae-6"
+  ]
+ }
+]

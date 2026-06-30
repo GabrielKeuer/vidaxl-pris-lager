@@ -1,0 +1,36 @@
+name: Cleanup Duplicate Products
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'true = kun resolver + sikkerhedstjek, ingen writes'
+        required: false
+        default: 'true'
+      limit:
+        description: 'Maks antal klynger (tom = alle)'
+        required: false
+        default: ''
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Cleanup duplicate products
+        env:
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          LIMIT: ${{ github.event.inputs.limit }}
+        run: |
+          ARGS=""
+          if [ "$DRY_RUN" != "true" ]; then ARGS="--live"; fi
+          if [ -n "$LIMIT" ]; then ARGS="$ARGS --limit $LIMIT"; fi
+          python scripts/cleanup_dups.py $ARGS
