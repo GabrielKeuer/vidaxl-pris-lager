@@ -598,6 +598,7 @@ def push_to_shopify_bulk(today_rows, on_sale_rows, variants_map, progress_cb=Non
             r = requests.get(result_url, timeout=120)
             r.raise_for_status()
             result_lines = r.text.strip().split('\n')
+            err_counts = defaultdict(int)
             for line in result_lines:
                 if not line: continue
                 try:
@@ -606,6 +607,11 @@ def push_to_shopify_bulk(today_rows, on_sale_rows, variants_map, progress_cb=Non
                         'productVariantsBulkUpdate', {}).get('userErrors') or []
                     if user_errors:
                         stats["errors"] += len(user_errors)
+                        for ue in user_errors:
+                            msg = ue.get('message') or 'ukendt fejl'
+                            fld = ue.get('field')
+                            key = f"{msg} [{'.'.join(fld) if isinstance(fld, list) else fld}]" if fld else msg
+                            err_counts[key[:140]] += 1
                     else:
                         # Count successful productVariants
                         pv = (res.get('data', {}) or {}).get(
@@ -615,7 +621,11 @@ def push_to_shopify_bulk(today_rows, on_sale_rows, variants_map, progress_cb=Non
                 except json.JSONDecodeError:
                     continue
             if stats["errors"]:
-                print(f"  ⚠ {stats['errors']} userErrors i bulk-resultat")
+                top = sorted(err_counts.items(), key=lambda kv: -kv[1])[:5]
+                stats["error_samples"] = top
+                print(f"  ⚠ {stats['errors']} userErrors i bulk-resultat. Hyppigste:")
+                for msg, c in top:
+                    print(f"     {c}× {msg}")
         except Exception as e:
             print(f"  ⚠ Kunne ikke parse resultat: {str(e)[:200]}")
 

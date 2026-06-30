@@ -299,9 +299,13 @@ def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
     errors = stats.get("errors", 0)
     error_rate = errors / (applied + errors) if (applied + errors) else 0
     ok = error_rate <= 0.01
+    samples = stats.get("error_samples") or []
+    sample_str = "; ".join(f"{c}× {m}" for m, c in samples[:3])
+    log = f"{'Done' if ok else 'FAILED'}. {applied} opdateret, {errors} fejl ({error_rate:.2%})"
+    if sample_str:
+        log += f" — {sample_str}"
     _update_job(sb, job_id, status="completed" if ok else "failed", actual_count=applied,
-                failed_count=errors, completed_at=_now(),
-                log_summary=f"{'Done' if ok else 'FAILED'}. {applied} opdateret, {errors} fejl ({error_rate:.2%})")
+                failed_count=errors, completed_at=_now(), log_summary=log[:500])
     print(f"{'✅ DONE' if ok else '❌ FAILED'}. Applied={applied}, Errors={errors}")
     return 0 if ok else 1
 
