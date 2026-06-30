@@ -176,7 +176,7 @@ def compute_price_diffs(feed_df, state, pricing_cfg_resolver, shop_skus):
     on_sale_rows = []
     state_updates = []
     counters = {
-        "skip_no_state": 0, "skip_invalid_b2b": 0,
+        "skip_no_state": 0, "skip_invalid_b2b": 0, "skip_fictive": 0,
         "skip_unchanged_normal": 0, "skip_unchanged_on_sale": 0,
         "update_normal": 0, "update_warmup": 0, "warmup_reset": 0,
         "update_on_sale": 0, "on_sale_edge_case_cleared": 0,
@@ -204,6 +204,20 @@ def compute_price_diffs(feed_df, state, pricing_cfg_resolver, shop_skus):
         if not pricing_cfg:
             counters["skip_no_state"] += 1  # genbrug skip-counter — ingen config = ingen handling
             continue
+
+        # === MODE-BEVIDST: fictive_discount (Omnibus OFF) styres IKKE her ===
+        # Denne sync er rotations-/state-baseret (real_discount). For en fictive
+        # vendor er kundens pris = cost × fixed_markup med en deterministisk fiktiv
+        # førpris seedet på produkt-HANDLE — og handle findes ikke i shop-cachen,
+        # så vi kan ikke reproducere førprisen uden at churne den dagligt.
+        # Desuden er calculate_normal_price/calculate_sale_price IKKE mode-bevidste
+        # (ingen tiers → fallback 1,7× / None), så de ville sætte forkerte priser
+        # (bl.a. 0 kr på on_sale-rækker). Fictive cost-drift håndteres i den fictive
+        # bulk-/daily-sti (resolve_variant_pricing med seed=handle). → spring over.
+        if (pricing_cfg or {}).get("mode") == "fictive_discount":
+            counters["skip_fictive"] += 1
+            continue
+
         new_normal = pricing.calculate_normal_price(b2b, pricing_cfg)
         new_sale = pricing.calculate_sale_price(b2b, pricing_cfg)
         old_normal = int(float(product_state.get("normal_price") or 0))
