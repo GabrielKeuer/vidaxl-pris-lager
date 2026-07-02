@@ -18,6 +18,17 @@ SHOPIFY_STORE_URL = os.environ.get('SHOPIFY_STORE_URL')
 SHOPIFY_ACCESS_TOKEN = os.environ.get('SHOPIFY_ACCESS_TOKEN')
 SOLLUX_CSV_URL = 'https://apps.sollux-lighting.com/stock/products_availability.csv'
 
+# Supabase Edge Function-proxy — fallback naar Sollux' firewall blokerer
+# GitHub-runnerens IP (rodaarsag verificeret 2026-06-09: IP-blok af dele af
+# Azure-intervallerne, ikke kvote/UA — retries fra SAMME runner-IP hjaelper
+# derfor ikke). Proxyen (functions/v1/sollux-stock-proxy) henter CSV'en fra
+# Supabase-infrastrukturens IP i stedet (verificeret naaelig 2026-07-02:
+# 200 OK, 45 KB, ~1s) og kraever service-key som Bearer-token.
+SUPABASE_URL = os.environ.get('SUPABASE_URL', '').rstrip('/')
+SUPABASE_SERVICE_KEY = os.environ.get('SUPABASE_SERVICE_KEY', '')
+SOLLUX_PROXY_URL = (f"{SUPABASE_URL}/functions/v1/sollux-stock-proxy"
+                    if SUPABASE_URL else None)
+
 # GraphQL endpoint
 GRAPHQL_URL = f"https://{SHOPIFY_STORE_URL}/admin/api/2024-01/graphql.json"
 
@@ -37,7 +48,10 @@ def log(message):
 
 
 # Retry-konfiguration for Sollux-download
-MAX_ATTEMPTS = 6
+# 3 forsoeg pr. kilde (direkte + proxy) — retries fra samme runner-IP slaar
+# alligevel ikke en IP-blok, saa vi skifter hurtigere til proxyen i stedet
+# for at braende 7 min af paa 6 direkte forsoeg.
+ATTEMPTS_PER_SOURCE = 3
 # (connect, read): fejl hurtigt på connect (15s) frem for at sidde fast i 60s,
 # men giv serveren god tid til at levere selve CSV'en (120s).
 REQUEST_TIMEOUT = (15, 120)
@@ -51,41 +65,56 @@ REQUEST_HEADERS = {
 
 
 def download_sollux_csv():
-    """Download CSV fra Sollux med sejlivet retry-logik.
+    """Download CSV — direkte fra Sollux foerst, Supabase-proxy som fallback.
 
-    Sollux-serveren (apps.sollux-lighting.com) er intermitterende: den giver
-    ConnectTimeout på enkelte timer (typisk ~35% af kørslerne på dårlige dage),
-    men kommer sig som regel inden for få minutter. Det er IKKE en daglig
-    pull-kvote (verificeret: dagens første kørsler fejler nogle gange mens
-    senere lykkes, og fejl er jævnt spredt over alle 24 timer).
-
-    Derfor: 6 forsøg med exponential backoff + jitter, så vi rider de korte
-    blip af i stedet for at give op efter 3 forsøg. Jobbet kører hver time,
-    så de ekstra forsøg belaster ikke Sollux mere end før.
+    Sollux' firewall blokerer dele af GitHub-runnernes IP-intervaller
+    (ConnectTimeout paa ~25% af koerslerne; jaevnt spredt over doegnet, ikke
+    kvote/UA). Retries fra samme runner hjaelper kun mod korte blip — ved en
+    IP-blok er eneste redning en anden afsender-IP. Derfor: 3 direkte forsoeg,
+    derefter 3 forsoeg via sollux-stock-proxy (Supabase Edge Function), som
+    henter fra Supabase-infrastrukturens IP.
     """
     log("📥 Downloading Sollux CSV...")
-    for attempt in range(1, MAX_ATTEMPTS + 1):
-        try:
-            response = requests.get(SOLLUX_CSV_URL, timeout=REQUEST_TIMEOUT,
-                                    headers=REQUEST_HEADERS)
-            response.raise_for_status()
-            log(f"✅ Downloaded CSV ({len(response.text)} bytes, "
-                f"attempt {attempt}/{MAX_ATTEMPTS})")
-            return response.text
-        except (requests.exceptions.ConnectionError,
-                requests.exceptions.Timeout,
-                requests.exceptions.HTTPError) as e:
-            err_type = type(e).__name__
-            if attempt < MAX_ATTEMPTS:
-                # Exponential backoff (30, 45, 60, 75, 90 ...) + jitter, capped 90s
-                wait = min(30 + 15 * (attempt - 1), 90) + random.uniform(0, 10)
-                log(f"⚠️  Attempt {attempt}/{MAX_ATTEMPTS} failed ({err_type}). "
-                    f"Retrying in {wait:.0f}s...")
-                time.sleep(wait)
-            else:
-                log(f"❌ All {MAX_ATTEMPTS} attempts failed. "
-                    f"Last error ({err_type}): {str(e)[:160]}")
-    log(f"❌ Could not download Sollux CSV after {MAX_ATTEMPTS} attempts")
+    sources = [('direkte', SOLLUX_CSV_URL, REQUEST_HEADERS)]
+    if SOLLUX_PROXY_URL and SUPABASE_SERVICE_KEY:
+        sources.append(('proxy', SOLLUX_PROXY_URL,
+                        {'Authorization': f'Bearer {SUPABASE_SERVICE_KEY}',
+                         'Accept': 'text/csv,*/*'}))
+    else:
+        log("⚠️  SUPABASE_URL/SUPABASE_SERVICE_KEY ikke sat — kun direkte forsøg")
+
+    last_err = None
+    for src_label, url, headers in sources:
+        for attempt in range(1, ATTEMPTS_PER_SOURCE + 1):
+            try:
+                response = requests.get(url, timeout=REQUEST_TIMEOUT,
+                                        headers=headers)
+                response.raise_for_status()
+                body = response.text
+                # Sanity-check: proxy/WAF-fejlsider maa ikke parses som lager
+                if not body.lstrip().upper().startswith('SKU'):
+                    raise requests.exceptions.HTTPError(
+                        f"Uventet indhold fra {src_label}: {body[:60]!r}")
+                log(f"✅ Downloaded CSV via {src_label} ({len(body)} bytes, "
+                    f"attempt {attempt}/{ATTEMPTS_PER_SOURCE})")
+                return body
+            except (requests.exceptions.ConnectionError,
+                    requests.exceptions.Timeout,
+                    requests.exceptions.HTTPError) as e:
+                last_err = e
+                err_type = type(e).__name__
+                if attempt < ATTEMPTS_PER_SOURCE:
+                    # Backoff (20, 35s) + jitter — kort, for naeste kilde venter
+                    wait = 20 + 15 * (attempt - 1) + random.uniform(0, 10)
+                    log(f"⚠️  {src_label} attempt {attempt}/{ATTEMPTS_PER_SOURCE} "
+                        f"failed ({err_type}). Retrying in {wait:.0f}s...")
+                    time.sleep(wait)
+                else:
+                    log(f"⚠️  {src_label}: alle {ATTEMPTS_PER_SOURCE} forsøg "
+                        f"fejlede ({err_type}): {str(e)[:160]}")
+
+    log(f"❌ Could not download Sollux CSV (direkte + proxy). "
+        f"Last error: {type(last_err).__name__}: {str(last_err)[:160]}")
     sys.exit(1)
 
 

@@ -1,4 +1,4 @@
-name: Sollux Inventory Sync
+﻿name: Sollux Inventory Sync
 
 on:
   # Kør hver 1. time
@@ -41,6 +41,8 @@ jobs:
         env:
           SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
           SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
           python scripts/sync_sollux_inventory.py
       
