@@ -242,21 +242,57 @@ def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
     hver fictive variant er "altid på tilbud" → on_sale-row med Compare At
     Action SET (fiktiv førpris) eller CLEAR (ingen rabat).
     """
+    # === KOST-SANDHED: feed-b2b, IKKE Shopify-cost ===
+    # Rod-årsag fundet 2026-07-05: Shopify-cost var forældet (daily rotation-sync
+    # skipper fictive; denne funktion læste den forældede cost → 'Ingen ændringer'
+    # mens vidaXL hævede b2b ~15% → 93,6% af kataloget underprissat, 1,44× realiseret).
+    # Nu: b2b hentes fra offer-feedet hver kørsel; pris+førpris+COST pushes sammen.
+    feed_b2b = {}
+    if (vendor or "").lower() == "vidaxl":
+        print("📥 Henter vidaXL offer-feed (b2b = kost-sandhed)...")
+        _fdf = fetch_supplier_feed()
+        for _sku, _b2b in zip(_fdf["SKU"].astype(str), _fdf["B2B price"]):
+            try:
+                _b = float(_b2b)
+                if _b > 0: feed_b2b[_sku.strip().replace(".0", "")] = _b
+            except (TypeError, ValueError):
+                pass
+        if len(feed_b2b) < 1000:
+            _update_job(sb, job_id, status="failed", completed_at=_now(),
+                        log_summary=f"AFVIST: offer-feed gav kun {len(feed_b2b)} b2b-priser — kører ikke på forældet cost")
+            sys.exit("❌ Offer-feed utilgængeligt/tomt — afviser at reprise på forældet Shopify-cost")
+        print(f"   ✅ {len(feed_b2b)} b2b-priser fra feed")
+
     on_sale_rows = []      # rows til push_to_shopify
     variants_map = {}      # sku -> [variant_id, product_id] (numeriske)
+    state_rows = []        # spejl til vidaxl_pricing_state (b2b/pris/førpris)
     checked = 0
+    counters = {"feed_missing": 0, "cost_update": 0, "price_update": 0}
     print(f"🔎 Bulk-eksporterer '{vendor}'-produkter fra Shopify (fictive mode)...")
     for v in _bulk_export_vendor_products(vendor, ptype):
         checked += 1
         sku = v["sku"]
-        if not sku or v["cost"] <= 0:
+        if not sku:
             continue
-        np_, nc_ = resolve_variant_pricing(v["cost"], cfg, seed=v["handle"], on_sale=True)
+        if feed_b2b:
+            b2b = feed_b2b.get(str(sku).strip())
+            if not b2b:
+                counters["feed_missing"] += 1  # udgået hos vidaXL → delete-flow ejer den
+                continue
+        else:
+            b2b = v["cost"]                     # ikke-vidaXL fictive vendors: uændret adfærd
+            if not b2b or b2b <= 0:
+                continue
+        np_, nc_ = resolve_variant_pricing(b2b, cfg, seed=v["handle"], on_sale=True)
         np_ = int(np_); nc_ = int(nc_) if nc_ else None
         cur_p = int(round(float(v["price"]))) if v.get("price") else 0
         cur_c = int(round(float(v["compareAtPrice"]))) if v.get("compareAtPrice") else None
-        if np_ == cur_p and nc_ == cur_c:
+        cur_cost = float(v["cost"]) if v.get("cost") else 0.0
+        cost_changed = abs(b2b - cur_cost) >= 0.01
+        if np_ == cur_p and nc_ == cur_c and not cost_changed:
             continue
+        if np_ != cur_p or nc_ != cur_c: counters["price_update"] += 1
+        if cost_changed: counters["cost_update"] += 1
         vid_num = _gid_num(v["id"]); pid_num = _gid_num(v["pid"])
         if vid_num is None or pid_num is None:
             continue
@@ -264,10 +300,14 @@ def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
         on_sale_rows.append({
             "Variant SKU": sku,
             "Variant Price": np_,
+            "Variant Cost": b2b,                 # cost pushes i SAMME mutation
             "Compare At Action": "SET" if nc_ else "CLEAR",
             "Set Compare At": nc_ if nc_ else "",
             "Variant Command": "UPDATE",
         })
+        state_rows.append({"sku": sku, "b2b_cost": b2b,
+                           "normal_price": nc_ or np_, "sale_price": np_})
+    print(f"   counters: {counters}")
 
     total_changes = len(on_sale_rows)
     _update_job(sb, job_id, preview_count=total_changes,
@@ -302,14 +342,57 @@ def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
     samples = stats.get("error_samples") or []
     sample_str = "; ".join(f"{c}× {m}" for m, c in samples[:3])
     dups = stats.get("skipped_duplicate", 0)
+
+    # === STATE-SPEJL: hold vidaxl_pricing_state i sync med det vi netop pushede ===
+    # (hub-visning + fremtidig diagnostik; KUN eksisterende rækker, bevar group/status)
+    if ok and state_rows and (vendor or "").lower() == "vidaxl":
+        try:
+            st = load_pricing_state(sb)
+            payload = []
+            for r in state_rows:
+                cur = st.get(r["sku"])
+                if not cur:
+                    continue
+                payload.append({"sku": r["sku"], "pricing_group": cur["pricing_group"],
+                                "status": cur["status"], "b2b_cost": r["b2b_cost"],
+                                "normal_price": r["normal_price"], "sale_price": r["sale_price"]})
+            upsert_state(sb, payload)
+            print(f"🗄 state-spejl opdateret: {len(payload)} rækker")
+        except Exception as e:
+            print(f"⚠ state-spejl fejlede (ikke kritisk): {e}")
+
+    # === VERIFIKATIONS-PAS: genberegn mod frisk Shopify-eksport — fanger silent drift ===
+    verify_note = ""
+    if ok and total_changes > 0:
+        try:
+            drift = 0
+            for v in _bulk_export_vendor_products(vendor, ptype):
+                sku = v["sku"]
+                b2b = feed_b2b.get(str(sku).strip()) if feed_b2b else (v["cost"] or 0)
+                if not sku or not b2b or b2b <= 0:
+                    continue
+                np_, nc_ = resolve_variant_pricing(b2b, cfg, seed=v["handle"], on_sale=True)
+                cur_p = int(round(float(v["price"]))) if v.get("price") else 0
+                if int(np_) != cur_p:
+                    drift += 1
+            pct = drift / max(checked, 1)
+            verify_note = f" | VERIFIKATION: {drift} rest-afvigelser ({pct:.2%})"
+            if pct > 0.02:
+                ok = False
+                verify_note += " — OVER GRÆNSE, marker FAILED"
+        except Exception as e:
+            verify_note = f" | verifikation fejlede: {e}"
+
     log = f"{'Done' if ok else 'FAILED'}. {applied} opdateret, {errors} fejl ({error_rate:.2%})"
     if dups:
         log += f", {dups} dup-SKU sprunget over"
+    log += f", counters={counters}"
     if sample_str:
         log += f" — {sample_str}"
+    log += verify_note
     _update_job(sb, job_id, status="completed" if ok else "failed", actual_count=applied,
                 failed_count=errors, completed_at=_now(), log_summary=log[:500])
-    print(f"{'✅ DONE' if ok else '❌ FAILED'}. Applied={applied}, Errors={errors}")
+    print(f"{'✅ DONE' if ok else '❌ FAILED'}. Applied={applied}, Errors={errors}{verify_note}")
     return 0 if ok else 1
 
 
