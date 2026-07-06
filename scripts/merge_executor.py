@@ -214,9 +214,9 @@ def load_feed():
     if not fu:
         sys.exit(f"❌ offer-feed {r.status_code} og ingen FEED_URL-fallback for pris/lager")
     print(f"  ⚠ offer-feed {r.status_code} → falder tilbage til hoved-feed for pris/lager")
-    data = requests.get(fu, headers={"User-Agent": "Mozilla/5.0"}, timeout=300).content
-    z = zipfile.ZipFile(io.BytesIO(data))
-    with z.open(z.namelist()[0]) as f:
+    z = zipfile.ZipFile(io.BytesIO(get_feed_zip(fu)))
+    name = next(f for f in z.namelist() if f.endswith(".csv"))
+    with z.open(name) as f:
         return _parse_offer_rows(csv.DictReader(io.TextIOWrapper(f, encoding="utf-8"), delimiter=","))
 
 # ---------- enrichment: billeder + beskrivelse + EAN + vægt (fra hoved-feedet) ----------
@@ -239,12 +239,37 @@ def _all_images(row):
             imgs.append(v)
     return imgs
 
+_FEED_CACHE = os.path.join(os.environ.get("TEMP", "/tmp"), "vidaxl_feed_cache.zip")
+_FEED_TTL = 6 * 3600
+
+def get_feed_zip(feed_url):
+    """Hent hoved-feed-ZIP med lokal cache (6t) + retry — undgår gentagne 88MB-downloads (rate-limit)."""
+    if os.path.exists(_FEED_CACHE) and time.time() - os.path.getmtime(_FEED_CACHE) < _FEED_TTL:
+        try:
+            data = open(_FEED_CACHE, "rb").read()
+            zipfile.ZipFile(io.BytesIO(data))
+            print(f"  📦 bruger cachet feed ({len(data)//1_000_000} MB, {int((time.time()-os.path.getmtime(_FEED_CACHE))/60)} min gammel)")
+            return data
+        except Exception:
+            pass
+    for a in range(1, 6):
+        try:
+            r = requests.get(feed_url, timeout=600)
+            r.raise_for_status()
+            zipfile.ZipFile(io.BytesIO(r.content))   # valider zip
+            open(_FEED_CACHE, "wb").write(r.content)
+            return r.content
+        except Exception as e:
+            if a >= 5:
+                raise
+            print(f"  ⚠ feed-download forsøg {a} fejlede ({type(e).__name__}) — prøver igen om {8*a}s")
+            time.sleep(8 * a)
+
 def load_enrich(feed_url):
     """{sku: {images:[feed-urls], html:beskrivelse, ean:str, weight:gram}} fra hoved-feedet (ZIP)."""
-    r = requests.get(feed_url, timeout=600)
-    r.raise_for_status()
+    content = get_feed_zip(feed_url)
     out = {}
-    with zipfile.ZipFile(io.BytesIO(r.content)) as zf:
+    with zipfile.ZipFile(io.BytesIO(content)) as zf:
         name = next(f for f in zf.namelist() if f.endswith(".csv"))
         with zf.open(name) as f:
             for row in csv.DictReader(io.TextIOWrapper(f, encoding="utf-8")):

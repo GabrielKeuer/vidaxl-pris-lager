@@ -52,7 +52,34 @@ def variant_input(sku, opts, is_first, feed, enrich, cfg, seed, loc):
         vi["file"] = {"originalSource": img, "contentType": "IMAGE"}
     return vi
 
-def build_input(spec, feed, enrich, cfg, loc, handle, ptype):
+def split_dupes(spec):
+    """Sikr gyldige productSet-varianter: hver variant har værdi for hver akse (mangler → 'Standard'),
+    og ingen dublet option-kombinationer (dubletter splittes ud som egne single-produkter, dublet-titel OK)."""
+    variants = [dict(v) for v in spec["variants"]]
+    axes = [a for a in ("Farve", "Konfiguration") if any(v.get(a) for v in variants)]
+    for v in variants:
+        for a in axes:
+            if not v.get(a):
+                v[a] = "Standard"
+    seen, main, extras = set(), [], []
+    for v in variants:
+        combo = tuple(v.get(a) for a in axes)
+        (extras if combo in seen else main).append(v)
+        seen.add(combo)
+    out = [{"title": spec["title"], "variants": main}]
+    for v in extras:
+        out.append({"title": spec["title"], "variants": [{"sku": v["sku"]}]})   # single, ingen akser
+    return out
+
+def live_product_for_sku(sku):
+    """Returnér (titel, handle) for det produkt SKU'en ligger på nu, ellers None (forældreløs)."""
+    d = ME.gql('query($q:String!){productVariants(first:3,query:$q){edges{node{sku product{title handle}}}}}', {"q": f"sku:{sku}"})
+    for e in (((d.get("data") or {}).get("productVariants") or {}).get("edges") or []):
+        if (e["node"]["sku"] or "").strip() == str(sku):
+            return e["node"]["product"]["title"], e["node"]["product"]["handle"]
+    return None
+
+def build_input(spec, feed, enrich, cfg, loc, ptype):
     variants = spec["variants"]
     axes = []
     if any(v.get("Farve") for v in variants): axes.append("Farve")            # Farve = option 1
@@ -76,7 +103,8 @@ def build_input(spec, feed, enrich, cfg, loc, handle, ptype):
     for vi in vin:
         if vi.get("file") and vi["file"]["originalSource"] not in kept:
             del vi["file"]
-    return {"title": spec["title"], "handle": handle, "status": "ACTIVE", "productType": ptype or "",
+    # INGEN handle → Shopify auto-genererer unik handle (dublet-titler tilladt, ingen kollision)
+    return {"title": spec["title"], "status": "ACTIVE", "productType": ptype or "",
             "vendor": "vidaXL", "productOptions": product_options, "variants": vin, "files": files}
 
 def main():
@@ -99,28 +127,33 @@ def main():
         prods = specs.get(h) or []
         d = ME.gql("query($h:String!){productByHandle(handle:$h){id productType}}", {"h": h})
         pr = (d.get("data") or {}).get("productByHandle")
-        if not pr:
-            print(f"  ⚠ {h}: ikke fundet"); continue
-        ptype = pr.get("productType")
+        ptype = (pr or {}).get("productType") or ""
         print(f"\n▶ {h} → {len(prods)} produkter" + ("" if live else " (DRY)"))
         try:
-            if live:
-                ME.delete_product(pr["id"], h, False, print)          # slet original (frigør SKUs)
+            if live and pr:
+                ME.delete_product(pr["id"], h, False, print)          # slet original (frigør SKUs) hvis den findes
             primary = None
-            for i, spec in enumerate(prods):
-                handle = gen_handle(spec["title"], used_handles)
+            expanded = [s for spec in prods for s in split_dupes(spec)]   # normalisér + split dublet-kombos
+            for i, spec in enumerate(expanded):
                 tot_p += 1
                 if not live:
                     if i == 0:
-                        primary = handle
+                        primary = gen_handle(spec["title"], used_handles)
                     axes = [a for a in ("Farve", "Konfiguration") if any(v.get(a) for v in spec["variants"])]
-                    print(f"     \"{spec['title'][:50]}\" | {len(spec['variants'])} var | akser={axes or 'single'} | handle={handle}")
+                    print(f"     \"{spec['title'][:50]}\" | {len(spec['variants'])} var | akser={axes or 'single'}")
                     continue
-                inp = build_input(spec, feed, enrich, cfg, loc, handle, ptype)
+                # idempotent: er 1. SKU allerede live på et produkt med korrekt titel? → spring over
+                ex = live_product_for_sku(spec["variants"][0]["sku"])
+                if ex and ex[0] == spec["title"]:
+                    if primary is None:
+                        primary = ex[1]
+                    print(f"     ⏭ {ex[1]} findes allerede")
+                    continue
+                inp = build_input(spec, feed, enrich, cfg, loc, ptype)
                 r = ME.gql(PS, {"input": inp, "sync": True})
                 errs = (((r.get("data") or {}).get("productSet") or {}).get("userErrors")) or []
                 if errs:
-                    print(f"     ❌ {handle}: {errs[:2]}"); continue
+                    print(f"     ❌ \"{spec['title'][:40]}\": {errs[:2]}"); continue
                 newid = r["data"]["productSet"]["product"]["id"]
                 actual = r["data"]["productSet"]["product"]["handle"]   # Shopifys faktiske handle
                 if i == 0 or primary is None:
