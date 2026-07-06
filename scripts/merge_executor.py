@@ -100,8 +100,12 @@ def _axis_one(k, v):
     return "Model"
 
 def _norm_val(v):
-    # normalisér mål-separator (× → x) + whitespace, så '5×3 m' og '5 x 3 m' ikke dubleres
-    return re.sub(r"\s+", " ", str(v).replace("×", "x").replace(" ", " ")).strip()
+    # normalisér mål-separator (× → x) + whitespace; forbogstav pr. ord på ikke-mål-værdier
+    # ('artisan eg' → 'Artisan Eg', men '200 cm bordlængde' urørt). Dedup'er casing-dubletter.
+    v = re.sub(r"\s+", " ", str(v).replace("×", "x").replace(" ", " ")).strip()
+    if v and not re.search(r"\d", v):
+        v = " ".join(w[:1].upper() + w[1:] if w else w for w in v.split(" "))
+    return v
 
 def danish_opts(sku, master):
     """SKUs item_variant → {dansk_akse: værdi} (eksakt label pr. master → ellers inferens)."""
@@ -193,18 +197,26 @@ def set_title(pid, title, dry, log):
 def create_redirect(frm, to, dry, log, sb):
     log(f"    ↪ redirect {frm} → {to}")
     if not dry:
-        gql("""mutation($r:UrlRedirectInput!){urlRedirectCreate(urlRedirect:$r){userErrors{field message}}}""",
-            {"r": {"path": frm, "target": to}})
+        d = gql("""mutation($r:UrlRedirectInput!){urlRedirectCreate(urlRedirect:$r){userErrors{field message}}}""",
+                {"r": {"path": frm, "target": to}})
+        errs = (((d.get("data") or {}).get("urlRedirectCreate") or {}).get("userErrors")) or []
+        # 'already exists' = idempotent OK (redirect ligger fra tidligere kørsel)
+        if errs and not any("exist" in str(e).lower() or "taken" in str(e).lower() for e in errs):
+            raise RuntimeError(f"urlRedirectCreate: {errs}")
         try: sb.table("deleted_redirects").insert({"path": frm, "target": to, "source": "merge_executor"}).execute()
         except Exception: pass
 
 def delete_product(pid, handle, dry, log):
     log(f"    ✖ slet donor {handle}")
     if not dry:
-        d = gql("""mutation($i:ProductDeleteInput!){productDelete(input:$i){userErrors{field message}}}""",
+        d = gql("""mutation($i:ProductDeleteInput!){productDelete(input:$i){deletedProductId userErrors{field message}}}""",
                 {"i": {"id": pid}})
-        errs = d["data"]["productDelete"]["userErrors"]
-        if errs: raise RuntimeError(f"productDelete: {errs}")
+        res = (d.get("data") or {}).get("productDelete") or {}
+        errs = res.get("userErrors") or []
+        # allerede slettet ('not found'/'does not exist') = idempotent OK ved resume
+        if errs and not any(("not" in str(e).lower() and ("found" in str(e).lower() or "exist" in str(e).lower()))
+                            for e in errs):
+            raise RuntimeError(f"productDelete: {errs}")
 
 # ---------- gruppe-processor ----------
 def backfill_existing(pid, existing_edges, target_axes, existing_opts, dry, log):
@@ -307,7 +319,9 @@ def main():
     sb = get_supabase_client()
     plans, scraped = load_sources()
     cfg = pricing.load_pricing_config(sb, vendor="vidaXL")
-    feed = load_feed() if not dry else defaultdict(lambda: (100.0, 5))
+    class _MockFeed(dict):
+        def get(self, k, d=None): return (100.0, 5)   # dry-run: .get() giver altid b2b
+    feed = load_feed() if not dry else _MockFeed()
     if dry: print("⚠ DRY-RUN: feed mocked (b2b=100), ingen mutationer sendes\n")
 
     # rækkefølge: fix_mismerge_rest først, så merges (mindste først = hurtig validérbar fremdrift)
