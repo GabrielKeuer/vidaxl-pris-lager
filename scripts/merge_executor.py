@@ -197,16 +197,27 @@ def danish_opts(sku, master, keyname=None):
             out[name] = _norm_val(v)
     return out
 
-def load_feed():
-    r = requests.get(OFFER, headers={"User-Agent": "Mozilla/5.0"}, timeout=300)
-    if r.status_code != 200:
-        sys.exit(f"❌ offer-feed {r.status_code} — eksekvering kræver frisk feed (pris/lager)")
+def _parse_offer_rows(reader):
     out = {}
-    for row in csv.DictReader(io.StringIO(r.text)):
+    for row in reader:
         s = (row.get("SKU") or "").strip().replace(".0", "")
         try: out[s] = (float(row.get("B2B price") or 0), int(float(row.get("Stock") or 0)))
         except Exception: pass
     return out
+
+def load_feed():
+    r = requests.get(OFFER, headers={"User-Agent": "Mozilla/5.0"}, timeout=300)
+    if r.status_code == 200:
+        return _parse_offer_rows(csv.DictReader(io.StringIO(r.text)))
+    # OFFER-feed blokeret (fx 403) → fald tilbage til hoved-feedet (ZIP), som har samme B2B price + Stock
+    fu = os.environ.get("FEED_URL")
+    if not fu:
+        sys.exit(f"❌ offer-feed {r.status_code} og ingen FEED_URL-fallback for pris/lager")
+    print(f"  ⚠ offer-feed {r.status_code} → falder tilbage til hoved-feed for pris/lager")
+    data = requests.get(fu, headers={"User-Agent": "Mozilla/5.0"}, timeout=300).content
+    z = zipfile.ZipFile(io.BytesIO(data))
+    with z.open(z.namelist()[0]) as f:
+        return _parse_offer_rows(csv.DictReader(io.TextIOWrapper(f, encoding="utf-8"), delimiter=","))
 
 # ---------- enrichment: billeder + beskrivelse + EAN + vægt (fra hoved-feedet) ----------
 # Merged varianter er ALTID 'ikke-første' → skal have samme variant-metafelter som normal-
