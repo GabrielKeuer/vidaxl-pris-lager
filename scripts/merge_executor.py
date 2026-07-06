@@ -352,14 +352,18 @@ def reorder_keeper_first(pid, keeper_skus, dry, log):
     vs = [(e["node"]["id"], (e["node"]["sku"] or "").strip()) for e in d["data"]["product"]["variants"]["edges"]]
     ks = set(keeper_skus)
     ordered = [v for v in vs if v[1] in ks] + [v for v in vs if v[1] not in ks]
-    if [v[0] for v in ordered] == [v[0] for v in vs]:
-        return   # allerede korrekt rækkefølge
-    pos = [{"id": vid, "position": i + 1} for i, (vid, _) in enumerate(ordered)]
-    for i in range(0, len(pos), 250):
-        gql("""mutation($pid:ID!,$pos:[ProductVariantPositionInput!]!){
-          productVariantsBulkReorder(productId:$pid,positions:$pos){userErrors{field message}}}""",
-            {"pid": pid, "pos": pos[i:i + 250]})
-    log("    ↕ keeper-variant(er) flyttet forrest")
+    if [v[0] for v in ordered] != [v[0] for v in vs]:
+        pos = [{"id": vid, "position": i + 1} for i, (vid, _) in enumerate(ordered)]
+        for i in range(0, len(pos), 250):
+            gql("""mutation($pid:ID!,$pos:[ProductVariantPositionInput!]!){
+              productVariantsBulkReorder(productId:$pid,positions:$pos){userErrors{field message}}}""",
+                {"pid": pid, "pos": pos[i:i + 250]})
+        log("    ↕ keeper-variant(er) flyttet forrest")
+    # 1. variant = sku-only (bruger produkt-niveau beskrivelse/billeder); fjern evt. arvede metafelter
+    if ordered:
+        gql("""mutation($m:[MetafieldIdentifierInput!]!){metafieldsDelete(metafields:$m){userErrors{message}}}""",
+            {"m": [{"ownerId": ordered[0][0], "namespace": "custom", "key": k}
+                   for k in ("produktinfo", "variantbilleder")]})
 
 def set_title(pid, title, dry, log):
     # opdatér BÅDE produkt-titel (H1) OG SEO-meta-titel (global.title_tag), så meta-titlen ikke
