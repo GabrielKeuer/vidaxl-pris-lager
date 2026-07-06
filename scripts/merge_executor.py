@@ -354,15 +354,42 @@ def set_title(pid, title, dry, log):
         errs = d["data"]["productUpdate"]["userErrors"]
         if errs: raise RuntimeError(f"productUpdate: {errs}")
 
+_REST = f"https://{STORE}/admin/api/2024-10"
+_RESTH = {"X-Shopify-Access-Token": TOK, "Content-Type": "application/json"}
+
+def _find_redirect(path):
+    r = requests.get(f"{_REST}/redirects.json?path={path}", headers=_RESTH, timeout=30)
+    for x in (r.json().get("redirects") or []):
+        if x["path"] == path:
+            return x
+    return None
+
+def del_self_redirect(path, dry, log):
+    """Fjern ENHVER redirect på keeperens egen path (aktivt produkt skal ikke redirecte) — ellers
+    afviser Shopify donor→keeper ('can't redirect to another redirect'). Target kan være fuld URL.
+    Rester fra tidligere redirect-oprydning (~70k self-redirects path→fuld-URL-af-samme-path)."""
+    if dry:
+        return
+    ex = _find_redirect(path)
+    if ex:
+        requests.delete(f"{_REST}/redirects/{ex['id']}.json", headers=_RESTH, timeout=30)
+        log(f"    🧹 fjernet redirect på keeper-path {path}")
+
 def create_redirect(frm, to, dry, log, sb):
+    # REST (write_content dækker det — GraphQL urlRedirectCreate kræver write_online_store_navigation
+    # som tokenet ikke har). Upsert: opdatér eksisterende self-redirect → keeper, ellers opret.
     log(f"    ↪ redirect {frm} → {to}")
     if not dry:
-        d = gql("""mutation($r:UrlRedirectInput!){urlRedirectCreate(urlRedirect:$r){userErrors{field message}}}""",
-                {"r": {"path": frm, "target": to}})
-        errs = (((d.get("data") or {}).get("urlRedirectCreate") or {}).get("userErrors")) or []
-        # 'already exists' = idempotent OK (redirect ligger fra tidligere kørsel)
-        if errs and not any("exist" in str(e).lower() or "taken" in str(e).lower() for e in errs):
-            raise RuntimeError(f"urlRedirectCreate: {errs}")
+        ex = _find_redirect(frm)
+        if ex:
+            if ex["target"] != to:
+                requests.put(f"{_REST}/redirects/{ex['id']}.json", headers=_RESTH,
+                             json={"redirect": {"id": ex["id"], "path": frm, "target": to}}, timeout=30)
+        else:
+            rr = requests.post(f"{_REST}/redirects.json", headers=_RESTH,
+                               json={"redirect": {"path": frm, "target": to}}, timeout=30)
+            if rr.status_code not in (200, 201):
+                raise RuntimeError(f"redirect POST {rr.status_code}: {rr.text[:200]}")
         try: sb.table("deleted_redirects").insert({"path": frm, "target": to, "source": "merge_executor"}).execute()
         except Exception: pass
 
@@ -492,6 +519,8 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
                                 (keeper.get("mediaCount") or {}).get("count", 0))
     if p.get("new_title") and p["title_changes"]:
         set_title(keeper["id"], p["new_title"], dry, log)
+    if p["product_deletes"]:
+        del_self_redirect(f"/products/{p['keeper_handle']}", dry, log)   # så donor→keeper ikke afvises
     for dd in p["product_deletes"]:
         create_redirect(f"/products/{dd['handle']}", f"/products/{p['keeper_handle']}", dry, log, sb)
         delete_product(dd["pid"], dd["handle"], dry, log)
