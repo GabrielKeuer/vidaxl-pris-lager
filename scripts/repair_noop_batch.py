@@ -15,15 +15,23 @@ def main():
     cache = json.load(open(SP + r"\plan_data_cache.json", encoding="utf-8"))
     prods, varz = cache["prods"], cache["vars"]
     h2pid = {pr["handle"]: pid for pid, pr in prods.items() if isinstance(pr, dict) and pr.get("handle")}
-    # CACHE-drevne akser pr. produkt (pre-batch sandhed) — kun akser IKKE i cachen er batch-tilføjede
+    # CACHE-drevet sandhed pr. produkt: {akse: sæt af værdier} (pre-batch). Batch-tilføjede akser =
+    # akser IKKE i cachen hvis værdier heller IKKE matcher en cache-akse der mangler live (= omdøbning).
     from collections import defaultdict
-    cache_axes = defaultdict(set)
+    cache_av = defaultdict(lambda: defaultdict(set))
     for s, vv in varz.items():
         if vv.get("pid"):
-            for a in (vv.get("opts") or {}):
-                cache_axes[vv["pid"]].add(a)
-    done = [r["group_key"] for r in ME.get_supabase_client().table("merge_exec_log").select("group_key").eq("status", "done").execute().data or []]
-    noop = [k for k in done if plans.get(k) and not plans[k]["variant_creates"] and not plans[k]["product_deletes"]
+            for a, val in (vv.get("opts") or {}).items():
+                if val:
+                    cache_av[vv["pid"]][a].add(val.lower())
+    # Rørte grupper udledes fra BATCH-LOGGEN (journalen er renset for no-op) — '▶ <key> [action]'
+    log_path = SP + r"\merge_batch1.log"
+    touched = set()
+    for line in open(log_path, encoding="utf-8", errors="ignore"):
+        m = re.match(r"▶ (\S+) \[", line.strip())
+        if m:
+            touched.add(m.group(1))
+    noop = [k for k in touched if plans.get(k) and not plans[k]["variant_creates"] and not plans[k]["product_deletes"]
             and plans[k]["action"] in ("merge", "fix_mismerge_rest")]
     print(f"{'LIVE' if live else 'DRY-RUN'}: {len(noop)} no-op keepers at reparere\n")
     t_fix = axis_fix = flagged = 0
@@ -35,8 +43,10 @@ def main():
         if not pr:
             continue
         pid = pr["id"]
-        cax = cache_axes.get(h2pid.get(h), set())
-        n_extra = len([o for o in pr["options"] if o["name"] != "Title"]) - len(cax)
+        cav = cache_av.get(h2pid.get(h), {})            # {cache_akse: sæt(lower-værdier)}
+        cax = set(cav)
+        live_names = {o["name"] for o in pr["options"] if o["name"] != "Title"}
+        n_extra = len(live_names) - len(cax)
         # 1) gendan titel — KUN hvis batchen ændrede INDHOLDET (droppede/ændrede ord), ikke ren casing
         # (batchens '100x40x40' er bedre end cachens '100X40X40' → rør ikke rene casing-diffs)
         if cache_title and pr["title"].strip().lower() != cache_title.strip().lower():
@@ -45,23 +55,20 @@ def main():
             if live:
                 ME.gql("mutation($i:ProductInput!){productUpdate(input:$i){userErrors{message}}}",
                        {"i": {"id": pid, "title": cache_title, "seo": {"title": cache_title[:70]}}})
-        # 2) fjern BATCH-TILFØJEDE duplikat-akser: (a) navn IKKE i cachens akser (batch tilføjede den)
-        #    OG (b) værdisæt er delmængde af en anden akse (ægte duplikat, ikke en ren omdøbning).
-        #    → beskytter både ægte cache-akser OG rene omdøbninger; fjerner kun den redundante dublet.
+        # 2) fjern BATCH-TILFØJEDE akser (root-cause: gendan til cachens akse-sæt). En live-akse fjernes
+        #    hvis navn IKKE i cache OG dens værdier IKKE matcher en cache-akse der mangler live (omdøbning).
+        #    → beholder ægte cache-akser + rene omdøbninger; fjerner ægte batch-tilføjede (dubletter OG nye).
         bogus = []
         if n_extra > 0 and cax:
-            opts = [{"o": o, "vals": {v["name"] for v in o["optionValues"] if v["name"] != "—"}}
-                    for o in pr["options"] if o["name"] != "Title"]
-            for a in opts:
-                if a["o"]["name"] in cax:
-                    continue                       # ægte cache-akse → aldrig fjern
-                if not a["vals"]:
-                    bogus.append(a["o"]); continue  # kun '—' = tom bogus akse
-                for b in opts:
-                    if a is b or not b["vals"]:
-                        continue
-                    if a["vals"] <= b["vals"]:      # delmængde af anden akse = duplikat
-                        bogus.append(a["o"]); break
+            absent = {a: vals for a, vals in cav.items() if a not in live_names}   # omdøbt-væk cache-akser
+            for o in pr["options"]:
+                if o["name"] == "Title" or o["name"] in cax:
+                    continue
+                ov = {v["name"].lower() for v in o["optionValues"] if v["name"] != "—"}
+                # omdøbning? værdier matcher en fraværende cache-akse (kraftig overlap)
+                is_rename = any(ov & vals and len(ov & vals) >= 0.5 * len(ov) for vals in absent.values()) if ov else False
+                if not is_rename:
+                    bogus.append(o)
             bogus = bogus[:max(0, n_extra)]
         for o in bogus:
             axis_fix += 1

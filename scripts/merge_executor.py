@@ -627,8 +627,10 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
                        feed, cfg, enrich or {}, p["keeper_handle"], dry, log)
     n_created = create_variants(keeper["id"], rows, dry, log, location_id,
                                 (keeper.get("mediaCount") or {}).get("count", 0))
-    reorder_keeper_first(keeper["id"], keeper_skus, dry, log)
+    # RÆKKEFØLGE: option-reorder FØRST (Shopify re-sorterer varianter efter option-rækkefølge),
+    # DEREFTER keeper-først (så den ikke bliver overskrevet af option-reorderens re-sortering).
     reorder_options_priority(keeper["id"], dry, log)   # Farve = option 1 (variant-thumbnail-swatch)
+    reorder_keeper_first(keeper["id"], keeper_skus, dry, log)
     if p.get("new_title") and p["title_changes"]:
         set_title(keeper["id"], p["new_title"], dry, log)
     if p["product_deletes"]:
