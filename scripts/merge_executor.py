@@ -343,6 +343,24 @@ def upload_media(pid, rows, existing_media, dry, log):
             out[u] = m["id"]
     return out
 
+def reorder_keeper_first(pid, keeper_skus, dry, log):
+    """Sørg for at keeperens EGNE varianter står FØRST (bruger produkt-niveau beskrivelse/billeder;
+    har kun custom.sku-metafelt). Ellers sorterer Shopify efter option-værdi og de kan havne sidst."""
+    if dry:
+        return
+    d = gql("""query($id:ID!){product(id:$id){variants(first:250){edges{node{id sku}}}}}""", {"id": pid})
+    vs = [(e["node"]["id"], (e["node"]["sku"] or "").strip()) for e in d["data"]["product"]["variants"]["edges"]]
+    ks = set(keeper_skus)
+    ordered = [v for v in vs if v[1] in ks] + [v for v in vs if v[1] not in ks]
+    if [v[0] for v in ordered] == [v[0] for v in vs]:
+        return   # allerede korrekt rækkefølge
+    pos = [{"id": vid, "position": i + 1} for i, (vid, _) in enumerate(ordered)]
+    for i in range(0, len(pos), 250):
+        gql("""mutation($pid:ID!,$pos:[ProductVariantPositionInput!]!){
+          productVariantsBulkReorder(productId:$pid,positions:$pos){userErrors{field message}}}""",
+            {"pid": pid, "pos": pos[i:i + 250]})
+    log("    ↕ keeper-variant(er) flyttet forrest")
+
 def set_title(pid, title, dry, log):
     # opdatér BÅDE produkt-titel (H1) OG SEO-meta-titel (global.title_tag), så meta-titlen ikke
     # bliver stående på den gamle variant-specifikke titel. Ingen pris i titlen (JSON-LD viser live pris).
@@ -517,6 +535,7 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
     backfill_existing(keeper["id"], keeper["variants"]["edges"], target_axes, existing, dry, log)
     n_created = create_variants(keeper["id"], rows, dry, log, location_id,
                                 (keeper.get("mediaCount") or {}).get("count", 0))
+    reorder_keeper_first(keeper["id"], keeper_skus, dry, log)
     if p.get("new_title") and p["title_changes"]:
         set_title(keeper["id"], p["new_title"], dry, log)
     if p["product_deletes"]:
