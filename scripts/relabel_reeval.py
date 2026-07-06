@@ -24,8 +24,8 @@ def main():
     for p in plans:
         if p["action"] not in ("merge", "fix_mismerge_rest"):
             continue
-        if p.get("dup_sku_quarantine") or (p.get("unresolved_collisions") == [["title_review"]]):
-            continue  # separate beslutninger — rør ikke
+        if p.get("unresolved_collisions") == [["title_review"]]:
+            continue  # titel-review = separat beslutning — rør ikke
         added = [m["sku"] for m in p["variant_creates"]]
         if not added:
             continue
@@ -46,25 +46,40 @@ def main():
             for k, v in ME.danish_opts(s, master, km).items():
                 if v: vals[k].add(v)
         real_axes = sorted(k for k, vv in vals.items() if len(vv) > 1)
-        # kollision på tilføjede (efter relabel)
+        # drop glitch-akse(r) hvis >3 (domineret + redundant) → re-filtrér gemte options
+        if len(real_axes) > 3:
+            allopts = [ME.danish_opts(s, master, km) for s in set(added + kskus)]
+            reduced, dropped = ME.reduce_to_3_axes(allopts, real_axes)
+            if dropped:
+                real_axes = sorted(reduced)
+                for m in p["variant_creates"]:
+                    m["option_values"] = {k: v for k, v in (m["option_values"] or {}).items() if k in real_axes}
+        # kollision på tilføjede (efter relabel + evt. akse-drop)
         sig = Counter(tuple(sorted((m["option_values"] or {}).items())) for m in p["variant_creates"])
         coll = sum(v - 1 for v in sig.values() if v > 1)
-        was_q = bool(p.get("unresolved_collisions"))
-        if coll == 0 and len(real_axes) <= 3:
-            if was_q:
-                p.pop("unresolved_collisions", None); p.pop("needs_review", None); resolved += 1
-            p["target_axes"] = real_axes
-        elif len(real_axes) > 3:
+        was_q = bool(p.get("unresolved_collisions") or p.get("dup_sku_quarantine"))
+        if len(real_axes) > 3:
             still_over += 1
             p["unresolved_collisions"] = [["over_3_axes"]]
             p["needs_review"] = f">3 akser ({real_axes})"
-        elif coll > 0:
+            p.pop("dup_sku_quarantine", None)
+            continue
+        if coll > 0:
+            # disambiguér (som eksekutoren): to varianter m. samme kombo → suffiks på sidste akse
+            seen = set(); axis = real_axes[-1] if real_axes else None
+            for m in p["variant_creates"]:
+                ov = m["option_values"] or {}
+                if frozenset(ov.items()) in seen and axis:
+                    base = ov.get(axis, "—"); nn = 2
+                    while frozenset({**ov, axis: f"{base} {nn}"}.items()) in seen:
+                        nn += 1
+                    ov[axis] = f"{base} {nn}"; m["option_values"] = ov
+                seen.add(frozenset((m["option_values"] or {}).items()))
             still_coll += 1
-            if not was_q:
-                sig2 = defaultdict(list)
-                for m in p["variant_creates"]:
-                    sig2[tuple(sorted((m["option_values"] or {}).items()))].append(m["sku"])
-                p["unresolved_collisions"] = [v for v in sig2.values() if len(v) > 1]
+        if was_q:
+            p.pop("unresolved_collisions", None); p.pop("needs_review", None)
+            p.pop("dup_sku_quarantine", None); resolved += 1
+        p["target_axes"] = real_axes
 
     print(f"relabeled (options rettet): {relabeled}")
     print(f"OPHÆVET karantæne (falsk >3/kollision): {resolved}")

@@ -15,7 +15,7 @@ Design:
   - Reviews: donor-handles rapporteres FØR sletning (app-migrering afklares separat).
 """
 import argparse, csv, io, json, os, re, sys, time, urllib.request, zipfile
-from collections import defaultdict
+from collections import defaultdict, Counter
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.stdout.reconfigure(encoding="utf-8")
 # Lokal .env.local hvis den findes (dev); ellers env fra CI-secrets (GitHub Actions)
@@ -141,6 +141,28 @@ def build_keyname(skus, master):
             nm = f"{base} {c}"; c += 1
         km[k] = nm
     return km
+
+def reduce_to_3_axes(opts_list, axes):
+    """Fjern GLITCH-akse(r) hvis >3 akser: en akse droppes kun hvis den er (a) domineret af ÉN
+    værdi (≥60% af varianter — glitch-signal, fx Antal='1' på 24/27) OG (b) redundant (fjernelse
+    skaber INGEN kollision — varianterne er stadig distinkte). Ægte akser (sengegavle/rumdeler hvor
+    fjernelse ville kollidere) røres ikke. Returnerer (reducerede_akser, [droppede])."""
+    axes = list(axes); dropped = []
+    n = len(opts_list) or 1
+    while len(axes) > 3:
+        best = None
+        for a in axes:
+            rest = [x for x in axes if x != a]
+            combos = [tuple(sorted((k, v) for k, v in o.items() if k in rest)) for o in opts_list]
+            if len(combos) != len(set(combos)):
+                continue  # fjernelse skaber kollision → ægte akse, ikke redundant
+            dom = max(Counter(o.get(a) for o in opts_list).values()) / n
+            if dom >= 0.6 and (best is None or dom > best[0]):
+                best = (dom, a, rest)
+        if not best:
+            break
+        dropped.append(best[1]); axes = best[2]
+    return axes, dropped
 
 def danish_opts(sku, master, keyname=None):
     """SKUs item_variant → {dansk_akse: værdi}. keyname (fra build_keyname) giver konsistent
@@ -435,19 +457,31 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
             if v: axisvals[k].add(v)
     target_axes = sorted({k for k, vv in axisvals.items() if len(vv) > 1}
                          | {o["name"] for o in keeper["options"] if o["name"] != "Title"})
-    for r in rows:   # enkelt-værdi-attributter hører til i titlen, ikke som akse
+    # drop glitch-akse(r) hvis >3 (domineret + redundant); ægte 4-akser røres ikke
+    if len(target_axes) > 3:
+        allopts = list(existing.values()) + [r["options"] for r in rows]
+        target_axes, dropped = reduce_to_3_axes(allopts, target_axes)
+        if dropped:
+            log(f"    ✂ droppede glitch-akse(r) {dropped} → {len(target_axes)} akser")
+    for r in rows:   # enkelt-værdi/droppede-akser hører til i titlen, ikke som akse
         r["options"] = {k: v for k, v in r["options"].items() if k in target_axes}
-
-    # sikkerhed: >3 akser kan ikke lade sig gøre i Shopify → spring over (skulle være karantænet)
+    # sikkerhed: stadig >3 akser → ægte, kan ikke i Shopify → spring over (skulle være karantænet)
     if len(target_axes) > 3:
         log(f"    ⏭ >3 akser {target_axes} — springes over (manuel gennemgang)")
         return 0, 0
-    # combo-dedup: spring en ny variant over hvis dens option-kombo allerede findes på keeper
-    existing_combos = {frozenset(v.items()) for v in existing.values()}
-    before = len(rows)
-    rows = [r for r in rows if frozenset(r["options"].items()) not in existing_combos]
-    if len(rows) < before:
-        log(f"    ↷ {before - len(rows)} varianter har kombo der allerede findes på keeper — springes over")
+    # combo-disambiguering: to varianter med SAMME option-kombo kan ikke begge være i Shopify.
+    # I stedet for at droppe (datatab) omdøbes den 2./3. med suffiks ' 2',' 3'... på sidste akse,
+    # så BEGGE overlever (fx to reelt forskellige varianter vidaXL ikke kan skelne via item_variant).
+    seen = {frozenset((v or {}).items()) for v in existing.values()}
+    axis = target_axes[-1] if target_axes else None
+    for r in rows:
+        if frozenset(r["options"].items()) in seen and axis:
+            base = r["options"].get(axis, "—"); n = 2
+            while frozenset({**r["options"], axis: f"{base} {n}"}.items()) in seen:
+                n += 1
+            r["options"][axis] = f"{base} {n}"
+            log(f"    ↔ kombo-dublet omdøbt: {axis} → '{r['options'][axis]}'")
+        seen.add(frozenset(r["options"].items()))
 
     # 3) trin: opret akser → backfill eksisterende varianter → opret nye varianter
     ensure_options(keeper["id"], target_axes, keeper["options"], dry, log)

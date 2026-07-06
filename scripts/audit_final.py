@@ -43,11 +43,21 @@ for p in EX:
     if p["action"] not in ("merge", "fix_mismerge_rest"):
         continue
     tl = title.lower()
+    # ord der er FÆLLES for alle en akses værdier er delt identitet (fx alle Model = '5-personers …')
+    # → hører til i titlen; kun DISTINGVERENDE akse-værdier må ikke stå i den delte titel
+    axis_vals = defaultdict(list)
+    for m in p["variant_creates"]:
+        for k, v in (m["option_values"] or {}).items():
+            if v: axis_vals[k].append(str(v).lower())
+    common = {k: set.intersection(*[set(v.split()) for v in vv]) if vv else set()
+              for k, vv in axis_vals.items()}
     for m in p["variant_creates"]:
         for k, v in (m["option_values"] or {}).items():
             if k.lower() == "farve" or not v:
                 continue
             v0 = str(v).split()[0].lower()
+            if v0 in common.get(k, set()):
+                continue  # fælles prefix = delt identitet, ok i titel
             if len(v0) > 3 and re.search(r"\b" + re.escape(v0) + r"\b", tl) and not v0.isdigit():
                 fail["titel_har_aksevaerdi"].append(f"{key}: '{title}' ⊃ {k}={v}")
                 break
