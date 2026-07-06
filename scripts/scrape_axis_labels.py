@@ -63,6 +63,11 @@ def main():
                 print(f"  …{n[0]}/{len(todo)}")
     with ThreadPoolExecutor(max_workers=WORKERS) as ex:
         list(ex.map(work, todo))
+    # _binary-aliaser: item_variant normaliserer '_binary'-nøgler til base → labelen skal også være der
+    for d in done.values():
+        for k in list(d):
+            if k.endswith("_binary"):
+                d.setdefault(k[:-len("_binary")], d[k])
     json.dump(done, open(OUT, "w", encoding="utf-8"), ensure_ascii=False)
     cov = sum(1 for v in done.values() for k in v if k != "numberOfNumber")
     va3 = sum(1 for v in done.values() if "variationAttribute3" in v)
