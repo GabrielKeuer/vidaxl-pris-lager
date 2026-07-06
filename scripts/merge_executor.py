@@ -608,8 +608,13 @@ def main():
     limit = args.canary if args.canary else (len(todo) if args.group else (args.dry_groups if dry else len(todo)))
     spent = 0
     for p in todo[:limit] if not args.live or args.canary else todo:
-        if spent + len(p["variant_creates"]) > args.budget and not dry:
-            print(f"⏸ dagsbudget nået ({spent}/{args.budget})"); break
+        # Budget tjekkes KUN ved gruppe-grænse (grupper er ATOMISKE — process_group kører hele
+        # gruppen eller intet, aldrig halvt). spent>0-guard: en enkelt gruppe der ALENE overskrider
+        # budgettet kører altid (kan ikke deles), ellers ville den aldrig blive kørt. Journalen
+        # (merge_exec_log status=done) sikrer at næste dags kørsel fortsætter hvor vi slap.
+        if not dry and spent > 0 and spent + len(p["variant_creates"]) > args.budget:
+            print(f"⏸ dagsbudget nået ({spent}/{args.budget}) — stopper ved gruppe-grænse, genoptager i morgen via journal")
+            break
         try:
             if not dry:
                 sb.table("merge_exec_log").upsert({"group_key": p["key"], "action": p["action"],
