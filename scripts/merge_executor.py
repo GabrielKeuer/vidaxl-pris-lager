@@ -42,15 +42,23 @@ OFFER = ("https://feed.vidaxl.io/api/v1/feeds/download/"
          "f05d7105-88c0-45a4-a3a5-f1b48ba55d2a/DK/vidaXL_dk_dropshipping_offer.csv")
 
 def gql(q, v=None):
-    for a in range(4):
-        r = requests.post(GQL, json={"query": q, "variables": v or {}},
-                          headers={"X-Shopify-Access-Token": TOK}, timeout=(10, 120))
-        d = r.json()
+    last = None
+    for a in range(5):
+        try:
+            r = requests.post(GQL, json={"query": q, "variables": v or {}},
+                              headers={"X-Shopify-Access-Token": TOK}, timeout=(10, 120))
+        except requests.exceptions.RequestException as e:
+            last = e; time.sleep(2 ** a); continue   # transient netværk (timeout/connection) → retry
+        try:
+            d = r.json()
+        except ValueError as e:                       # ikke-JSON (fx 502/503 HTML) → retry
+            last = e; time.sleep(2 ** a); continue
         if "errors" in d and any("THROTTLED" in str(e) for e in d["errors"]):
             time.sleep(2 ** a); continue
         if d.get("errors"):   # top-level GraphQL-fejl (fx manglende scope) = HÅRD fejl, aldrig slug
             raise RuntimeError(f"GraphQL-fejl: {d['errors']}")
         return d
+    raise RuntimeError(f"gql opgav efter 5 forsøg (transient): {last}")
     return d
 
 def load_sources():
@@ -136,11 +144,22 @@ def build_keyname(skus, master):
         for k, v in (OPTS.get(str(s).strip(), {}) or {}).items():
             if v: vals[k].append(v)
     km = {}
-    for k in sorted(vals):
+    used = {}   # akse-navn → nøgle der ejer det
+    ndist = lambda k: len({x for x in vals[k] if x and x != "—"})
+    # flest distinkte (ikke-pladsholder) værdier først → den "primære" nøgle vinder navnet
+    for k in sorted(vals, key=lambda k: (-ndist(k), k)):
         nm = lab.get(k) or ("Farve" if k == "color" else _axis_name_multi(vals[k]))
-        base, c = nm, 2
-        while nm in km.values():
-            nm = f"{base} {c}"; c += 1
+        if nm in used:
+            ov = {x for x in vals[k] if x and x != "—"}
+            pv = {x for x in vals[used[nm]] if x and x != "—"}
+            # samme akse-navn: reelt SAMME attribut (kraftig værdi-overlap / triviel) = vidaXL-dublet
+            # → drop nøglen (undgå bogus 'X 2'-akse). Kun ægte forskellige værdisæt beholder ' 2'.
+            if not ov or (ov & pv and len(ov & pv) >= 0.5 * len(ov)):
+                continue
+            base, c = nm, 2
+            while nm in used:
+                nm = f"{base} {c}"; c += 1
+        used[nm] = k
         km[k] = nm
     return km
 
@@ -558,23 +577,49 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
             log(f"    ✂ droppede glitch-akse(r) {dropped} → {len(target_axes)} akser")
     for r in rows:   # enkelt-værdi/droppede-akser hører til i titlen, ikke som akse
         r["options"] = {k: v for k, v in r["options"].items() if k in target_axes}
+    # BOGUS DUBLET-AKSE: build_keyname laver 'X 2' når to item_variant-nøgler får samme navn (vidaXL
+    # lagrer fx størrelsen redundant). Det må ALDRIG blive en rigtig akse live → spring over til manuel
+    # gennemgang. (Ramte no-op keepers i batch 1 med 'Størrelse 2'/'Model 2'.)
+    if any(re.search(r" \d+$", a) for a in target_axes):
+        log(f"    ⏭ bogus dublet-akse i {target_axes} — springes over (manuel gennemgang)")
+        return 0, 0
     # sikkerhed: stadig >3 akser → ægte, kan ikke i Shopify → spring over (skulle være karantænet)
     if len(target_axes) > 3:
         log(f"    ⏭ >3 akser {target_axes} — springes over (manuel gennemgang)")
         return 0, 0
-    # combo-disambiguering: to varianter med SAMME option-kombo kan ikke begge være i Shopify.
-    # I stedet for at droppe (datatab) omdøbes den 2./3. med suffiks ' 2',' 3'... på sidste akse,
-    # så BEGGE overlever (fx to reelt forskellige varianter vidaXL ikke kan skelne via item_variant).
-    seen = {frozenset((v or {}).items()) for v in existing.values()}
+    # keeper kan have LEGACY død-option (fx 'Model' m. 1 værdi) der optager en af Shopifys 3 slots
+    # men ikke er i target_axes (reduce droppede den). At tilføje en ny akse ville give 4 options →
+    # afvises. Vi kan ikke fjerne en live-option nemt → spring over til manuel gennemgang.
+    keeper_live_opts = {o["name"] for o in keeper["options"] if o["name"] != "Title"}
+    if len(set(target_axes) | keeper_live_opts) > 3:
+        log(f"    ⏭ keeper-live-options {sorted(keeper_live_opts)} + target {target_axes} > 3 slots "
+            f"(legacy død-option) — springes over (manuel gennemgang)")
+        return 0, 0
+    # combo-kollisioner tjekkes KUN på target_axes (det Shopify ser), ikke keeperens fulde legacy-dict.
+    def _combo(ov):
+        return frozenset({a: (ov.get(a) or "") for a in target_axes}.items())
+    # KOLLISION blandt keeperens EKSISTERENDE varianter: reduce kan have droppet en akse der adskilte
+    # dem → de bliver identiske under target_axes → reconcile ville fejle ('variant already exists').
+    # Eksisterende varianter kan ikke sikkert omdøbes (ægte identitet) → spring over til manuel gennemgang.
+    ex_seen = {}
+    for s, ov in existing.items():
+        c = _combo(ov)
+        if c in ex_seen:
+            log(f"    ⏭ keeper-varianter kolliderer under {target_axes} ({s} vs {ex_seen[c]}) — springes over (manuel gennemgang)")
+            return 0, 0
+        ex_seen[c] = s
+    # combo-disambiguering af TILFØJEDE varianter: to med samme kombo (også mod eksisterende) kan ikke
+    # begge være i Shopify. Nye varianter omdøbes m. suffiks ' 2',' 3'... på sidste akse (datatab undgås).
+    seen = set(ex_seen)
     axis = target_axes[-1] if target_axes else None
     for r in rows:
-        if frozenset(r["options"].items()) in seen and axis:
+        if _combo(r["options"]) in seen and axis:
             base = r["options"].get(axis, "—"); n = 2
-            while frozenset({**r["options"], axis: f"{base} {n}"}.items()) in seen:
+            while _combo({**r["options"], axis: f"{base} {n}"}) in seen:
                 n += 1
             r["options"][axis] = f"{base} {n}"
             log(f"    ↔ kombo-dublet omdøbt: {axis} → '{r['options'][axis]}'")
-        seen.add(frozenset(r["options"].items()))
+        seen.add(_combo(r["options"]))
 
     # 3) trin: opret akser → reconcile keeperens eksisterende varianter (kanonisk) → opret nye
     ensure_options(keeper["id"], target_axes, keeper["options"], dry, log)
@@ -624,7 +669,8 @@ def main():
     # rækkefølge: fix_mismerge_rest først, så merges (mindste først = hurtig validérbar fremdrift)
     done = {r["group_key"] for r in (sb.table("merge_exec_log").select("group_key").eq("status", "done").execute().data or [])}
     todo = [p for p in plans if p["action"] in ("fix_mismerge_rest", "merge") and p["key"] not in done
-            and not p.get("unresolved_collisions") and not p.get("dup_sku_quarantine")]
+            and not p.get("unresolved_collisions") and not p.get("dup_sku_quarantine")
+            and (p["variant_creates"] or p["product_deletes"])]   # NO-OP grupper (intet at merge) røres ALDRIG
     todo.sort(key=lambda p: (p["action"] != "fix_mismerge_rest", len(p["variant_creates"])))
     if args.group:
         todo = [p for p in todo if args.group in (p["keeper_handle"], p["key"])]
