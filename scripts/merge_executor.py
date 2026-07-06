@@ -48,6 +48,8 @@ def gql(q, v=None):
         d = r.json()
         if "errors" in d and any("THROTTLED" in str(e) for e in d["errors"]):
             time.sleep(2 ** a); continue
+        if d.get("errors"):   # top-level GraphQL-fejl (fx manglende scope) = HÅRD fejl, aldrig slug
+            raise RuntimeError(f"GraphQL-fejl: {d['errors']}")
         return d
     return d
 
@@ -293,7 +295,7 @@ def create_variants(pid, rows, dry, log, location_id=None, existing_media=0):
         log(f"    + {len(chunk)} varianter (bulkCreate)")
         if not dry:
             d = gql("""mutation($pid:ID!,$v:[ProductVariantsBulkInput!]!){
-                productVariantsBulkCreate(productId:$pid,variants:$v,strategy:REMOVE_STANDALONE_VARIANT){
+                productVariantsBulkCreate(productId:$pid,variants:$v){
                 userErrors{field message} productVariants{id inventoryItem{id}}}}""", {"pid": pid, "v": vinputs})
             res = d["data"]["productVariantsBulkCreate"]
             if res["userErrors"]: raise RuntimeError(f"bulkCreate: {res['userErrors']}")
@@ -501,6 +503,7 @@ def main():
     ap.add_argument("--canary", type=int, default=0)
     ap.add_argument("--budget", type=int, default=1000)
     ap.add_argument("--dry-groups", type=int, default=3)
+    ap.add_argument("--group", default="", help="kør KUN denne gruppe (keeper-handle eller key)")
     args = ap.parse_args()
     dry = not args.live
     sb = get_supabase_client()
@@ -527,7 +530,11 @@ def main():
     todo = [p for p in plans if p["action"] in ("fix_mismerge_rest", "merge") and p["key"] not in done
             and not p.get("unresolved_collisions") and not p.get("dup_sku_quarantine")]
     todo.sort(key=lambda p: (p["action"] != "fix_mismerge_rest", len(p["variant_creates"])))
-    limit = args.canary if args.canary else (args.dry_groups if dry else len(todo))
+    if args.group:
+        todo = [p for p in todo if args.group in (p["keeper_handle"], p["key"])]
+        if not todo:
+            sys.exit(f"❌ gruppe '{args.group}' ikke fundet i eksekverbare (måske done/karantæne)")
+    limit = args.canary if args.canary else (len(todo) if args.group else (args.dry_groups if dry else len(todo)))
     spent = 0
     for p in todo[:limit] if not args.live or args.canary else todo:
         if spent + len(p["variant_creates"]) > args.budget and not dry:
@@ -540,13 +547,14 @@ def main():
             nc, nd = process_group(p, scraped, feed, cfg, sb, dry, enrich, location_id)
             spent += nc
             if not dry:
-                sb.table("merge_exec_log").upsert({"group_key": p["key"], "status": "done",
-                    "n_variants_created": nc, "donors_deleted": nd,
+                sb.table("merge_exec_log").upsert({"group_key": p["key"], "action": p["action"], "status": "done",
+                    "keeper_pid": p["keeper"], "n_variants_created": nc, "donors_deleted": nd,
                     "finished_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}).execute()
         except Exception as e:
             print(f"  ❌ {p['key']}: {e}")
             if not dry:
-                sb.table("merge_exec_log").upsert({"group_key": p["key"], "status": "failed", "error": str(e)[:400]}).execute()
+                sb.table("merge_exec_log").upsert({"group_key": p["key"], "action": p["action"],
+                    "status": "failed", "keeper_pid": p["keeper"], "error": str(e)[:400]}).execute()
     print(f"\n{'DRY-RUN' if dry else 'LIVE'} slut. variant-creates: {spent}")
 
 if __name__ == "__main__":
