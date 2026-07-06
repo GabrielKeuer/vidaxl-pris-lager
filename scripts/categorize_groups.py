@@ -52,8 +52,10 @@ def main():
         # legacy: keeper-options ikke i target. Døde (1 værdi) fjernes; multi-værdi = konflikt → flag
         kv = kopt_vals.get(pid, {})
         legacy_live = [a for a, vals in kv.items() if a not in target and len(vals) > 1]
-        if legacy_live:
-            cat["legacy_konflikt (multi-værdi)"] += 1; examples["legacy_konflikt (multi-værdi)"].append((p["keeper_handle"], legacy_live, target)); continue
+        # legacy der passer i 3 slots = HÅNDTERBAR (rename via reconcile + fjern gammel akse) → REN.
+        # legacy der overstiger 3 = ægte 4-akser → split.
+        if legacy_live and len(set(target) | set(legacy_live)) > 3:
+            cat["ægte_4_akser (split)"] += 1; examples["ægte_4_akser (split)"].append((p["keeper_handle"], legacy_live, target)); continue
         # coverage: alle varianter har alle target-akser?
         if any(not opts[s].get(a) for a in target for s in allsk):
             cat["ægte_inkonsistent"] += 1; examples["ægte_inkonsistent"].append(p["keeper_handle"]); continue

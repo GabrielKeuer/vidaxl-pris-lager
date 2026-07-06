@@ -286,6 +286,27 @@ def remove_dead_legacy(pid, dead_opts, variant_edges, dry, log):
             raise RuntimeError(f"fjern død legacy-option {o['name']}: {errs}")
         log(f"    🧹 fjernet død legacy-option '{o['name']}' (ikke i autoritativ struktur)")
 
+def remove_legacy_by_name(pid, names, dry, log):
+    """Fjern options ved NAVN (multi-værdi legacy-akser erstattet af autoritativ struktur). Varianterne
+    er nu keyet på target-akserne (reconcile kørt), så det er sikkert at kollapse+slette den gamle akse."""
+    if dry or not names:
+        return
+    d = gql("""query($id:ID!){product(id:$id){options{id name} variants(first:250){edges{node{id}}}}}""", {"id": pid})
+    prod = (d.get("data") or {}).get("product") or {}
+    vids = [e["node"]["id"] for e in prod.get("variants", {}).get("edges", [])]
+    for o in prod.get("options", []):
+        if o["name"] in names:
+            ups = [{"id": vid, "optionValues": [{"optionName": o["name"], "name": "Standard"}]} for vid in vids]
+            for i in range(0, len(ups), 100):
+                gql("""mutation($pid:ID!,$v:[ProductVariantsBulkInput!]!){
+                  productVariantsBulkUpdate(productId:$pid,variants:$v){userErrors{message}}}""", {"pid": pid, "v": ups[i:i + 100]})
+            r = gql("""mutation($pid:ID!,$o:[ID!]!){
+              productOptionsDelete(productId:$pid,options:$o,strategy:DEFAULT){userErrors{message}}}""", {"pid": pid, "o": [o["id"]]})
+            errs = (((r.get("data") or {}).get("productOptionsDelete") or {}).get("userErrors")) or []
+            if errs:
+                raise RuntimeError(f"fjern legacy-akse {o['name']}: {errs}")
+            log(f"    🧹 fjernet legacy-akse '{o['name']}' (erstattet af autoritativ struktur)")
+
 def ensure_options(pid, target_axes, existing_options, dry, log):
     """Sørg for at keeper har præcis target-akserne (productOptionsCreate for manglende)."""
     have = {o["name"] for o in existing_options}
@@ -618,9 +639,11 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
     legacy = [o for o in keeper["options"] if o["name"] != "Title" and o["name"] not in target_axes]
     legacy_dead = [o for o in legacy if len(o.get("optionValues") or []) <= 1]
     legacy_live = [o for o in legacy if len(o.get("optionValues") or []) > 1]
-    if legacy_live:
-        log(f"    ⏭ multi-værdi legacy-akse {[o['name'] for o in legacy_live]} ikke i autoritativ struktur "
-            f"{target_axes} — springes over (rename/rebuild)")
+    # multi-værdi legacy (gammelt akse-navn ≠ scrapet): kan HÅNDTERES hvis den + target passer i 3 slots
+    # (tilføj autoritativ akse, reconcile varianter til den, fjern så den gamle akse). Ellers = ægte 4-akser.
+    if len(set(target_axes) | {o["name"] for o in legacy_live}) > 3:
+        log(f"    ⏭ ægte >3 akser (target {target_axes} + legacy {[o['name'] for o in legacy_live]}) — "
+            f"springes over (split nødvendig)")
         return 0, 0
     # AKSE-DÆKNING: ALLE varianter (eksisterende + tilføjede) skal have værdi for ALLE target-akser.
     # Ellers har vidaXL inkonsistent variant-struktur (nogle varianter mangler en akse) → Shopify afviser
@@ -661,6 +684,9 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
                        feed, cfg, enrich or {}, p["keeper_handle"], dry, log)
     n_created = create_variants(keeper["id"], rows, dry, log, location_id,
                                 (keeper.get("mediaCount") or {}).get("count", 0))
+    # fjern multi-værdi legacy-akser NU (varianter er keyet på target efter reconcile+create)
+    if legacy_live:
+        remove_legacy_by_name(keeper["id"], [o["name"] for o in legacy_live], dry, log)
     # RÆKKEFØLGE: option-reorder FØRST (Shopify re-sorterer varianter efter option-rækkefølge),
     # DEREFTER keeper-først (så den ikke bliver overskrevet af option-reorderens re-sortering).
     reorder_options_priority(keeper["id"], dry, log)   # Farve = option 1 (variant-thumbnail-swatch)
