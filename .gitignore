@@ -1,0 +1,7 @@
+*.pyc
+__pycache__/
+output/*.log
+output/*_links.json
+output/judge_ckpt.jsonl
+output/sku_variants_incomplete.jsonl
+output/title_batch.json

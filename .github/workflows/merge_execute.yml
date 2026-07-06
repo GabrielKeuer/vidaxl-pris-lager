@@ -1,0 +1,65 @@
+name: Merge Executor (katalog-konsolidering)
+
+# KATALOG-MERGE: konsoliderer dublet/variant-produkter over ~40 dage (~1000 varianter/dag).
+# SIKKERHED: den daglige (schedule) kørsel gør INTET live før repo-variablen
+#   MERGE_EXECUTE_LIVE == 'true'. Indtil da er den et no-op. Manuel kørsel (workflow_dispatch)
+#   defaulter til dry-run. Journal + genoptagelse via Supabase merge_exec_log (idempotent).
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run | canary | live'
+        required: true
+        default: 'dry-run'
+      budget:
+        description: 'Max variant-creates (live/schedule)'
+        required: false
+        default: '1000'
+      canary:
+        description: 'Antal grupper i canary-mode'
+        required: false
+        default: '10'
+  schedule:
+    - cron: '0 4 * * *'   # dagligt 04:00 UTC — no-op medmindre MERGE_EXECUTE_LIVE=true
+
+concurrency:
+  group: merge-executor
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install requests pandas beautifulsoup4 supabase
+      - name: Kør merge-executor
+        env:
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          set -e
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            if [ "${{ vars.MERGE_EXECUTE_LIVE }}" != "true" ]; then
+              echo "⏸ MERGE_EXECUTE_LIVE er ikke 'true' → springer over (ingen live-kørsel)."
+              exit 0
+            fi
+            echo "▶ Daglig LIVE-batch (budget ${{ vars.MERGE_DAILY_BUDGET || '1000' }})"
+            python scripts/merge_executor.py --live --budget "${{ vars.MERGE_DAILY_BUDGET || '1000' }}"
+          else
+            MODE="${{ github.event.inputs.mode }}"
+            if [ "$MODE" = "live" ]; then
+              python scripts/merge_executor.py --live --budget "${{ github.event.inputs.budget }}"
+            elif [ "$MODE" = "canary" ]; then
+              python scripts/merge_executor.py --live --canary "${{ github.event.inputs.canary }}"
+            else
+              python scripts/merge_executor.py --dry-groups 10
+            fi
+          fi
