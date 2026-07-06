@@ -266,6 +266,26 @@ def fetch_group_live(handles):
     return out
 
 # ---------- mutations (kun kaldt ved --live) ----------
+def remove_dead_legacy(pid, dead_opts, variant_edges, dry, log):
+    """Fjern keeperens DØDE legacy-options (1 værdi, ikke i autoritativ item_variant-struktur) så nye
+    akser kan tilføjes uden at bryde Shopifys 3-option-grænse. Kollaps til én værdi → slet."""
+    if dry or not dead_opts:
+        return
+    vids = [e["node"]["id"] for e in variant_edges]
+    for o in dead_opts:
+        ups = [{"id": vid, "optionValues": [{"optionName": o["name"], "name": "Standard"}]} for vid in vids]
+        for i in range(0, len(ups), 100):
+            gql("""mutation($pid:ID!,$v:[ProductVariantsBulkInput!]!){
+              productVariantsBulkUpdate(productId:$pid,variants:$v){userErrors{message}}}""",
+                {"pid": pid, "v": ups[i:i + 100]})
+        r = gql("""mutation($pid:ID!,$o:[ID!]!){
+          productOptionsDelete(productId:$pid,options:$o,strategy:DEFAULT){userErrors{message}}}""",
+                {"pid": pid, "o": [o["id"]]})
+        errs = (((r.get("data") or {}).get("productOptionsDelete") or {}).get("userErrors")) or []
+        if errs:
+            raise RuntimeError(f"fjern død legacy-option {o['name']}: {errs}")
+        log(f"    🧹 fjernet død legacy-option '{o['name']}' (ikke i autoritativ struktur)")
+
 def ensure_options(pid, target_axes, existing_options, dry, log):
     """Sørg for at keeper har præcis target-akserne (productOptionsCreate for manglende)."""
     have = {o["name"] for o in existing_options}
@@ -552,23 +572,28 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
                      "b2b": b2b, "img_url": img, "stock": stock,
                      "images": e.get("images"), "html": e.get("html"), "ean": e.get("ean"), "weight": e.get("weight")})
 
-    # keeperens EKSISTERENDE varianter → KANONISKE options. item_variant VINDER over keeperens
-    # gamle Shopify-værdier (oprettet ad andre veje/tidspunkter, kan være forkerte: fx 'træ' i
-    # stedet for 'Massivt Fyrretræ', eller 'Konstrueret træ' vs 'Konstrueret Træ' → dubletter).
-    # Behold kun legacy-options som item_variant ikke dækker.
+    # keeperens EKSISTERENDE varianter → KUN autoritativ item_variant (IKKE keeperens gamle legacy-
+    # live-options, som forurener akse-sættet med akser der ikke findes i den scrapede struktur).
     existing = {}
+    gap = []
     for e in keeper["variants"]["edges"]:
         s = e["node"]["sku"].strip()
-        live_opts = {o["name"]: o["value"] for o in e["node"]["selectedOptions"] if o["name"] != "Title"}
-        existing[s] = {**live_opts, **danish_opts(s, master, km)}
+        dop = danish_opts(s, master, km)
+        if not dop:
+            gap.append(s)
+        existing[s] = dop
+    gap += [r["sku"] for r in rows if not danish_opts(r["sku"], master, km)]
+    # SCRAPE-HUL: en variant mangler item_variant → kan ikke bygge autoritativ struktur → skip (re-scrape)
+    if gap:
+        log(f"    ⏭ scrape-hul (item_variant mangler: {gap[:4]}) — springes over (re-scrape nødvendig)")
+        return 0, 0
 
-    # REELLE akser = varierer på tværs af HELE sættet (eksisterende + tilføjede) ∪ keeperens nuværende
+    # REELLE akser = varierer på tværs af HELE sættet — KUN fra autoritativ item_variant (ingen legacy).
     axisvals = defaultdict(set)
     for o in list(existing.values()) + [r["options"] for r in rows]:
         for k, v in o.items():
             if v: axisvals[k].add(v)
-    target_axes = sorted({k for k, vv in axisvals.items() if len(vv) > 1}
-                         | {o["name"] for o in keeper["options"] if o["name"] != "Title"})
+    target_axes = sorted({k for k, vv in axisvals.items() if len(vv) > 1})
     # drop glitch-akse(r) hvis >3 (domineret + redundant); ægte 4-akser røres ikke
     if len(target_axes) > 3:
         allopts = list(existing.values()) + [r["options"] for r in rows]
@@ -587,13 +612,15 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
     if len(target_axes) > 3:
         log(f"    ⏭ >3 akser {target_axes} — springes over (manuel gennemgang)")
         return 0, 0
-    # keeper kan have LEGACY død-option (fx 'Model' m. 1 værdi) der optager en af Shopifys 3 slots
-    # men ikke er i target_axes (reduce droppede den). At tilføje en ny akse ville give 4 options →
-    # afvises. Vi kan ikke fjerne en live-option nemt → spring over til manuel gennemgang.
-    keeper_live_opts = {o["name"] for o in keeper["options"] if o["name"] != "Title"}
-    if len(set(target_axes) | keeper_live_opts) > 3:
-        log(f"    ⏭ keeper-live-options {sorted(keeper_live_opts)} + target {target_axes} > 3 slots "
-            f"(legacy død-option) — springes over (manuel gennemgang)")
+    # LEGACY-OPTIONS: keeper kan have GAMLE akser der ikke findes i den autoritative item_variant-struktur
+    # (target). DØDE (1 værdi) fjernes trygt ved merge så produktet matcher scrapet struktur. MULTI-værdi
+    # legacy ikke i target = ægte konflikt (akse skal omdøbes/rebuildes) → flag til manuel gennemgang.
+    legacy = [o for o in keeper["options"] if o["name"] != "Title" and o["name"] not in target_axes]
+    legacy_dead = [o for o in legacy if len(o.get("optionValues") or []) <= 1]
+    legacy_live = [o for o in legacy if len(o.get("optionValues") or []) > 1]
+    if legacy_live:
+        log(f"    ⏭ multi-værdi legacy-akse {[o['name'] for o in legacy_live]} ikke i autoritativ struktur "
+            f"{target_axes} — springes over (rename/rebuild)")
         return 0, 0
     # AKSE-DÆKNING: ALLE varianter (eksisterende + tilføjede) skal have værdi for ALLE target-akser.
     # Ellers har vidaXL inkonsistent variant-struktur (nogle varianter mangler en akse) → Shopify afviser
@@ -627,7 +654,8 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
             log(f"    ↔ kombo-dublet omdøbt: {axis} → '{r['options'][axis]}'")
         seen.add(_combo(r["options"]))
 
-    # 3) trin: opret akser → reconcile keeperens eksisterende varianter (kanonisk) → opret nye
+    # 3) trin: fjern døde legacy-options → opret akser → reconcile → opret nye
+    remove_dead_legacy(keeper["id"], legacy_dead, keeper["variants"]["edges"], dry, log)
     ensure_options(keeper["id"], target_axes, keeper["options"], dry, log)
     reconcile_existing(keeper["id"], keeper["variants"]["edges"], target_axes, existing,
                        feed, cfg, enrich or {}, p["keeper_handle"], dry, log)
