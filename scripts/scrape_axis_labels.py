@@ -1,25 +1,37 @@
-"""Hent EKSAKTE danske akse-navne pr. master via scrape_vidaxl (option A).
-Kun masters i merge/split/fix/atomize-grupper (~3k, ikke 161k). numberOfNumber dækkes
-ikke af scrape_vidaxl → fast 'Antal personer'. Output: output/axis_labels.json {master:{key:label}}.
+"""Hent EKSAKTE danske akse-navne pr. master DIREKTE fra vidaXL-siden (data-attr → label).
+Fanger ALLE akser inkl. dropdowns (Model), som scrape_vidaxl missede → 0% gæt.
+Kun masters i merge/split/fix/atomize-grupper. Output: output/axis_labels.json {master:{key:label}}.
 Threaded + checkpoint. READ-ONLY."""
-import json, os, sys, time, functools
+import json, os, sys, re, html as _htmlmod, functools, threading
+import requests
 from concurrent.futures import ThreadPoolExecutor
-import threading
 sys.stdout.reconfigure(encoding="utf-8")
-sys.path.insert(0, r"C:\Users\APC\dropxl-product-automation\scripts")
 print = functools.partial(print, flush=True)
-from product_utils import scrape_vidaxl
 
 PLAN = "output/merge_plan.jsonl"
 LINKS = "output/all_sku_links.json"
 OUT = "output/axis_labels.json"
-FIXED = {"numberOfNumber": "Antal personer"}   # scrape_vidaxl dækker ikke denne
-WORKERS = 6
+UA = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"}
+FIXED = {"numberOfNumber": "Antal personer"}   # har ikke altid egen data-attr-blok
+WORKERS = 8
+
+def extract_labels(txt):
+    """{item_variant_nøgle: dansk_label} fra 'data-attr="KEY" ... >Label<'."""
+    t = _htmlmod.unescape(txt)
+    out = {}
+    for m in re.finditer(r'data-attr="([^"]+)"', t):
+        k = m.group(1)
+        chunk = t[m.start():m.start() + 700]
+        lm = re.search(r">\s*([A-ZÆØÅa-zæøå][A-Za-zÆØÅæøå ]{1,28}?)\s*<", chunk)
+        if lm:
+            lab = lm.group(1).strip()
+            if lab and lab.lower() not in ("option", "options"):
+                out[k] = lab
+    return out
 
 def main():
     links = json.load(open(LINKS, encoding="utf-8"))
     plans = [json.loads(l) for l in open(PLAN, encoding="utf-8")]
-    # master → repræsentativ SKU (med link)
     rep = {}
     for p in plans:
         if p["action"] not in ("merge", "split", "atomize", "fix_mismerge_rest"):
@@ -30,28 +42,31 @@ def main():
         for m in p["variant_creates"]:
             if links.get(m["sku"]):
                 rep[master] = links[m["sku"]]; break
-    print(f"🏷️ {len(rep)} masters at labelle")
-    done = json.load(open(OUT, encoding="utf-8")) if os.path.exists(OUT) else {}
-    todo = [(mp, url) for mp, url in rep.items() if mp not in done]
-    print(f"   {len(todo)} tilbage (checkpoint: {len(done)})")
+    print(f"🏷️ {len(rep)} masters at labelle (direkte HTML-udtræk)")
+    done = {}
+    todo = list(rep.items())
     lock = threading.Lock(); n = [0]
     def work(pair):
         mp, url = pair
+        labels = {}
         try:
-            sc = scrape_vidaxl(url)
-            labels = {k: v.get("display_name") for k, v in (sc.get("options") or {}).items() if v.get("display_name")}
+            r = requests.get(url, headers=UA, timeout=25)
+            if r.status_code == 200:
+                labels = extract_labels(r.text)
         except Exception:
-            labels = {}
-        labels = {**FIXED, **labels}   # scrape vinder hvor den har label; ellers fast
+            pass
+        labels = {**FIXED, **labels}
         with lock:
             done[mp] = labels; n[0] += 1
-            if n[0] % 100 == 0:
+            if n[0] % 200 == 0:
                 json.dump(done, open(OUT, "w", encoding="utf-8"), ensure_ascii=False)
                 print(f"  …{n[0]}/{len(todo)}")
     with ThreadPoolExecutor(max_workers=WORKERS) as ex:
         list(ex.map(work, todo))
     json.dump(done, open(OUT, "w", encoding="utf-8"), ensure_ascii=False)
-    print(f"✅ {len(done)} masters med labels → {OUT}")
+    cov = sum(1 for v in done.values() for k in v if k != "numberOfNumber")
+    va3 = sum(1 for v in done.values() if "variationAttribute3" in v)
+    print(f"✅ {len(done)} masters | {cov} labels udtrukket | variationAttribute3 dækket: {va3}")
 
 if __name__ == "__main__":
     main()
