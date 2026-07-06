@@ -1,9 +1,9 @@
 name: Merge Executor (katalog-konsolidering)
 
 # KATALOG-MERGE: konsoliderer dublet/variant-produkter over ~40 dage (~1000 varianter/dag).
-# SIKKERHED: den daglige (schedule) kørsel gør INTET live før repo-variablen
-#   MERGE_EXECUTE_LIVE == 'true'. Indtil da er den et no-op. Manuel kørsel (workflow_dispatch)
-#   defaulter til dry-run. Journal + genoptagelse via Supabase merge_exec_log (idempotent).
+# SIKKERHED: on/off = om workflowen er ENABLED i GitHub. Styres fra Hub → Katalog → Merge-status
+#   (toggler via GitHubs workflow enable/disable). Disabled → cron fyrer ikke. Manuel kørsel
+#   (workflow_dispatch) defaulter til dry-run. Journal + genoptagelse via merge_exec_log (idempotent).
 
 on:
   workflow_dispatch:
@@ -48,10 +48,9 @@ jobs:
         run: |
           set -e
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            if [ "${{ vars.MERGE_EXECUTE_LIVE }}" != "true" ]; then
-              echo "⏸ MERGE_EXECUTE_LIVE er ikke 'true' → springer over (ingen live-kørsel)."
-              exit 0
-            fi
+            # ON/OFF styres nu af om selve workflowen er ENABLED i GitHub (Hub → Katalog → Merge-status
+            # toggler den via GitHubs workflow enable/disable). Disabled workflow → cron fyrer slet ikke.
+            # Enabled → daglig LIVE-batch. Ingen MERGE_EXECUTE_LIVE-variabel længere.
             echo "▶ Daglig LIVE-batch (budget ${{ vars.MERGE_DAILY_BUDGET || '1000' }})"
             python scripts/merge_executor.py --live --budget "${{ vars.MERGE_DAILY_BUDGET || '1000' }}"
           else
