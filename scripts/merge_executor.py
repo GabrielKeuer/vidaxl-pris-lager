@@ -365,6 +365,30 @@ def reorder_keeper_first(pid, keeper_skus, dry, log):
             {"m": [{"ownerId": ordered[0][0], "namespace": "custom", "key": k}
                    for k in ("produktinfo", "variantbilleder")]})
 
+# option-prioritet: Farve altid nr. 1 (Shopify bruger option 1 til variant-thumbnail-swatch),
+# derefter Form (2), Materiale (3), resten uændret. Rører KUN option-rækkefølge (ikke varianter).
+_OPT_PRI = {"farve": 0, "form": 1, "materiale": 2}
+
+def reorder_options_priority(pid, dry, log):
+    d = gql("""query($id:ID!){product(id:$id){options{id name position}}}""", {"id": pid})
+    opts = [o for o in (((d.get("data") or {}).get("product") or {}).get("options") or []) if o["name"] != "Title"]
+    if len(opts) < 2:
+        return
+    cur = sorted(opts, key=lambda o: o["position"])
+    want = sorted(opts, key=lambda o: (_OPT_PRI.get(o["name"].lower(), 9), o["position"]))
+    if [o["id"] for o in want] == [o["id"] for o in cur]:
+        return  # allerede korrekt
+    if dry:
+        log(f"    ↕ ville reordre options → {[o['name'] for o in want]}")
+        return
+    r = gql("""mutation($pid:ID!,$o:[OptionReorderInput!]!){
+      productOptionsReorder(productId:$pid,options:$o){userErrors{field message}}}""",
+            {"pid": pid, "o": [{"id": o["id"]} for o in want]})
+    errs = (((r.get("data") or {}).get("productOptionsReorder") or {}).get("userErrors")) or []
+    if errs:
+        raise RuntimeError(f"reorder options: {errs}")
+    log(f"    ↕ options → Farve først ({[o['name'] for o in want]})")
+
 def set_title(pid, title, dry, log):
     # opdatér BÅDE produkt-titel (H1) OG SEO-meta-titel (global.title_tag), så meta-titlen ikke
     # bliver stående på den gamle variant-specifikke titel. Ingen pris i titlen (JSON-LD viser live pris).
@@ -559,6 +583,7 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
     n_created = create_variants(keeper["id"], rows, dry, log, location_id,
                                 (keeper.get("mediaCount") or {}).get("count", 0))
     reorder_keeper_first(keeper["id"], keeper_skus, dry, log)
+    reorder_options_priority(keeper["id"], dry, log)   # Farve = option 1 (variant-thumbnail-swatch)
     if p.get("new_title") and p["title_changes"]:
         set_title(keeper["id"], p["new_title"], dry, log)
     if p["product_deletes"]:
