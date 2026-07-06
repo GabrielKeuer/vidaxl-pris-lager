@@ -107,14 +107,51 @@ def _norm_val(v):
         v = " ".join(w[:1].upper() + w[1:] if w else w for w in v.split(" "))
     return v
 
-def danish_opts(sku, master):
-    """SKUs item_variant → {dansk_akse: værdi} (eksakt label pr. master → ellers inferens)."""
+def _axis_name_multi(values):
+    """Ét akse-navn ud fra ALLE en nøgles værdier (pr. nøgle, ikke pr. værdi)."""
+    vals = [str(v).strip() for v in values if v]
+    if not vals:
+        return "Model"
+    n = len(vals)
+    if sum(1 for v in vals if re.search(r"\d+\s*[x×]\s*\d+|\bcm\b|\bmm\b|ø\d", v.lower())) >= n * 0.5:
+        return "Størrelse"
+    # materiale: kræv at ordet IKKE er del af 'udtræk'/'indtræk' (config, ikke træ-materiale)
+    def is_mat(v):
+        vl = v.lower()
+        return any(m in vl for m in _MATW) and "træk" not in vl
+    if sum(1 for v in vals if is_mat(v)) >= n * 0.5:
+        return "Materiale"
+    if all(re.fullmatch(r"\d+", v) for v in vals):
+        return "Antal i pakke"
+    return "Model"
+
+def build_keyname(skus, master):
+    """KONSISTENT akse-navn pr. item_variant-NØGLE for en gruppe (ikke pr. værdi) — så fx
+    variationAttribute3 ('uden madras' + 'med udtræk') bliver ÉN akse, ikke Model+Materiale."""
+    lab = LABELS.get(master, {})
+    vals = defaultdict(list)
+    for s in skus:
+        for k, v in (OPTS.get(str(s).strip(), {}) or {}).items():
+            if v: vals[k].append(v)
+    km = {}
+    for k in sorted(vals):
+        nm = lab.get(k) or ("Farve" if k == "color" else _axis_name_multi(vals[k]))
+        base, c = nm, 2
+        while nm in km.values():
+            nm = f"{base} {c}"; c += 1
+        km[k] = nm
+    return km
+
+def danish_opts(sku, master, keyname=None):
+    """SKUs item_variant → {dansk_akse: værdi}. keyname (fra build_keyname) giver konsistent
+    navn pr. nøgle; ellers eksakt label → per-værdi-inferens (fallback)."""
     raw = OPTS.get(str(sku).strip(), {})
     lab = LABELS.get(master, {})
     out = {}
     for k, v in raw.items():
         if v:
-            out[lab.get(k) or _axis_one(k, v)] = _norm_val(v)
+            name = (keyname or {}).get(k) or lab.get(k) or _axis_one(k, v)
+            out[name] = _norm_val(v)
     return out
 
 def load_feed():
@@ -357,13 +394,16 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
     if not keeper:
         raise RuntimeError("keeper ikke fundet live (drift) — gruppe springes over")
     keeper_skus = {e["node"]["sku"].strip() for e in keeper["variants"]["edges"]}
+    # KONSISTENT akse-navn pr. nøgle for HELE gruppen (added + keeper) — så samme item_variant-
+    # nøgle aldrig får to navne (fx variationAttribute3 = ÉN akse, ikke Model+Materiale)
+    km = build_keyname([m["sku"] for m in p["variant_creates"]] + list(keeper_skus), master)
 
     # 2) byg målmatrix pr. tilføjet SKU — options fra item_variant, pris fra feed×hub-regler
     rows = []
     for mv in p["variant_creates"]:
         sku = mv["sku"]
         if sku in keeper_skus: continue          # bor allerede på keeper
-        opts = danish_opts(sku, master) or {k: v for k, v in (mv["option_values"] or {}).items()}
+        opts = danish_opts(sku, master, km) or {k: v for k, v in (mv["option_values"] or {}).items()}
         b2b, stock = feed.get(sku, (0, 0))
         if b2b <= 0:
             log(f"    ⚠ {sku}: ingen b2b i feed — springes over"); continue
@@ -384,7 +424,7 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
     for e in keeper["variants"]["edges"]:
         s = e["node"]["sku"].strip()
         cur = {o["name"]: o["value"] for o in e["node"]["selectedOptions"] if o["name"] != "Title"}
-        for k, v in danish_opts(s, master).items():
+        for k, v in danish_opts(s, master, km).items():
             cur.setdefault(k, v)
         existing[s] = cur
 
