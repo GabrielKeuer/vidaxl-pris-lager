@@ -283,10 +283,13 @@ def upload_media(pid, rows, existing_media, dry, log):
     return out
 
 def set_title(pid, title, dry, log):
-    log(f"    ✎ titel → {title!r}")
+    # opdatér BÅDE produkt-titel (H1) OG SEO-meta-titel (global.title_tag), så meta-titlen ikke
+    # bliver stående på den gamle variant-specifikke titel. Ingen pris i titlen (JSON-LD viser live pris).
+    seo_t = title if len(title) <= 70 else title[:67] + "..."
+    log(f"    ✎ titel + SEO-meta → {title!r}")
     if not dry:
         d = gql("""mutation($i:ProductInput!){productUpdate(input:$i){userErrors{field message}}}""",
-                {"i": {"id": pid, "title": title}})
+                {"i": {"id": pid, "title": title, "seo": {"title": seo_t}}})
         errs = d["data"]["productUpdate"]["userErrors"]
         if errs: raise RuntimeError(f"productUpdate: {errs}")
 
