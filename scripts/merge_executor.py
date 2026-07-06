@@ -595,6 +595,12 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
         log(f"    ⏭ keeper-live-options {sorted(keeper_live_opts)} + target {target_axes} > 3 slots "
             f"(legacy død-option) — springes over (manuel gennemgang)")
         return 0, 0
+    # AKSE-DÆKNING: ALLE varianter (eksisterende + tilføjede) skal have værdi for ALLE target-akser.
+    # Ellers har vidaXL inkonsistent variant-struktur (nogle varianter mangler en akse) → Shopify afviser
+    # ('You need to add option values for X') eller efterlader '—'. Kan ikke danne rent variant-net → skip.
+    if any(not o.get(a) for a in target_axes for o in (list(existing.values()) + [r["options"] for r in rows])):
+        log(f"    ⏭ inkonsistent akse-dækning {target_axes} (ikke alle varianter har alle akser) — springes over (manuel gennemgang)")
+        return 0, 0
     # combo-kollisioner tjekkes KUN på target_axes (det Shopify ser), ikke keeperens fulde legacy-dict.
     def _combo(ov):
         return frozenset({a: (ov.get(a) or "") for a in target_axes}.items())
