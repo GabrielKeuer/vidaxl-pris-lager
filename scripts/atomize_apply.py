@@ -103,29 +103,40 @@ def main():
             print(f"  ⚠ {h}: ikke fundet"); continue
         ptype = pr.get("productType")
         print(f"\n▶ {h} → {len(prods)} produkter" + ("" if live else " (DRY)"))
-        if live:
-            ME.delete_product(pr["id"], h, False, print)          # slet original (frigør SKUs)
-        primary = None
-        for i, spec in enumerate(prods):
-            handle = gen_handle(spec["title"], used_handles)
-            if i == 0:
-                primary = handle
-            tot_p += 1
-            if not live:
-                axes = [a for a in ("Farve", "Konfiguration") if any(v.get(a) for v in spec["variants"])]
-                print(f"     \"{spec['title'][:50]}\" | {len(spec['variants'])} var | akser={axes or 'single'} | handle={handle}")
-                continue
-            inp = build_input(spec, feed, enrich, cfg, loc, handle, ptype)
-            r = ME.gql(PS, {"input": inp, "sync": True})
-            errs = (((r.get("data") or {}).get("productSet") or {}).get("userErrors")) or []
-            if errs:
-                print(f"     ❌ {handle}: {errs[:2]}"); continue
-            newid = r["data"]["productSet"]["product"]["id"]
-            if pubs:
-                ME.gql(PUB, {"id": newid, "input": [{"publicationId": p} for p in pubs]})
-            print(f"     ✓ {handle} ({len(spec['variants'])} var)")
-        if live and primary:
-            ME.create_redirect(f"/products/{h}", f"/products/{primary}", False, print, sb)
+        try:
+            if live:
+                ME.delete_product(pr["id"], h, False, print)          # slet original (frigør SKUs)
+            primary = None
+            for i, spec in enumerate(prods):
+                handle = gen_handle(spec["title"], used_handles)
+                tot_p += 1
+                if not live:
+                    if i == 0:
+                        primary = handle
+                    axes = [a for a in ("Farve", "Konfiguration") if any(v.get(a) for v in spec["variants"])]
+                    print(f"     \"{spec['title'][:50]}\" | {len(spec['variants'])} var | akser={axes or 'single'} | handle={handle}")
+                    continue
+                inp = build_input(spec, feed, enrich, cfg, loc, handle, ptype)
+                r = ME.gql(PS, {"input": inp, "sync": True})
+                errs = (((r.get("data") or {}).get("productSet") or {}).get("userErrors")) or []
+                if errs:
+                    print(f"     ❌ {handle}: {errs[:2]}"); continue
+                newid = r["data"]["productSet"]["product"]["id"]
+                actual = r["data"]["productSet"]["product"]["handle"]   # Shopifys faktiske handle
+                if i == 0 or primary is None:
+                    primary = actual
+                if pubs:
+                    ME.gql(PUB, {"id": newid, "input": [{"publicationId": p} for p in pubs]})
+                print(f"     ✓ {actual} ({len(spec['variants'])} var)")
+            if live and primary:
+                try:
+                    ME.del_self_redirect(f"/products/{primary}", False, print)   # ryd gammel redirect på target
+                    ME.create_redirect(f"/products/{h}", f"/products/{primary}", False, print, sb)
+                except Exception as e:
+                    print(f"    ⚠ redirect sprunget over: {e}")
+        except Exception as e:
+            print(f"  ❌ {h}: KEEPER-FEJL — {e}")
+            continue
     print(f"\n=== {'LIVE' if live else 'DRY-RUN'}: {len(handles)} keepers → {tot_p} produkter ===")
 
 if __name__ == "__main__":
