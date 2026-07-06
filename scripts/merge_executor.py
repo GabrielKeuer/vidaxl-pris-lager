@@ -14,7 +14,7 @@ Design:
   - Keeperens EGNE varianter opdateres også (nye akse-værdier), ikke kun donor-flyt.
   - Reviews: donor-handles rapporteres FØR sletning (app-migrering afklares separat).
 """
-import argparse, csv, io, json, os, re, sys, time, urllib.request
+import argparse, csv, io, json, os, re, sys, time, urllib.request, zipfile
 from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.stdout.reconfigure(encoding="utf-8")
@@ -128,6 +128,45 @@ def load_feed():
         except Exception: pass
     return out
 
+# ---------- enrichment: billeder + beskrivelse + EAN + vægt (fra hoved-feedet) ----------
+# Merged varianter er ALTID 'ikke-første' → skal have samme variant-metafelter som normal-
+# oprettelse (create_products_v2._row_to_variant_spec): custom.sku + custom.produktinfo +
+# custom.variantbilleder (HELE feed-galleriet som permanente vidaXL-URLs) + native billede.
+def _clean_vidaxl(t):
+    if not t: return ""
+    t = str(t)
+    for v in ("vidaXL ", "vidaxl ", "VidaXL ", "VIDAXL ", "fra vidaXL", "vidaXL", "vidaxl"):
+        t = t.replace(v, "")
+    return t.strip()
+
+def _all_images(row):
+    imgs = []
+    for i in range(1, 22):
+        col = f"Image {i}" if i <= 12 else ("image 13" if i == 13 else ("Image 14" if i == 14 else f"image {i}"))
+        v = (row.get(col) or "").strip()
+        if v.startswith("http"):
+            imgs.append(v)
+    return imgs
+
+def load_enrich(feed_url):
+    """{sku: {images:[feed-urls], html:beskrivelse, ean:str, weight:gram}} fra hoved-feedet (ZIP)."""
+    r = requests.get(feed_url, timeout=600)
+    r.raise_for_status()
+    out = {}
+    with zipfile.ZipFile(io.BytesIO(r.content)) as zf:
+        name = next(f for f in zf.namelist() if f.endswith(".csv"))
+        with zf.open(name) as f:
+            for row in csv.DictReader(io.TextIOWrapper(f, encoding="utf-8")):
+                s = (row.get("SKU") or "").strip().replace(".0", "")
+                if not s:
+                    continue
+                w = 0
+                try: w = int(float(str(row.get("Weight") or 0).replace(",", ".")) * 1000)
+                except Exception: pass
+                out[s] = {"images": _all_images(row), "html": _clean_vidaxl(row.get("HTML_description", "")),
+                          "ean": str(row.get("EAN") or "").strip(), "weight": w}
+    return out
+
 def oracle_title(sb, skus):
     for i in range(0, len(skus), 50):
         res = sb.table("vidaxl_approved_titles").select("approved_title").in_("sku", skus[i:i + 50]).limit(1).execute()
@@ -138,7 +177,7 @@ def fetch_group_live(handles):
     """Hent gruppens produkter live: varianter (id/sku/options/billede-URL) + variant-metafelter."""
     out = {}
     for h in handles:
-        d = gql("""query($h:String!){productByHandle(handle:$h){id handle title
+        d = gql("""query($h:String!){productByHandle(handle:$h){id handle title mediaCount{count}
           options{id name position optionValues{id name}}
           variants(first:250){edges{node{id sku selectedOptions{name value}
             image{url} metafields(first:5,namespace:"custom"){edges{node{key value type}}}}}}}}""", {"h": h})
@@ -161,18 +200,36 @@ def ensure_options(pid, target_axes, existing_options, dry, log):
             if errs: raise RuntimeError(f"optionsCreate: {errs}")
     return missing
 
-def create_variants(pid, rows, dry, log):
-    """productVariantsBulkCreate i batches à 100. rows: [{sku,options{axis:val},price,cap,b2b,img_url}]"""
+def create_variants(pid, rows, dry, log, location_id=None, existing_media=0):
+    """productVariantsBulkCreate i batches à 100. Sætter samme variant-data som normal-oprettelse:
+    3 metafelter (custom.sku/produktinfo/variantbilleder), native billede + galleri fra PERMANENTE
+    feed-URLs, barcode(EAN), vægt, cost, pris, lager."""
+    media_map = upload_media(pid, rows, existing_media, dry, log)
     created = 0
     for i in range(0, len(rows), 100):
         chunk = rows[i:i + 100]
         vinputs = []
         for r in chunk:
+            mf = [{"namespace": "custom", "key": "sku", "type": "single_line_text_field", "value": r["sku"]}]
+            if r.get("html"):
+                mf.append({"namespace": "custom", "key": "produktinfo",
+                           "type": "multi_line_text_field", "value": r["html"]})
+            if r.get("images"):
+                mf.append({"namespace": "custom", "key": "variantbilleder",
+                           "type": "list.single_line_text_field", "value": json.dumps(r["images"])})
+            inv = {"sku": r["sku"], "cost": str(r["b2b"]), "tracked": True, "requiresShipping": True}
+            if r.get("weight"):
+                inv["measurement"] = {"weight": {"value": r["weight"] / 1000.0, "unit": "KILOGRAMS"}}
             vi = {"optionValues": [{"optionName": k, "name": v or "—"} for k, v in r["options"].items()],
-                  "price": str(r["price"]), "inventoryItem": {"sku": r["sku"], "cost": str(r["b2b"]), "tracked": True},
-                  "inventoryPolicy": "DENY"}
+                  "price": str(r["price"]), "inventoryItem": inv, "inventoryPolicy": "DENY",
+                  "taxable": True, "metafields": mf}
+            if r.get("ean"): vi["barcode"] = r["ean"]
             if r.get("cap"): vi["compareAtPrice"] = str(r["cap"])
-            if r.get("img_url"): vi["mediaSrc"] = [r["img_url"]]
+            if location_id and r.get("stock") is not None:
+                vi["inventoryQuantities"] = [{"locationId": location_id, "availableQuantity": int(r["stock"])}]
+            # native billede via mediaId (dedup'et, permanent feed-URL) → vandtæt + under 250-grænsen
+            mid = media_map.get((r.get("images") or [None])[0])
+            if mid and not str(mid).startswith("dry-"): vi["mediaId"] = mid
             vinputs.append(vi)
         log(f"    + {len(chunk)} varianter (bulkCreate)")
         if not dry:
@@ -185,6 +242,45 @@ def create_variants(pid, rows, dry, log):
         else:
             created += len(chunk)
     return created
+
+def upload_media(pid, rows, existing_media, dry, log):
+    """KUN ét native billede pr. variant (dedup pr. URL) — IKKE hele galleriet. Galleriet ligger i
+    variantbilleder-metafeltet (ubegrænset streng, ikke Shopify-media). Respekterer 250-media/produkt-
+    grænsen: farve-DÆKNING først (1 pr. unik farve), så richness, cap ved budget. Overskydende varianter
+    får intet native billede men viser galleri-strengen → intet produkt brækker."""
+    budget = max(0, 245 - int(existing_media or 0))   # 5 buffer under 250
+    firstimg = lambda r: (r.get("images") or [None])[0]
+    ordered, seen, colors = [], set(), set()
+    for r in rows:   # coverage: 1 billede pr. unik farve (vigtigst — hver farve får en thumbnail)
+        u, c = firstimg(r), r["options"].get("Farve")
+        if u and u not in seen and c and c not in colors:
+            colors.add(c); seen.add(u); ordered.append(u)
+    for r in rows:   # richness: resten
+        u = firstimg(r)
+        if u and u not in seen:
+            seen.add(u); ordered.append(u)
+    dropped = len(ordered) - budget
+    ordered = ordered[:budget]
+    if dropped > 0:
+        log(f"    ⚠ {dropped} native billeder droppet (250-grænse) — de varianter bruger galleri-metafeltet")
+    if not ordered:
+        return {}
+    log(f"    🖼 uploader {len(ordered)} native billeder (galleri-strengen dækker alle varianter)")
+    if dry:
+        return {u: f"dry-{i}" for i, u in enumerate(ordered)}
+    out = {}
+    for i in range(0, len(ordered), 50):
+        chunk = ordered[i:i + 50]
+        d = gql("""mutation($pid:ID!,$m:[CreateMediaInput!]!){
+            productCreateMedia(productId:$pid,media:$m){media{id} mediaUserErrors{field message}}}""",
+                {"pid": pid, "m": [{"originalSource": u, "mediaContentType": "IMAGE"} for u in chunk]})
+        res = (d.get("data") or {}).get("productCreateMedia") or {}
+        errs = res.get("mediaUserErrors") or []
+        if errs:
+            raise RuntimeError(f"productCreateMedia: {errs}")
+        for u, m in zip(chunk, res.get("media") or []):   # productCreateMedia bevarer rækkefølge
+            out[u] = m["id"]
+    return out
 
 def set_title(pid, title, dry, log):
     log(f"    ✎ titel → {title!r}")
@@ -244,7 +340,7 @@ def backfill_existing(pid, existing_edges, target_axes, existing_opts, dry, log)
         if errs:
             raise RuntimeError(f"backfill: {errs}")
 
-def process_group(p, scraped, feed, cfg, sb, dry):
+def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None):
     key = p["key"]; master = key.split("|")[1] if "|" in key else ""
     log_lines = []
     log = lambda s: (log_lines.append(s), print(s))
@@ -275,8 +371,10 @@ def process_group(p, scraped, feed, cfg, sb, dry):
             for e in src["variants"]["edges"]:
                 if e["node"]["sku"].strip() == sku and e["node"].get("image"):
                     img = e["node"]["image"]["url"]; break
+        e = (enrich or {}).get(sku, {})
         rows.append({"sku": sku, "options": opts, "price": int(price), "cap": int(cap) if cap else None,
-                     "b2b": b2b, "img_url": img, "stock": stock})
+                     "b2b": b2b, "img_url": img, "stock": stock,
+                     "images": e.get("images"), "html": e.get("html"), "ean": e.get("ean"), "weight": e.get("weight")})
 
     # keeperens EKSISTERENDE varianter → deres komplette options (live-valgte + item_variant)
     existing = {}
@@ -297,10 +395,22 @@ def process_group(p, scraped, feed, cfg, sb, dry):
     for r in rows:   # enkelt-værdi-attributter hører til i titlen, ikke som akse
         r["options"] = {k: v for k, v in r["options"].items() if k in target_axes}
 
+    # sikkerhed: >3 akser kan ikke lade sig gøre i Shopify → spring over (skulle være karantænet)
+    if len(target_axes) > 3:
+        log(f"    ⏭ >3 akser {target_axes} — springes over (manuel gennemgang)")
+        return 0, 0
+    # combo-dedup: spring en ny variant over hvis dens option-kombo allerede findes på keeper
+    existing_combos = {frozenset(v.items()) for v in existing.values()}
+    before = len(rows)
+    rows = [r for r in rows if frozenset(r["options"].items()) not in existing_combos]
+    if len(rows) < before:
+        log(f"    ↷ {before - len(rows)} varianter har kombo der allerede findes på keeper — springes over")
+
     # 3) trin: opret akser → backfill eksisterende varianter → opret nye varianter
     ensure_options(keeper["id"], target_axes, keeper["options"], dry, log)
     backfill_existing(keeper["id"], keeper["variants"]["edges"], target_axes, existing, dry, log)
-    n_created = create_variants(keeper["id"], rows, dry, log)
+    n_created = create_variants(keeper["id"], rows, dry, log, location_id,
+                                (keeper.get("mediaCount") or {}).get("count", 0))
     if p.get("new_title") and p["title_changes"]:
         set_title(keeper["id"], p["new_title"], dry, log)
     for dd in p["product_deletes"]:
@@ -323,6 +433,17 @@ def main():
         def get(self, k, d=None): return (100.0, 5)   # dry-run: .get() giver altid b2b
     feed = load_feed() if not dry else _MockFeed()
     if dry: print("⚠ DRY-RUN: feed mocked (b2b=100), ingen mutationer sendes\n")
+    # enrichment (billeder/beskrivelse/EAN/vægt) + lager-lokation — kun ved live
+    enrich, location_id = {}, None
+    if not dry:
+        fu = os.environ.get("FEED_URL")
+        if not fu:
+            sys.exit("❌ FEED_URL mangler — kræves for variant-metafelter/billeder")
+        print("📥 Henter hoved-feed (billeder/beskrivelse)…")
+        enrich = load_enrich(fu)
+        print(f"   {len(enrich)} SKUs beriget")
+        ld = gql("""{locations(first:1,query:"status:active"){edges{node{id}}}}""")
+        location_id = ld["data"]["locations"]["edges"][0]["node"]["id"]
 
     # rækkefølge: fix_mismerge_rest først, så merges (mindste først = hurtig validérbar fremdrift)
     done = {r["group_key"] for r in (sb.table("merge_exec_log").select("group_key").eq("status", "done").execute().data or [])}
@@ -339,7 +460,7 @@ def main():
                 sb.table("merge_exec_log").upsert({"group_key": p["key"], "action": p["action"],
                     "status": "running", "keeper_pid": p["keeper"],
                     "n_variants_planned": len(p["variant_creates"]), "started_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}).execute()
-            nc, nd = process_group(p, scraped, feed, cfg, sb, dry)
+            nc, nd = process_group(p, scraped, feed, cfg, sb, dry, enrich, location_id)
             spent += nc
             if not dry:
                 sb.table("merge_exec_log").upsert({"group_key": p["key"], "status": "done",

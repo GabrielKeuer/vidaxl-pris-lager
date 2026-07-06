@@ -44,6 +44,7 @@ jobs:
           SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          FEED_URL: ${{ vars.FEED_URL }}
         run: |
           set -e
           if [ "${{ github.event_name }}" = "schedule" ]; then
