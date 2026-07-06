@@ -428,30 +428,47 @@ def delete_product(pid, handle, dry, log):
             raise RuntimeError(f"productDelete: {errs}")
 
 # ---------- gruppe-processor ----------
-def backfill_existing(pid, existing_edges, target_axes, existing_opts, dry, log):
-    """Sæt korrekte akse-værdier på keeperens EKSISTERENDE varianter for alle target-akser,
-    så en nyintroduceret akse ikke efterlader tomme/forkerte værdier. Idempotent."""
-    updates = []
+def reconcile_existing(pid, existing_edges, target_axes, existing_opts, feed, cfg, enrich, seed, dry, log):
+    """Bring keeperens EKSISTERENDE varianter til FULDT KANONISK stand — vi kan ikke stole på at
+    deres data stemmer (oprettet ad andre veje/tidspunkter). Sætter: kanoniske option-værdier
+    (item_variant vinder), pris/compareAt/cost (feed×hub), barcode/vægt + metafelter (produktinfo+
+    variantbilleder fra feed; sku altid). 1. variant strippes til sku-only senere af reorder."""
+    ups = []
     for e in existing_edges:
-        s = e["node"]["sku"].strip()
-        cur = {o["name"]: o["value"] for o in e["node"]["selectedOptions"] if o["name"] != "Title"}
+        n = e["node"]; s = (n["sku"] or "").strip(); vid = n["id"]
         want = existing_opts.get(s, {})
-        newvals = {a: (want.get(a) or cur.get(a)) for a in target_axes if (want.get(a) or cur.get(a))}
-        if newvals and any(cur.get(a) != v for a, v in newvals.items()):
-            updates.append({"id": e["node"]["id"],
-                            "optionValues": [{"optionName": a, "name": v} for a, v in newvals.items()]})
-    if not updates:
+        cur = {o["name"]: o["value"] for o in n["selectedOptions"] if o["name"] != "Title"}
+        opts = {a: (want.get(a) or cur.get(a)) for a in target_axes if (want.get(a) or cur.get(a))}
+        vin = {"id": vid, "optionValues": [{"optionName": a, "name": v} for a, v in opts.items()]}
+        b2b, _ = feed.get(s, (0, 0))
+        if b2b > 0:
+            price, cap = resolve_variant_pricing(b2b, cfg, seed=seed, on_sale=True)
+            vin["price"] = str(int(price))
+            if cap:
+                vin["compareAtPrice"] = str(int(cap))
+            vin["inventoryItem"] = {"cost": str(b2b)}
+        en = enrich.get(s, {})
+        mf = [{"namespace": "custom", "key": "sku", "type": "single_line_text_field", "value": s}]
+        if en.get("html"):
+            mf.append({"namespace": "custom", "key": "produktinfo", "type": "multi_line_text_field", "value": en["html"]})
+        if en.get("images"):
+            mf.append({"namespace": "custom", "key": "variantbilleder", "type": "list.single_line_text_field", "value": json.dumps(en["images"])})
+        vin["metafields"] = mf
+        if en.get("ean"):
+            vin["barcode"] = en["ean"]
+        ups.append(vin)
+    if not ups:
         return
-    log(f"    ↻ backfill {len(updates)} eksisterende varianter (nye akse-værdier)")
+    log(f"    ↻ reconcile {len(ups)} keeper-varianter (kanoniske options/pris/cost/metafelter)")
     if dry:
         return
-    for i in range(0, len(updates), 100):
+    for i in range(0, len(ups), 100):
         d = gql("""mutation($pid:ID!,$v:[ProductVariantsBulkInput!]!){
           productVariantsBulkUpdate(productId:$pid,variants:$v){userErrors{field message}}}""",
-                {"pid": pid, "v": updates[i:i + 100]})
+                {"pid": pid, "v": ups[i:i + 100]})
         errs = (((d.get("data") or {}).get("productVariantsBulkUpdate") or {}).get("userErrors")) or []
         if errs:
-            raise RuntimeError(f"backfill: {errs}")
+            raise RuntimeError(f"reconcile: {errs}")
 
 def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None):
     key = p["key"]; master = key.split("|")[1] if "|" in key else ""
@@ -492,14 +509,15 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
                      "b2b": b2b, "img_url": img, "stock": stock,
                      "images": e.get("images"), "html": e.get("html"), "ean": e.get("ean"), "weight": e.get("weight")})
 
-    # keeperens EKSISTERENDE varianter → deres komplette options (live-valgte + item_variant)
+    # keeperens EKSISTERENDE varianter → KANONISKE options. item_variant VINDER over keeperens
+    # gamle Shopify-værdier (oprettet ad andre veje/tidspunkter, kan være forkerte: fx 'træ' i
+    # stedet for 'Massivt Fyrretræ', eller 'Konstrueret træ' vs 'Konstrueret Træ' → dubletter).
+    # Behold kun legacy-options som item_variant ikke dækker.
     existing = {}
     for e in keeper["variants"]["edges"]:
         s = e["node"]["sku"].strip()
-        cur = {o["name"]: o["value"] for o in e["node"]["selectedOptions"] if o["name"] != "Title"}
-        for k, v in danish_opts(s, master, km).items():
-            cur.setdefault(k, v)
-        existing[s] = cur
+        live_opts = {o["name"]: o["value"] for o in e["node"]["selectedOptions"] if o["name"] != "Title"}
+        existing[s] = {**live_opts, **danish_opts(s, master, km)}
 
     # REELLE akser = varierer på tværs af HELE sættet (eksisterende + tilføjede) ∪ keeperens nuværende
     axisvals = defaultdict(set)
@@ -534,9 +552,10 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
             log(f"    ↔ kombo-dublet omdøbt: {axis} → '{r['options'][axis]}'")
         seen.add(frozenset(r["options"].items()))
 
-    # 3) trin: opret akser → backfill eksisterende varianter → opret nye varianter
+    # 3) trin: opret akser → reconcile keeperens eksisterende varianter (kanonisk) → opret nye
     ensure_options(keeper["id"], target_axes, keeper["options"], dry, log)
-    backfill_existing(keeper["id"], keeper["variants"]["edges"], target_axes, existing, dry, log)
+    reconcile_existing(keeper["id"], keeper["variants"]["edges"], target_axes, existing,
+                       feed, cfg, enrich or {}, p["keeper_handle"], dry, log)
     n_created = create_variants(keeper["id"], rows, dry, log, location_id,
                                 (keeper.get("mediaCount") or {}).get("count", 0))
     reorder_keeper_first(keeper["id"], keeper_skus, dry, log)
