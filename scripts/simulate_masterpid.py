@@ -34,6 +34,9 @@ def main():
         if s:
             feed[s] = r.get("Title") or ""
     print(f"feed-SKUs: {len(feed)}")
+    # orakel-titler (titel-engine output — bruges til MULTI, stripper variant-akser korrekt)
+    oracle = {r["sku"]: r["approved_title"] for r in csv.DictReader(open("output/approved_titles_by_sku.csv", encoding="utf-8-sig")) if r["approved_title"]}
+    print(f"orakel-titler: {len(oracle)}")
 
     sim = {}; cat = Counter()
     for mid, skus in bym.items():
@@ -46,14 +49,16 @@ def main():
             for k, v in opts[s].items():
                 axisvals[k].add(v)
         axes = sorted({k for k, vv in axisvals.items() if len(vv) > 1})
-        # multi-titel = FÆLLES tokens på tværs af varianternes feed-titler (renset) — stol på master_pid
-        def gen_title():
+        # MULTI-titel = orakel (titel-engine, stripper variant-akser). Fælles-token som fallback.
+        def multi_title():
+            for s in live:
+                if oracle.get(s):
+                    return oracle[s]
             cl = [clean(feed[s]) for s in live if feed.get(s)]
-            if not cl:
-                return ""
-            common = set.intersection(*[set(t.lower().split()) for t in cl])
-            return housestyle(" ".join(w for w in cl[0].split() if w.lower() in common))
+            common = set.intersection(*[set(t.lower().split()) for t in cl]) if cl else set()
+            return housestyle(" ".join(w for w in cl[0].split() if w.lower() in common)) if cl else ""
         if len(live) == 1:
+            # SINGLE = fuld feed-titel (behold ALT: farve, mål, g/m²)
             sim[mid] = {"type": "single", "title": housestyle(feed[live[0]]), "n": 1, "skus": live}
             cat["OK_single"] += 1
         elif not axes:
@@ -66,7 +71,7 @@ def main():
                             "titler": [feed[s][:40] for s in live[:3]]}
                 cat["FLAG_collision"] += 1
             else:
-                sim[mid] = {"type": "multi", "title": gen_title(), "axes": axes, "n": len(live), "skus": live}
+                sim[mid] = {"type": "multi", "title": multi_title(), "axes": axes, "n": len(live), "skus": live}
                 cat["OK_multi"] += 1
     json.dump(sim, open("output/catalog_simulation.json", "w", encoding="utf-8"), ensure_ascii=False)
     tot = len(sim)
