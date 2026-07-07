@@ -32,9 +32,11 @@ def main():
     feed = load_feed_df()
     rum = load_rum()
     print(f"feed {len(feed)} SKUs | rum_dict {len(rum)} mappings")
-    specs = json.load(open("output/atomize_specs.json", encoding="utf-8"))
+    spath = sys.argv[sys.argv.index("--specs") + 1] if "--specs" in sys.argv else "output/atomize_specs.json"
+    specs = json.load(open(spath, encoding="utf-8"))
     done = fail = shown = 0
-    for h, prods in specs.items():
+    for h, spec in specs.items():
+        prods = spec["products"] if isinstance(spec, dict) else spec   # flagged_specs har {products,delete_handles}
         for p in prods:
             first_sku = p["variants"][0]["sku"]
             row = feed.get(first_sku)

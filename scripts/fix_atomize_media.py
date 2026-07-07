@@ -16,8 +16,11 @@ def main():
     live = "--live" in sys.argv
     limit = int(sys.argv[sys.argv.index("--n") + 1]) if "--n" in sys.argv else None
     enrich = ME.load_enrich(os.environ["FEED_URL"])
-    specs = json.load(open("output/atomize_specs.json", encoding="utf-8"))
-    multi = [(h, p) for h, prods in specs.items() for p in prods if len(p["variants"]) > 1]
+    spath = sys.argv[sys.argv.index("--specs") + 1] if "--specs" in sys.argv else "output/atomize_specs.json"
+    specs = json.load(open(spath, encoding="utf-8"))
+    def _prods(spec):
+        return spec["products"] if isinstance(spec, dict) else spec
+    multi = [(h, p) for h, spec in specs.items() for p in _prods(spec) if len(p["variants"]) > 1]
     if limit:
         multi = multi[:limit]
     print(f"{len(multi)} multi-variant produkter")
