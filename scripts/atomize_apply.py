@@ -13,6 +13,11 @@ PS = """mutation($input:ProductSetInput!,$sync:Boolean){productSet(input:$input,
   product{id handle} userErrors{field message}}}"""
 PUB = """mutation($id:ID!,$input:[PublicationInput!]!){publishablePublish(id:$id,input:$input){userErrors{message}}}"""
 
+def _nat(v):
+    import re as _re
+    nums = _re.findall(r"\d+\.?\d*", v or "")
+    return (0, [float(n) for n in nums], (v or "").lower()) if nums else (1, [], (v or "").lower())
+
 def gen_handle(title, used):
     h = title.lower().replace("æ", "ae").replace("ø", "oe").replace("å", "aa")
     h = re.sub(r"[^a-z0-9]+", "-", h).strip("-")[:80] or "produkt"
@@ -89,7 +94,8 @@ def build_input(spec, feed, enrich, cfg, loc, ptype):
         for a in axes:
             if v.get(a) and v[a] not in optvals[a]:
                 optvals[a].append(v[a])
-    product_options = [{"name": a, "values": [{"name": x} for x in optvals[a]]} for a in axes] \
+    # natural-sort værdierne (tal stigende, ord alfabetisk) ved oprettelse
+    product_options = [{"name": a, "values": [{"name": x} for x in sorted(optvals[a], key=_nat)]} for a in axes] \
         or [{"name": "Title", "values": [{"name": "Default Title"}]}]
     vin = [variant_input(v["sku"], {a: v[a] for a in axes if v.get(a)}, i == 0, feed, enrich, cfg, spec["title"], loc)
            for i, v in enumerate(variants)]

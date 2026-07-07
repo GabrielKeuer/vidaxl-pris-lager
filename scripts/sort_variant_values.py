@@ -45,10 +45,14 @@ def main():
         pid = (d.get("data") or {}).get("productByHandle", {}).get("id")
         print(f"{only}: {sort_product(pid, not live)}")
         return
-    # alle aktive multi-variant vidaXL-produkter
-    cursor = None; n = sorted_ = already = 0
+    # alle aktive multi-variant vidaXL-produkter — tjek sorterethed fra liste-kald (undgå per-produkt-kald)
+    def opt_sorted(vals):
+        return vals == sorted(vals, key=nat)
+    cursor = sys.argv[sys.argv.index("--cursor") + 1] if "--cursor" in sys.argv else None
+    n = need = sorted_ = 0; pages = 0
     while True:
-        q = 'query($c:String){products(first:100,after:$c,query:"vendor:vidaXL status:active"){pageInfo{hasNextPage endCursor} edges{node{id variantsCount{count}}}}}'
+        q = ('query($c:String){products(first:100,after:$c,query:"vendor:vidaXL status:active"){'
+             'pageInfo{hasNextPage endCursor} edges{node{id variantsCount{count} options{optionValues{name}}}}}}')
         d = ME.gql(q, {"c": cursor})
         pr = (d.get("data") or {}).get("products") or {}
         for e in pr.get("edges", []):
@@ -56,18 +60,21 @@ def main():
             if (node.get("variantsCount") or {}).get("count", 0) < 2:
                 continue
             n += 1
+            # allerede sorteret på alle options? → skip
+            if all(opt_sorted([v["name"] for v in o["optionValues"]]) for o in node["options"]):
+                continue
+            need += 1
             r = sort_product(node["id"], not live)
             if r == "sorteret":
                 sorted_ += 1
-            elif r == "allerede sorteret":
-                already += 1
-            if n % 200 == 0:
-                print(f"  …{n} produkter ({sorted_} sorteret)")
             time.sleep(0.05)
+        pages += 1
+        if pages % 10 == 0:
+            print(f"  …{pages} sider, {n} multi-variant, {sorted_} sorteret", flush=True)
         if not pr.get("pageInfo", {}).get("hasNextPage"):
             break
         cursor = pr["pageInfo"]["endCursor"]
-    print(f"=== {'LIVE' if live else 'DRY'}: {n} multi-variant produkter | {sorted_} sorteret, {already} allerede ===")
+    print(f"=== {'LIVE' if live else 'DRY'}: {n} multi-variant | {need} trængte til sortering, {sorted_} sorteret | slut-cursor: {cursor} ===")
 
 if __name__ == "__main__":
     main()

@@ -590,6 +590,33 @@ def reconcile_existing(pid, existing_edges, target_axes, existing_opts, feed, cf
         if errs:
             raise RuntimeError(f"reconcile: {errs}")
 
+def _nat_val(v):
+    nums = re.findall(r"\d+\.?\d*", v or "")
+    return (0, [float(n) for n in nums], (v or "").lower()) if nums else (1, [], (v or "").lower())
+
+def sort_variants_natural(pid, dry, log):
+    """Omordn varianter så option-værdier vises stigende (tal) / alfabetisk (ord). Rører kun position."""
+    if dry:
+        return
+    d = gql("""query($id:ID!){product(id:$id){options{position name} variants(first:250){edges{node{id selectedOptions{name value}}}}}}""", {"id": pid})
+    p = (d.get("data") or {}).get("product")
+    if not p or len(p["variants"]["edges"]) < 2:
+        return
+    opts = sorted(p["options"], key=lambda o: o["position"])
+    vs = [e["node"] for e in p["variants"]["edges"]]
+    def vkey(v):
+        so = {o["name"]: o["value"] for o in v["selectedOptions"]}
+        return tuple(_nat_val(so.get(o["name"], "")) for o in opts)
+    svs = sorted(vs, key=vkey)
+    if [v["id"] for v in svs] == [v["id"] for v in vs]:
+        return
+    pos = [{"id": v["id"], "position": i + 1} for i, v in enumerate(svs)]
+    r = gql("""mutation($p:ID!,$pos:[ProductVariantPositionInput!]!){
+      productVariantsBulkReorder(productId:$p,positions:$pos){userErrors{message}}}""", {"p": pid, "pos": pos})
+    errs = (((r.get("data") or {}).get("productVariantsBulkReorder") or {}).get("userErrors")) or []
+    if not errs:
+        log("    ↕ variant-værdier natural-sorteret")
+
 def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None):
     key = p["key"]; master = key.split("|")[1] if "|" in key else ""
     log_lines = []
@@ -727,6 +754,7 @@ def process_group(p, scraped, feed, cfg, sb, dry, enrich=None, location_id=None)
     # DEREFTER keeper-først (så den ikke bliver overskrevet af option-reorderens re-sortering).
     reorder_options_priority(keeper["id"], dry, log)   # Farve = option 1 (variant-thumbnail-swatch)
     reorder_keeper_first(keeper["id"], keeper_skus, dry, log)
+    sort_variants_natural(keeper["id"], dry, log)      # variant-værdier stigende/alfabetisk
     if p.get("new_title") and p["title_changes"]:
         set_title(keeper["id"], p["new_title"], dry, log)
     if p["product_deletes"]:
