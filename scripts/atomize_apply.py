@@ -93,11 +93,15 @@ def build_input(spec, feed, enrich, cfg, loc, ptype):
         or [{"name": "Title", "values": [{"name": "Default Title"}]}]
     vin = [variant_input(v["sku"], {a: v[a] for a in axes if v.get(a)}, i == 0, feed, enrich, cfg, spec["title"], loc)
            for i, v in enumerate(variants)]
+    # create-model: produkt-media = variant 1's fulde galleri + hver anden variants native (1.) billede
     files, seen = [], set()
-    for v in variants:
-        for u in (enrich.get(v["sku"], {}).get("images") or []):
-            if u not in seen:
-                seen.add(u); files.append({"originalSource": u, "contentType": "IMAGE"})
+    for u in (enrich.get(variants[0]["sku"], {}) or {}).get("images") or []:
+        if u not in seen:
+            seen.add(u); files.append({"originalSource": u, "contentType": "IMAGE"})
+    for v in variants[1:]:
+        imgs = (enrich.get(v["sku"], {}) or {}).get("images") or []
+        if imgs and imgs[0] not in seen:
+            seen.add(imgs[0]); files.append({"originalSource": imgs[0], "contentType": "IMAGE"})
     files = files[:245]
     kept = {f["originalSource"] for f in files}
     for vi in vin:
