@@ -48,7 +48,9 @@ def main():
         if (prod.get("descriptionHtml") or "").strip():
             already += 1; continue
         first_sku = (prod["variants"]["edges"][0]["node"]["sku"] or "").strip()
-        row = feed.get(first_sku) or feed.get(s)
+        row = feed.get(first_sku)
+        if row is None:
+            row = feed.get(s)
         if row is None:
             continue
         body = PU.format_body_html(row.get("HTML_description", ""))
