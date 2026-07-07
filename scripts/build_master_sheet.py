@@ -52,7 +52,10 @@ def main():
     for s in feed:
         c = (ME.OPTS.get(s) or {}).get("color")
         if c and len(c) > 2:
-            COLOR_UNIVERSE.add(c.lower().strip())
+            cl = c.lower().strip()
+            COLOR_UNIVERSE.add(cl)
+            if cl.endswith("t") and len(cl) > 6:
+                COLOR_UNIVERSE.add(cl[:-1])   # egetræsfarvet → egetræsfarve (feed-titlens form)
     print(f"master_pids: {len(bym)} | feed: {len(feed)} | farve-univers: {len(COLOR_UNIVERSE)}")
 
     out = r"C:\Users\APC\Desktop\master_sheet.csv"
