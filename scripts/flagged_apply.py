@@ -11,7 +11,8 @@ import atomize_apply as AA
 def main():
     live = "--live" in sys.argv
     n = int(sys.argv[sys.argv.index("--n") + 1]) if "--n" in sys.argv else None
-    specs = json.load(open("output/flagged_specs.json", encoding="utf-8"))
+    spath = sys.argv[sys.argv.index("--specs") + 1] if "--specs" in sys.argv else "output/flagged_specs.json"
+    specs = json.load(open(spath, encoding="utf-8"))
     sb = ME.get_supabase_client()
     cfg = pricing.load_pricing_config(sb, vendor="vidaXL")
     feed, enrich, loc, pubs = {}, {}, None, []

@@ -10,7 +10,9 @@ import csv
 
 def main():
     n = int(sys.argv[sys.argv.index("--n") + 1]) if "--n" in sys.argv else None
-    flagged = json.load(open("output/flagged_groups.json", encoding="utf-8"))
+    infile = sys.argv[sys.argv.index("--in") + 1] if "--in" in sys.argv else "output/flagged_groups.json"
+    outfile = sys.argv[sys.argv.index("--out") + 1] if "--out" in sys.argv else "output/flagged_specs.json"
+    flagged = json.load(open(infile, encoding="utf-8"))
     plans = {p["key"]: p for p in (json.loads(l) for l in open("output/merge_plan.jsonl", encoding="utf-8"))}
     oracle = {r["sku"]: r["approved_title"] for r in csv.DictReader(open("output/approved_titles_by_sku.csv", encoding="utf-8-sig")) if r["approved_title"]}
     groups = flagged[:n] if n else flagged
@@ -48,7 +50,7 @@ def main():
         else:
             out[keeper] = {"products": [{"title": oracle.get(r["sku"]) or keeper_title, "variants": [{"sku": r["sku"]}]} for r in rows], "delete_handles": del_handles}
             print(f"[{i}/{len(groups)}] {fg['cat']} {keeper[:36]} → FALLBACK singler ({len(live_skus)})")
-    json.dump(out, open("output/flagged_specs.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    json.dump(out, open(outfile, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     tp = sum(len(v["products"]) for v in out.values())
     print(f"\n=== {len(out)} grupper → {tp} produkter. Gemt output/flagged_specs.json ===")
 
