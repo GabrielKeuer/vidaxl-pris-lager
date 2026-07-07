@@ -1,0 +1,18 @@
+{
+ "grupper_med_handling": 2971,
+ "actions": {
+  "merge": 2150,
+  "split": 185,
+  "fix_mismerge_rest": 52,
+  "atomize": 584
+ },
+ "variant_creates": 39615,
+ "product_deletes": 12281,
+ "redirects": 12281,
+ "est_dage_ved_1000_pr_dag": 40,
+ "advarsler": {
+  "afled_option": 6832,
+  "ny_gruppe_titel": 33
+ },
+ "titel_ændres_på": 2589
+}

@@ -1,0 +1,12 @@
+{
+  "products": 30769,
+  "distinct_masters": 16067,
+  "clean_single": 27977,
+  "fully_single": 2568,
+  "mismerge": 224,
+  "missing_merge_masters": 1802,
+  "products_in_missing": 14132,
+  "resulting_products": 18635,
+  "over100": 149,
+  "over2000": 0
+}

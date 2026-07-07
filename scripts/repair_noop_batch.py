@@ -24,19 +24,29 @@ def main():
             for a, val in (vv.get("opts") or {}).items():
                 if val:
                     cache_av[vv["pid"]][a].add(val.lower())
-    # Rørte grupper udledes fra BATCH-LOGGEN (journalen er renset for no-op) — '▶ <key> [action]'
-    log_path = SP + r"\merge_batch1.log"
-    touched = set()
-    for line in open(log_path, encoding="utf-8", errors="ignore"):
-        m = re.match(r"▶ (\S+) \[", line.strip())
-        if m:
-            touched.add(m.group(1))
-    noop = [k for k in touched if plans.get(k) and not plans[k]["variant_creates"] and not plans[k]["product_deletes"]
-            and plans[k]["action"] in ("merge", "fix_mismerge_rest")]
-    print(f"{'LIVE' if live else 'DRY-RUN'}: {len(noop)} no-op keepers at reparere\n")
+    # Repair-mål: (1) no-op keepers rørt af batch 1 (fra log), (2) FAILED-grupper (delvis merge —
+    # keeper fik batch-akse men bulkCreate fejlede). Begge = ufuldstændige → gendan til cache-tilstand.
+    sb = ME.get_supabase_client()
+    noop = set()
+    for lg in ("merge_batch1.log", "merge_batch2.log"):
+        try:
+            for line in open(SP + "\\" + lg, encoding="utf-8", errors="ignore"):
+                m = re.match(r"▶ (\S+) \[", line.strip())
+                if m and plans.get(m.group(1)) and not plans[m.group(1)]["variant_creates"] and not plans[m.group(1)]["product_deletes"]:
+                    noop.add(plans[m.group(1)]["keeper_handle"])
+        except FileNotFoundError:
+            pass
+    for r in (sb.table("merge_exec_log").select("group_key").eq("status", "failed").execute().data or []):
+        if plans.get(r["group_key"]):
+            noop.add(plans[r["group_key"]]["keeper_handle"])
+    # SIKKERHED: ekskludér keepers der er i en DONE-gruppe (succesfuld merge — deres nye akser er ægte!)
+    done_handles = {plans[r["group_key"]]["keeper_handle"]
+                    for r in (sb.table("merge_exec_log").select("group_key").eq("status", "done").execute().data or [])
+                    if plans.get(r["group_key"])}
+    noop = sorted(noop - done_handles)   # liste af keeper-handles der IKKE er succesfuldt merged
+    print(f"{'LIVE' if live else 'DRY-RUN'}: {len(noop)} keepers (no-op + failed) at reparere\n")
     t_fix = axis_fix = flagged = 0
-    for k in noop:
-        h = plans[k]["keeper_handle"]
+    for h in noop:
         cache_title = (prods.get(h2pid.get(h), {}) or {}).get("title")
         d = ME.gql('query{productByHandle(handle:$h){id title options{id name optionValues{name}} variants(first:100){edges{node{id}}}}}'.replace("$h", '"%s"' % h))
         pr = (d.get("data") or {}).get("productByHandle")
