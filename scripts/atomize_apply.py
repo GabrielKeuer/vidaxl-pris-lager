@@ -121,6 +121,8 @@ def main():
         loc = ME.gql('{locations(first:1,query:"status:active"){edges{node{id}}}}')["data"]["locations"]["edges"][0]["node"]["id"]
         pubs = _pubs()
     used_handles = set()
+    DELF = "output/deleted_keepers.json"
+    deleted = set(json.load(open(DELF, encoding="utf-8")) if os.path.exists(DELF) else [])
     handles = [only] if only else (list(specs)[:n] if n else list(specs))
     tot_p = 0
     for h in handles:
@@ -130,8 +132,11 @@ def main():
         ptype = (pr or {}).get("productType") or ""
         print(f"\n▶ {h} → {len(prods)} produkter" + ("" if live else " (DRY)"))
         try:
-            if live and pr:
-                ME.delete_product(pr["id"], h, False, print)          # slet original (frigør SKUs) hvis den findes
+            if live and pr and h not in deleted:
+                # slet KUN hvis keeperen ikke allerede er slettet (nyt produkt kan have genbrugt handlen)
+                ME.delete_product(pr["id"], h, False, print)
+                deleted.add(h)
+                json.dump(sorted(deleted), open(DELF, "w", encoding="utf-8"))
             primary = None
             expanded = [s for spec in prods for s in split_dupes(spec)]   # normalisér + split dublet-kombos
             for i, spec in enumerate(expanded):
