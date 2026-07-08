@@ -26,7 +26,8 @@ def strip_axes(title, values, strip_colors=False):
         vn = re.sub(r"\s*x\s*", "x", v.lower().strip())
         for cand in {v.lower().strip(), vn, v.lower().split(",")[0].strip()}:
             if len(cand) > 1:
-                t = re.sub(r"(?<=\W)" + re.escape(cand) + r"(?=\W)", " ", t)
+                # tillad trailing farve-suffiks: feed "bordeauxfarvet" vs item_variant "Bordeaux"
+                t = re.sub(r"(?<=\W)" + re.escape(cand) + r"(farvet|farve)?(?=\W)", " ", t)
     return housestyle(re.sub(r"\s+", " ", t).strip(" -,·"))
 
 def nat_val(v):
@@ -122,11 +123,38 @@ def main():
             base = max(live, key=lambda s: len(opts[s]))
             avals = [v for k in [k for _, ks in specs for k in ks] for v in [opts[base].get(k)] if v] or list(opts[base].values())
             title = strip_axes(clean(feed[base]), avals, strip_colors=any("color" in ks for _, ks in specs)) or housestyle(feed[base])
+        # KOLLAPS redundante akser: to specs med IDENTISKE værdier på tværs af ALLE SKUs = samme akse
+        # (vidaXL lagrer redundant, fx variationAttribute1+2 = Sofa/sofabord/spisebord) → behold kun den
+        # første. Sikrer også unikke option-navne (samme navn + andre værdier → gør unikt).
+        def _spec_vals(ns):
+            _, ks = ns
+            return tuple(" ".join(opts[s].get(k, "") for k in ks).strip() for s in live)
+        uniq = []; seen_vals = set(); seen_names = set()
+        for ns in specs:
+            vt = _spec_vals(ns)
+            if vt in seen_vals:
+                continue
+            seen_vals.add(vt)
+            nm = ns[0]
+            if nm in seen_names:
+                c = 2
+                while f"{nm} {c}" in seen_names:
+                    c += 1
+                ns = (f"{nm} {c}", ns[1]); nm = ns[0]
+            seen_names.add(nm)
+            uniq.append(ns)
+        specs = uniq
         # OPTION-RÆKKEFØLGE: Farve altid først (variant-swatch), resten i deres rækkefølge
         specs = sorted(specs, key=lambda ns: 0 if ns[0] == "Farve" else 1)
-        # per-SKU option-værdier
+        # per-SKU option-værdier (kapitalisér første bogstav — "sofabord"→"Sofabord", "90 cm" urørt)
+        def cap1(v):
+            v = v.strip()
+            for i, ch in enumerate(v):
+                if ch.isalpha():
+                    return v[:i] + ch.upper() + v[i+1:]
+            return v
         def sku_values(s):
-            return {nm: " ".join(opts[s].get(k, "") for k in ks).strip() for nm, ks in specs}
+            return {nm: cap1(" ".join(opts[s].get(k, "") for k in ks).strip()) for nm, ks in specs}
         # split: samme kombo → separate produkter (nær-identiske, samme titel)
         combo_seen = defaultdict(int); byprod = defaultdict(list)
         for s in live:

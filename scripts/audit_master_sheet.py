@@ -29,7 +29,8 @@ def strip_axes(title, values, strip_colors=False):
         vn = re.sub(r"\s*x\s*", "x", v.lower().strip())
         for cand in {v.lower().strip(), vn, v.lower().split(",")[0].strip()}:
             if len(cand) > 1:
-                t = re.sub(r"(?<=\W)" + re.escape(cand) + r"(?=\W)", " ", t)
+                # tillad trailing farve-suffiks: feed "bordeauxfarvet" vs item_variant "Bordeaux"
+                t = re.sub(r"(?<=\W)" + re.escape(cand) + r"(farvet|farve)?(?=\W)", " ", t)
     return housestyle(re.sub(r"\s+", " ", t).strip(" -,·"))
 
 def main():
@@ -81,7 +82,7 @@ def main():
         if has_color:
             allvals |= COLOR_UNIVERSE
         tl = " " + title.lower() + " "
-        leak = [v for v in allvals if len(v) > 3 and re.search(r"(?<=\W)" + re.escape(v.lower().split(',')[0]) + r"(?=\W)", tl)]
+        leak = [v for v in allvals if len(v) > 3 and re.search(r"(?<=\W)" + re.escape(v.lower().split(',')[0]) + r"(farvet|farve)?(?=\W)", tl)]
         reasons = []
         if len(axes) > 3:
             reasons.append(f"over_3_akser ({len(axes)}: {axes})")
