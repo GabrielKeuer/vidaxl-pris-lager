@@ -1,0 +1,16 @@
+{
+ "_doc": "Manuelle titel-beslutninger for de residuale flaggede (tvetydige tal/mål). 'title'=override, 'keep'=nuværende er korrekt (fast mål), 'review'=kræver Gabriels blik. Anvendes i build_complete_feed efter generering.",
+
+ "M292550":   {"keep": true, "why": "50x50 cm er FAST mål (Antal 10/50/100 varierer) → titel korrekt"},
+ "M297550":   {"keep": true, "why": "12 cm er fast lampe-mål (Antal varierer) → korrekt"},
+ "M297549":   {"keep": true, "why": "Rund/Hvid er FAST for denne PID (kun Antal varierer) → korrekt"},
+ "M297463":   {"keep": true, "why": "200x170x4 cm er FAST mål (Farve+Antal varierer) → korrekt"},
+ "M30446391": {"keep": true, "why": "6x6x16 cm er fast (Antal beslag varierer) → korrekt"},
+
+ "M3007597":  {"title": "Justerbar Gine Kvinde", "why": "'Str. S 33-40' er Model/størrelse-variant → strip"},
+ "M3010061":  {"title": "Hynde Til Havebænk Oxfordstof", "why": "størrelse varierer (100/120/150) → strip mål"},
+ "M30446381": {"title": "Loftsspot Med Spotlights 6,5 X 6 X 11,5 Cm Metal", "why": "'Nikkel' er Farve-variant → strip"},
+ "M297316":   {"title": "Opbevaringsglas Med Korklåg 6 Stk.", "why": "aksen er rumfang (650/1100 ml) → strip ml; 6 stk fast"},
+
+ "M30485441": {"title": "Egnet Til Flad Træring", "why": "Gabriel godkendte LLM-forslaget — strip 'Ø40/ Stål'"}
+}

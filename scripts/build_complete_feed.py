@@ -6,14 +6,21 @@ Kører til sidst en fuld AUDIT af feedet. Output: Desktop/komplet_feed.csv + out
 import sys, os, io, zipfile, csv, re, json
 from collections import defaultdict, Counter
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, r"C:\Users\APC\dropxl-product-automation\scripts")
 sys.stdout.reconfigure(encoding="utf-8")
 import merge_executor as ME
+import title_rules as TR   # FEED_SPELLING (Utrækkelig→Udtrækkelig), pcs→dele, casing (LED/PVC/MDF)
 
 def clean(t):
     return re.sub(r"\s+", " ", re.sub(r"(?i)\bvidaxl\b", "", t or "")).strip()
 
 def housestyle(t):
-    return " ".join(w[:1].upper() + w[1:] if w else w for w in clean(t).split())
+    t = clean(t)
+    t = TR.fix_feed_spelling(t)          # systematiske feed-fejl (case-bevarende)
+    t = TR.fix_pcs_to_dele(t)            # pcs → dele
+    t = " ".join(w[:1].upper() + w[1:] if w else w for w in t.split())  # Title Case
+    t, _ = TR.fix_casing(t)              # LED/TV/USB/PVC/MDF/WPC osv. → versaler
+    return t
 
 COLOR_UNIVERSE = set()
 _COLOR_RE = None
@@ -25,15 +32,39 @@ def build_color_re():
     words = sorted((re.escape(c) for c in COLOR_UNIVERSE if len(c) > 2), key=len, reverse=True)
     _COLOR_RE = re.compile(r"(?<=\W)(?:" + "|".join(words) + r")(?:farvet|farve)?(?=\W)") if words else None
 
-def strip_axes(title, values, strip_colors=False):
-    t = " " + title.lower() + " "
+_QTY = r"stk\.?|dele|delt|personers?|ruller|pk|pcs|sæt|pakke"
+# ét sammenhængende mål: NxN(xN)... evt. + NxN, evt. med enhed cm/mm/m
+_DIM = (r"\d+(?:[.,]\d+)?(?:\s*[x×]\s*\d+(?:[.,]\d+)?)+(?:\s*(?:cm|mm|m))?"
+        r"(?:\s*\+\s*\d+(?:[.,]\d+)?(?:\s*[x×]\s*\d+(?:[.,]\d+)?)+(?:\s*(?:cm|mm|m))?)?")
+
+def strip_axes(title, values, strip_colors=False, strip_dims=False):
+    t = " " + re.sub(r"\s+", " ", title.lower()) + " "
+    # (1) MÅL-STRIP hvis en størrelse-akse varierer → fjern ALLE mål-mønstre (robust for format/enhed)
+    if strip_dims:
+        t = re.sub(r"(?<=\s)ø\s*" + _DIM + r"(?=\s)", " ", t)            # Ø-dimensioner: "Ø40x2,5 cm"
+        t = re.sub(r"(?<=\s)\(?\d[\d.,\-–/x×() ]*\)?\s*(?:cm|mm)(?=\s)", " ", t)  # sammensat/range m. cm/mm
+        t = re.sub(r"(?<=\s)" + _DIM + r"(?=\s)", " ", t)
+        t = re.sub(r"(?<=\s)\d+(?:[.,]\d+)?[-/]\d+(?:[.,]\d+)?\s*(?:cm|mm|m)(?=\s)", " ", t)  # tykkelse "7/9 mm"
+        t = re.sub(r"(?<=\s)\d+(?:[.,]\d+)?\s*(?:cm|mm)(?=\s)", " ", t)   # enkelt "N cm"/"N mm"
+        t = re.sub(r"(?<=\s)ø\s*\d+(?:[.,]\d+)?\s*(?:cm|mm)?(?=\s)", " ", t)  # Ø N cm
+    # (2) akse-værdier
     for v in values:
         if not v:
             continue
-        vn = re.sub(r"\s*x\s*", "x", v.lower().strip())
-        for cand in {v.lower().strip(), vn, v.lower().split(",")[0].strip()}:
-            if len(cand) > 1:
-                t = re.sub(r"(?<=\W)" + re.escape(cand) + r"(farvet|farve)?(?=\W)", " ", t)
+        vl = v.lower().strip()
+        if re.fullmatch(r"\d+", vl):
+            # "N stk" (antal + enhed)
+            t = re.sub(r"(?<=\s)" + vl + r"[\s\-]*(?:" + _QTY + r")(?=\s)", " ", t)
+            # bart antal-tal ("10 middagsservietter") — men IKKE hvis det er del af et mål
+            # (ikke foran x/enhed, ikke efter x, ikke del af større tal). Enhed = HELT ord (m må ikke
+            # ramme "middagsservietter"), derfor (?![a-zæøå]) efter enheden.
+            t = re.sub(r"(?<!\d)(?<![x×]\s)(?<=\s)" + vl +
+                       r"(?=\s)(?!\s*(?:[x×]|(?:cm|mm|m|l|kg|g|ml|cl|pr)(?![a-zæøå])))", " ", t)
+        else:
+            vn = re.sub(r"\s*x\s*", "x", vl)
+            for cand in {vl, vn, vl.split(",")[0].strip()}:
+                if len(cand) > 1:
+                    t = re.sub(r"(?<=\W)" + re.escape(cand) + r"(farvet|farve)?(?=\W)", " ", t)
     if strip_colors and _COLOR_RE:
         t = _COLOR_RE.sub(" ", t)
     return housestyle(re.sub(r"\s+", " ", t).strip(" -,·"))
@@ -133,11 +164,21 @@ def main():
             lbl = AXIS_LABELS.get(mid, {}) or {}
             specs = [("Farve" if k == "color" else (lbl.get(k) or option_name(k, axvals[k])), [k]) for k in axes]
             title = None
-        # titel (hvis ikke manuel)
+        # titel (hvis ikke manuel) = base-SKU's feed-titel MINUS ALLE varianters akse-værdier (union)
         if not title:
             base = max(live, key=lambda s: len(opts[s]))
-            avals = [v for k in [k for _, ks in specs for k in ks] for v in [opts[base].get(k)] if v] or list(opts[base].values())
-            title = strip_axes(clean(feed[base]), avals, strip_colors=any("color" in ks for _, ks in specs)) or housestyle(feed[base])
+            avals = []
+            for _, ks in specs:
+                for k in ks:
+                    for s in live:
+                        x = opts[s].get(k)
+                        if x and x not in avals:
+                            avals.append(x)
+            if not avals:
+                avals = list(opts[base].values())
+            SIZE_AXES = {"Størrelse", "Højde", "Bredde", "Længde", "Dybde", "Bordlængde", "Diameter", "Størrelse 2"}
+            strip_dims = any(nm in SIZE_AXES for nm, _ in specs)
+            title = strip_axes(clean(feed[base]), avals, strip_colors=any("color" in ks for _, ks in specs), strip_dims=strip_dims) or housestyle(feed[base])
         # KOLLAPS redundante akser: to specs med IDENTISKE værdier på tværs af ALLE SKUs = samme akse
         # (vidaXL lagrer redundant, fx variationAttribute1+2 = Sofa/sofabord/spisebord) → behold kun den
         # første. Sikrer også unikke option-navne (samme navn + andre værdier → gør unikt).
@@ -171,26 +212,47 @@ def main():
         def sku_values(s):
             return {nm: cap1(" ".join(opts[s].get(k, "") for k in ks).strip()) for nm, ks in specs}
         names = [nm for nm, _ in specs]
-        # split: samme kombo → separate produkter (nær-identiske). ORPHAN: SKU uden akse-værdi
-        # (udgået-søskende, ingen item_variant) kan ikke være variant → eget single-produkt.
+        # REGEL 1: INGEN akser → hver SKU er sit eget SINGLE-produkt med SIN EGEN fulde feed-titel
+        # (genuine singler + no-axes-master som plænetromle, hvor SKUs er forskellige produkter)
+        if not names:
+            for oi, s in enumerate(sorted(live)):
+                products.append({"key": f"{mid}" + (f"_s{oi+1}" if oi else ""), "mid": mid,
+                                 "title": housestyle(clean(feed[s])), "specs": [],
+                                 "variants": [{"sku": s, "values": {}, "pos": 1}],
+                                 "manual": bool(fix), "single": True, "orphan": (oi > 0)})
+            continue
+        # MULTI: split samme kombo → separate produkter (nær-identiske). ORPHAN: SKU uden akse-værdi →
+        # eget single-produkt med SIN EGEN feed-titel (ikke master-titlen).
         combo_seen = defaultdict(int); byprod = defaultdict(list); orphans = []
         for s in live:
             vals = sku_values(s)
-            if names and any(not vals[nm] for nm in names):
+            if any(not vals[nm] for nm in names):
                 orphans.append(s); continue
             combo = tuple(vals[nm] for nm in names)
             pnr = combo_seen[combo]; combo_seen[combo] += 1
             byprod[pnr].append((s, vals))
         for pnr, variants in sorted(byprod.items()):
-            # VÆRDI-SORTERING: natural-sort på option1(Farve), så option2, så option3
             variants.sort(key=lambda sv: tuple(nat_val(sv[1].get(n, "")) for n in names))
             products.append({"key": f"{mid}" + (f"_{pnr+1}" if pnr else ""), "mid": mid,
                              "title": title, "specs": names,
                              "variants": [{"sku": s, "values": v, "pos": i + 1} for i, (s, v) in enumerate(variants)],
                              "manual": bool(fix)})
         for oi, s in enumerate(orphans):
-            products.append({"key": f"{mid}_s{oi+1}", "mid": mid, "title": title, "specs": [],
-                             "variants": [{"sku": s, "values": {}, "pos": 1}], "manual": bool(fix), "orphan": True})
+            products.append({"key": f"{mid}_s{oi+1}", "mid": mid, "title": housestyle(clean(feed[s])), "specs": [],
+                             "variants": [{"sku": s, "values": {}, "pos": 1}],
+                             "manual": bool(fix), "single": True, "orphan": True})
+    # ANVEND manuelle titel-overrides (residuale flaggede) + markér review
+    ovr = json.load(open("output/title_overrides.json", encoding="utf-8")) if os.path.exists("output/title_overrides.json") else {}
+    n_ov = 0
+    for p in products:
+        o = ovr.get(p["key"])
+        if o and isinstance(o, dict):
+            if o.get("title"):
+                p["title"] = o["title"]; n_ov += 1
+            if o.get("review"):
+                p["review"] = True
+    print(f"titel-overrides anvendt: {n_ov}")
+
     # skriv CSV
     out = r"C:\Users\APC\Desktop\komplet_feed.csv"
     with open(out, "w", encoding="utf-8-sig", newline="") as f:
