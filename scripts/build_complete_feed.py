@@ -29,6 +29,11 @@ def strip_axes(title, values, strip_colors=False):
                 t = re.sub(r"(?<=\W)" + re.escape(cand) + r"(?=\W)", " ", t)
     return housestyle(re.sub(r"\s+", " ", t).strip(" -,·"))
 
+def nat_val(v):
+    """Natural-sort-nøgle: tal stigende (0,1,2,90,100), derefter alfabetisk; værdier uden tal alfabetisk."""
+    nums = re.findall(r"\d+\.?\d*", v or "")
+    return (0, [float(n) for n in nums], (v or "").lower()) if nums else (1, [], (v or "").lower())
+
 def option_name(key, values):
     if key == "color":
         return "Farve"
@@ -117,6 +122,8 @@ def main():
             base = max(live, key=lambda s: len(opts[s]))
             avals = [v for k in [k for _, ks in specs for k in ks] for v in [opts[base].get(k)] if v] or list(opts[base].values())
             title = strip_axes(clean(feed[base]), avals, strip_colors=any("color" in ks for _, ks in specs)) or housestyle(feed[base])
+        # OPTION-RÆKKEFØLGE: Farve altid først (variant-swatch), resten i deres rækkefølge
+        specs = sorted(specs, key=lambda ns: 0 if ns[0] == "Farve" else 1)
         # per-SKU option-værdier
         def sku_values(s):
             return {nm: " ".join(opts[s].get(k, "") for k in ks).strip() for nm, ks in specs}
@@ -127,17 +134,20 @@ def main():
             combo = tuple(vals[nm] for nm, _ in specs)
             pnr = combo_seen[combo]; combo_seen[combo] += 1
             byprod[pnr].append((s, vals))
+        names = [nm for nm, _ in specs]
         for pnr, variants in sorted(byprod.items()):
+            # VÆRDI-SORTERING: natural-sort på option1(Farve), så option2, så option3
+            variants.sort(key=lambda sv: tuple(nat_val(sv[1].get(n, "")) for n in names))
             products.append({"key": f"{mid}" + (f"_{pnr+1}" if pnr else ""), "mid": mid,
-                             "title": title, "specs": [nm for nm, _ in specs],
-                             "variants": [{"sku": s, "values": v} for s, v in variants],
+                             "title": title, "specs": names,
+                             "variants": [{"sku": s, "values": v, "pos": i + 1} for i, (s, v) in enumerate(variants)],
                              "manual": bool(fix)})
     # skriv CSV
     out = r"C:\Users\APC\Desktop\komplet_feed.csv"
     with open(out, "w", encoding="utf-8-sig", newline="") as f:
         w = csv.writer(f)
         w.writerow(["product_key", "titel", "option1_navn", "option1_vaerdi", "option2_navn",
-                    "option2_vaerdi", "option3_navn", "option3_vaerdi", "sku", "n_varianter", "manuel"])
+                    "option2_vaerdi", "option3_navn", "option3_vaerdi", "sku", "variant_position", "n_varianter", "manuel"])
         for p in products:
             names = p["specs"][:3]
             for v in p["variants"]:
@@ -147,7 +157,7 @@ def main():
                         row += [names[i], v["values"].get(names[i], "")]
                     else:
                         row += ["", ""]
-                row += [v["sku"], len(p["variants"]), "JA" if p["manual"] else ""]
+                row += [v["sku"], v["pos"], len(p["variants"]), "JA" if p["manual"] else ""]
                 w.writerow(row)
     json.dump(products, open("output/complete_feed.json", "w", encoding="utf-8"), ensure_ascii=False)
     print(f"\n✓ KOMPLET FEED: {sum(len(p['variants']) for p in products)} SKU-rækker, {len(products)} produkter → {out}")

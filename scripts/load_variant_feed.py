@@ -26,7 +26,8 @@ def main():
             st[status] += 1
             r = {"sku": sku, "master_pid": p["mid"], "product_key": p["key"],
                  "product_title": p["title"], "item_variant": iv or None,
-                 "status": status, "is_manual_fix": bool(p.get("manual"))}
+                 "status": status, "is_manual_fix": bool(p.get("manual")),
+                 "variant_position": v.get("pos")}
             for i in range(3):
                 nm = specs[i] if i < len(specs) else None
                 r[f"option{i+1}_name"] = nm
