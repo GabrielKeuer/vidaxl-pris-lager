@@ -165,6 +165,11 @@ def main():
     # TRÆFINISH-ord (item_variant trunkerer "Sort Eg"→"Sort", så feed-titlens "eg" overlever)
     for w in ("eg", "sonoma", "artisan", "røget"):
         COLOR_UNIVERSE.add(w)
+    # ekstra ny-danske/sammensatte farver feedet bruger men item_variant/COLOR_LEX mangler
+    for w in ("skygrå", "himmelblå", "flaskegrøn", "nougat", "champagne", "gyldenbrun", "grafitgrå",
+              "stengrå", "perlehvid", "råhvid", "antikbrun", "støvet", "pudderrosa", "koralrød",
+              "smaragdgrøn", "safirblå", "rustrød", "karrygul", "lavendel", "syren"):
+        COLOR_UNIVERSE.add(w)
     build_color_re()
     global AXIS_LABELS
     if os.path.exists("output/axis_labels.json"):
