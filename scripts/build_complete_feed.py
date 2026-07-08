@@ -56,6 +56,7 @@ def strip_axes(title, values, strip_colors=False, strip_dims=False):
         t = re.sub(r"(?<=\s)" + _DIM + r"(?=\s)", " ", t)
         t = re.sub(r"(?<=\s)\d+(?:[.,]\d+)?[-/]\d+(?:[.,]\d+)?\s*(?:cm|mm|m)(?=\s)", " ", t)  # tykkelse "7/9 mm"
         t = re.sub(r"(?<=\s)\d+(?:[.,]\d+)?\s*(?:cm|mm)(?=\s)", " ", t)   # enkelt "N cm"/"N mm"
+        t = re.sub(r"(?<=\s)\d+(?:[.,]\d+)?\s*[µμΜ]m(?=\s)", " ", t)      # tykkelse i mikrometer "200 μm"
         t = re.sub(r"(?<=\s)ø\s*\d+(?:[.,]\d+)?\s*(?:cm|mm)?(?=\s)", " ", t)  # Ø N cm
     # (2) akse-værdier
     for v in values:
@@ -275,7 +276,7 @@ def main():
                             avals.append(x)
             if not avals:
                 avals = list(opts[base].values())
-            SIZE_AXES = {"Størrelse", "Højde", "Bredde", "Længde", "Dybde", "Bordlængde", "Diameter", "Størrelse 2"}
+            SIZE_AXES = {"Størrelse", "Højde", "Bredde", "Længde", "Dybde", "Bordlængde", "Diameter", "Størrelse 2", "Tykkelse"}
             strip_dims = any(nm in SIZE_AXES for nm, _ in specs)
             title = strip_axes(clean(feed[base]), avals, strip_colors=any("color" in ks for _, ks in specs), strip_dims=strip_dims) or housestyle(feed[base])
         # KOLLAPS redundante akser: to specs med IDENTISKE værdier på tværs af ALLE SKUs = samme akse
