@@ -51,15 +51,20 @@ def regroup_master(mid, live, opts, titles, lbl):
                 gav[k].add(opts[s].get(k, ""))
         gaxes = [k for k in axes if len({x for x in gav[k] if x}) > 1]
         rep = Counter(resid[s] for s in gsk).most_common(1)[0][0]
-        if len(gsk) >= 2 and gaxes and RG.valid_group_title(rep):
+        # variant-gruppe kræver IKKE-tom værdi for ALLE gaxes (Shopify afviser tomme option-værdier);
+        # SKUs med tom akse-værdi bliver singles med deres fulde feed-titel.
+        vskus = [s for s in gsk if gaxes and all(opts[s].get(k) for k in gaxes)]
+        if len(vskus) >= 2 and RG.valid_group_title(rep):
             specs = sorted([(namef(k), [k]) for k in gaxes], key=lambda ns: 0 if ns[0] == "Farve" else 1)
             gi += 1
-            out.append({"key": f"{mid}_g{gi}", "title": rep, "specs": specs, "skus": gsk})
+            out.append({"key": f"{mid}_g{gi}", "title": rep, "specs": specs, "skus": vskus})
+            singles = [s for s in gsk if s not in vskus]
         else:
-            for s in gsk:
-                gi += 1
-                out.append({"key": f"{mid}_g{gi}", "title": B.housestyle(B.clean(titles.get(s, ""))),
-                            "specs": [], "skus": [s]})
+            singles = gsk
+        for s in singles:
+            gi += 1
+            out.append({"key": f"{mid}_g{gi}", "title": B.housestyle(B.clean(titles.get(s, ""))),
+                        "specs": [], "skus": [s]})
     return out
 
 def to_rows(prod, opts):
