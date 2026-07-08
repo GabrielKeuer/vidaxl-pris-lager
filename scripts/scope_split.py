@@ -42,12 +42,17 @@ def setup_universe(feed):
 def toks(s):
     return set(re.findall(r"[a-zæøå0-9]+", (s or "").lower()))
 
+def _cmatch(a, b):
+    """token-match m. sammensat-ord: 'underskab' ~ 'køkkenunderskab' (suffiks-komponent)."""
+    return a == b or (len(a) >= 4 and b.endswith(a)) or (len(b) >= 4 and a.endswith(b))
+
 def same_product(a, b):
-    """samme produkt hvis delmængde (ekstra ord) ELLER højt token-overlap (stavefejl)."""
+    """samme produkt hvis (sammensat-bevidst) delmængde ELLER højt token-overlap (stavefejl)."""
     ta, tb = toks(a), toks(b)
     if not ta or not tb:
         return True
-    if ta <= tb or tb <= ta:
+    small, big = (ta, tb) if len(ta) <= len(tb) else (tb, ta)
+    if all(any(_cmatch(x, y) for y in big) for x in small):   # delmængde (sammensat-bevidst)
         return True
     j = len(ta & tb) / len(ta | tb)
     return j >= 0.6

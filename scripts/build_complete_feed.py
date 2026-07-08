@@ -182,9 +182,64 @@ def main():
     manual = load_manual()
     print(f"master_pids: {len(bym)} | feed: {len(feed)} | manuelle: {len(manual)}")
 
-    products = []   # {key, title, specs:[(name,[keys])], variants:[{sku, values:{name:val}}]}
+    # SPLIT-OVERRIDES: godkendte master_pids der blander forskellige produkter (fx M3042959 køkkenskabe,
+    # M3003939 sidebord+havestole). For disse klynges SKU'erne efter produkt-NAVN og hver klynge bliver
+    # sit eget produkt (egne akser + egen titel). split_overrides.json = liste af godkendte master_pids.
+    def _toks(s):
+        return set(re.findall(r"[a-zæøå0-9]+", (s or "").lower()))
+    def _cmatch(a, b):
+        return a == b or (len(a) >= 4 and b.endswith(a)) or (len(b) >= 4 and a.endswith(b))
+    def _same_prod(a, b):
+        ta, tb = _toks(a), _toks(b)
+        if not ta or not tb:
+            return True
+        sm, bg = (ta, tb) if len(ta) <= len(tb) else (tb, ta)
+        if all(any(_cmatch(x, y) for y in bg) for x in sm):
+            return True
+        return len(ta & tb) / len(ta | tb) >= 0.6
+    def _noun_base(s, o, ax):
+        b = strip_axes(clean(feed[s]), [o.get(k) for k in ax], strip_colors=True, strip_dims=True)
+        b = re.sub(r"\b\d+\s*(?:stk|dele|pcs|sæt|pk|personers?|sæders?)\.?\b", " ", b.lower())
+        return " ".join(w for w in re.findall(r"[a-zæøå]+", b) if w not in MATERIAL_STOP and len(w) > 2)
+    split_appr = json.load(open("output/split_overrides.json", encoding="utf-8")) if os.path.exists("output/split_overrides.json") else []
+    split_groups = {}
+    for mid in split_appr:
+        live = [s for s in bym.get(mid, []) if s in feed]
+        if len(live) < 2:
+            continue
+        o = {s: {k: v for k, v in (ME.OPTS.get(s) or {}).items() if v} for s in live}
+        axv = defaultdict(set)
+        for s in live:
+            for k, v in o[s].items():
+                axv[k].add(v)
+        ax = sorted(k for k, vv in axv.items() if len(vv) > 1)
+        nb = {s: _noun_base(s, o[s], ax) for s in live}
+        cl = []
+        for s in live:
+            for g in cl:
+                if _same_prod(nb[s], nb[g[0]]):
+                    g.append(s); break
+            else:
+                cl.append([s])
+        if len(cl) > 1:
+            split_groups[mid] = sorted(cl, key=len, reverse=True)
+    if split_groups:
+        print(f"split-overrides: {len(split_groups)} master_pids → {sum(len(v) for v in split_groups.values())} produkt-grupper")
+
+    # arbejdsliste: (mid, live-SKUs, produkt-nøgle-base). split-master → én enhed pr. klynge.
+    worklist = []
     for mid, skus in bym.items():
         live = [s for s in skus if s in feed]
+        if not live:
+            continue
+        if mid in split_groups:
+            for gi, grp in enumerate(split_groups[mid]):
+                worklist.append((mid, grp, mid if gi == 0 else f"{mid}_split{gi+1}"))
+        else:
+            worklist.append((mid, live, mid))
+
+    products = []   # {key, title, specs:[(name,[keys])], variants:[{sku, values:{name:val}}]}
+    for mid, live, keybase in worklist:
         if not live:
             continue
         opts = {s: {k: v for k, v in (ME.OPTS.get(s) or {}).items() if v} for s in live}
@@ -260,7 +315,7 @@ def main():
         # (genuine singler + no-axes-master som plænetromle, hvor SKUs er forskellige produkter)
         if not names:
             for oi, s in enumerate(sorted(live)):
-                products.append({"key": f"{mid}" + (f"_s{oi+1}" if oi else ""), "mid": mid,
+                products.append({"key": f"{keybase}" + (f"_s{oi+1}" if oi else ""), "mid": mid,
                                  "title": housestyle(clean(feed[s])), "specs": [],
                                  "variants": [{"sku": s, "values": {}, "pos": 1}],
                                  "manual": bool(fix), "single": True, "orphan": (oi > 0)})
@@ -277,12 +332,12 @@ def main():
             byprod[pnr].append((s, vals))
         for pnr, variants in sorted(byprod.items()):
             variants.sort(key=lambda sv: tuple(nat_val(sv[1].get(n, "")) for n in names))
-            products.append({"key": f"{mid}" + (f"_{pnr+1}" if pnr else ""), "mid": mid,
+            products.append({"key": f"{keybase}" + (f"_{pnr+1}" if pnr else ""), "mid": mid,
                              "title": title, "specs": names,
                              "variants": [{"sku": s, "values": v, "pos": i + 1} for i, (s, v) in enumerate(variants)],
                              "manual": bool(fix)})
         for oi, s in enumerate(orphans):
-            products.append({"key": f"{mid}_s{oi+1}", "mid": mid, "title": housestyle(clean(feed[s])), "specs": [],
+            products.append({"key": f"{keybase}_s{oi+1}", "mid": mid, "title": housestyle(clean(feed[s])), "specs": [],
                              "variants": [{"sku": s, "values": {}, "pos": 1}],
                              "manual": bool(fix), "single": True, "orphan": True})
     # ANVEND manuelle titel-overrides (residuale flaggede) + markér review
