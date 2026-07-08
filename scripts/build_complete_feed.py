@@ -16,18 +16,26 @@ def housestyle(t):
     return " ".join(w[:1].upper() + w[1:] if w else w for w in clean(t).split())
 
 COLOR_UNIVERSE = set()
+_COLOR_RE = None
+AXIS_LABELS = {}   # master_pid → {item_variant-nøgle: vidaXL's eget akse-navn} (fra scrape)
+
+def build_color_re():
+    """Præ-kompilér ÉN regex for hele farve-universet (i stedet for 834 separate re.sub pr. titel)."""
+    global _COLOR_RE
+    words = sorted((re.escape(c) for c in COLOR_UNIVERSE if len(c) > 2), key=len, reverse=True)
+    _COLOR_RE = re.compile(r"(?<=\W)(?:" + "|".join(words) + r")(?:farvet|farve)?(?=\W)") if words else None
 
 def strip_axes(title, values, strip_colors=False):
     t = " " + title.lower() + " "
-    vals = list(values) + (sorted(COLOR_UNIVERSE, key=len, reverse=True) if strip_colors else [])
-    for v in vals:
+    for v in values:
         if not v:
             continue
         vn = re.sub(r"\s*x\s*", "x", v.lower().strip())
         for cand in {v.lower().strip(), vn, v.lower().split(",")[0].strip()}:
             if len(cand) > 1:
-                # tillad trailing farve-suffiks: feed "bordeauxfarvet" vs item_variant "Bordeaux"
                 t = re.sub(r"(?<=\W)" + re.escape(cand) + r"(farvet|farve)?(?=\W)", " ", t)
+    if strip_colors and _COLOR_RE:
+        t = _COLOR_RE.sub(" ", t)
     return housestyle(re.sub(r"\s+", " ", t).strip(" -,·"))
 
 def nat_val(v):
@@ -91,6 +99,11 @@ def main():
             cl = c.lower().strip(); COLOR_UNIVERSE.add(cl)
             if cl.endswith("t") and len(cl) > 6:
                 COLOR_UNIVERSE.add(cl[:-1])
+    build_color_re()
+    global AXIS_LABELS
+    if os.path.exists("output/axis_labels.json"):
+        AXIS_LABELS = json.load(open("output/axis_labels.json", encoding="utf-8"))
+    print(f"akse-labels: {len(AXIS_LABELS)} master_pids")
     manual = load_manual()
     print(f"master_pids: {len(bym)} | feed: {len(feed)} | manuelle: {len(manual)}")
 
@@ -116,7 +129,9 @@ def main():
                 for k, v in opts[s].items():
                     axvals[k].add(v)
             axes = sorted(k for k, vv in axvals.items() if len(vv) > 1)
-            specs = [(option_name(k, axvals[k]), [k]) for k in axes]
+            # navn: Farve for swatch, ellers vidaXL's EGET akse-label (scrape), ellers inferens
+            lbl = AXIS_LABELS.get(mid, {}) or {}
+            specs = [("Farve" if k == "color" else (lbl.get(k) or option_name(k, axvals[k])), [k]) for k in axes]
             title = None
         # titel (hvis ikke manuel)
         if not title:
@@ -155,14 +170,17 @@ def main():
             return v
         def sku_values(s):
             return {nm: cap1(" ".join(opts[s].get(k, "") for k in ks).strip()) for nm, ks in specs}
-        # split: samme kombo → separate produkter (nær-identiske, samme titel)
-        combo_seen = defaultdict(int); byprod = defaultdict(list)
+        names = [nm for nm, _ in specs]
+        # split: samme kombo → separate produkter (nær-identiske). ORPHAN: SKU uden akse-værdi
+        # (udgået-søskende, ingen item_variant) kan ikke være variant → eget single-produkt.
+        combo_seen = defaultdict(int); byprod = defaultdict(list); orphans = []
         for s in live:
             vals = sku_values(s)
-            combo = tuple(vals[nm] for nm, _ in specs)
+            if names and any(not vals[nm] for nm in names):
+                orphans.append(s); continue
+            combo = tuple(vals[nm] for nm in names)
             pnr = combo_seen[combo]; combo_seen[combo] += 1
             byprod[pnr].append((s, vals))
-        names = [nm for nm, _ in specs]
         for pnr, variants in sorted(byprod.items()):
             # VÆRDI-SORTERING: natural-sort på option1(Farve), så option2, så option3
             variants.sort(key=lambda sv: tuple(nat_val(sv[1].get(n, "")) for n in names))
@@ -170,6 +188,9 @@ def main():
                              "title": title, "specs": names,
                              "variants": [{"sku": s, "values": v, "pos": i + 1} for i, (s, v) in enumerate(variants)],
                              "manual": bool(fix)})
+        for oi, s in enumerate(orphans):
+            products.append({"key": f"{mid}_s{oi+1}", "mid": mid, "title": title, "specs": [],
+                             "variants": [{"sku": s, "values": {}, "pos": 1}], "manual": bool(fix), "orphan": True})
     # skriv CSV
     out = r"C:\Users\APC\Desktop\komplet_feed.csv"
     with open(out, "w", encoding="utf-8-sig", newline="") as f:

@@ -17,10 +17,12 @@ def main():
         for v in p["variants"]:
             sku = v["sku"]
             iv = ME.OPTS.get(sku) or {}
-            if not specs:
+            if p.get("orphan"):
+                status = "udgaaede_soeskende"   # var variant, egen item_variant udgået → nu single-produkt
+            elif not specs:
                 status = "single"
             elif not iv:
-                status = "udgaaede_soeskende"   # var variant, søskende udgået (ingen item_variant mere)
+                status = "udgaaede_soeskende"
             else:
                 status = "variant"
             st[status] += 1

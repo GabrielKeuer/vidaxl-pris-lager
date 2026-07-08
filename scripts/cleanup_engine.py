@@ -119,7 +119,7 @@ def main():
     for i in range(0, len(keys), 100):
         batch = keys[i:i+100]; fr = 0
         while True:
-            r = sb.table("br_variant_feed").select("*").in_("product_key", batch).range(fr, fr+999).execute().data or []
+            r = sb.table("br_variant_feed").select("*").in_("product_key", batch).order("sku").range(fr, fr+999).execute().data or []
             for x in r:
                 bym[x["product_key"]].append(x)
             if len(r) < 1000:
