@@ -1,0 +1,44 @@
+{
+ "_doc": "Manuelle beslutninger for de 32 flaggede master_pids. Truffet slavisk ud fra Category + item_variant + materiale + mål (hele feed-rækken). axes: item_variant-nøgle → rent option-navn. merge: liste af item_variant-nøgler der slås sammen til ét option (Shopify max 3). keep=titlen var korrekt (falsk positiv).",
+
+ "M3700001940": {"title": "Sofabord", "axes": {"color": "Farve"}, "note": "feed-titel var bare farve; navn fra Category=Sofaborde + beskrivelse"},
+ "M3006504":    {"title": "Pavillon 160 G/M²", "axes": {"color": "Farve", "variationAttribute2": "Størrelse", "variationAttribute3": "Stolpeovertræk"}, "note": "navn fra Category/beskrivelse=pavillon; g/m² fast"},
+
+ "M3015762": {"title": "Sengegavl Fløjl", "merge": [["variationAttribute2", "variationAttribute4"]], "axes": {"color": "Farve", "variationAttribute2+variationAttribute4": "Størrelse", "variationAttribute3": "Model"}, "note": "4→3 akser: bredde+højde(Høj/Lav)=Størrelse"},
+ "M3032891": {"title": "Rumdeler Polyrattan", "merge": [["variationAttribute3", "variationAttribute2"]], "axes": {"color": "Farve", "variationAttribute3+variationAttribute2": "Størrelse", "variationAttribute4": "Vævning"}, "note": "4→3: paneler+mål=Størrelse (korrelerer)"},
+ "M3032268": {"title": "Lænestol Velour", "drop": ["variationAttribute2", "variationAttribute3"], "axes": {"color": "Farve", "variationAttribute4": "Massagefunktion"}, "note": "attribut2(1)+attribut3(eldrevet) faste; Ja=massagestol/Nej=lænestol"},
+
+ "M298465":     {"title": "Konsolbord Med Stålben", "axes": {"variationAttribute1": "Længde", "variationAttribute2": "Materiale"}, "note": "materiale VARIERER (mangotræ/genbrugstræ/ru) → variant, ikke i titel"},
+ "M3030974":    {"title": "Havebord Gabiondesign", "axes": {"color": "Træsort", "variationAttribute2": "Størrelse"}, "note": "træsort VARIERER (fyrretræ/douglasgran) → variant"},
+
+ "M3035139":    {"title": "Parasolfod Med Håndtag Til Ø38/48 Mm Stænger", "axes": {"variationAttribute1": "Form", "variationAttribute2": "Vægt"}, "note": "strip Rund (form=variant)"},
+ "M3033307":    {"title": "Parasolfod Resin Bronzefarvet 9 Kg", "axes": {"variationAttribute1": "Form"}, "note": "strip Rund/halvrund (form=variant)"},
+ "M30113801":   {"title": "Anti-slip Shaggy Tæppe PP", "axes": {"color": "Farve", "variationAttribute2": "Størrelse"}, "note": "strip 120x120 (størrelse=variant)"},
+ "M30322531":   {"title": "Frostbeskyttelses Plantefleece Dække Non-woven", "axes": {"color": "Farve", "variationAttribute2": "Størrelse", "variationAttribute3": "Antal"}, "note": "strip mål (variant)"},
+ "M37000012271":{"title": "Vinter Dyne Mikrofiber Og Teddy Fleece", "axes": {"color": "Farve", "variationAttribute2": "Størrelse"}, "note": "strip 135x200 (størrelse=variant)"},
+ "M30455901":   {"title": "Paraplystativ Stål", "axes": {"color": "Farve", "variationAttribute2": "Mønster"}, "note": "'Regn' er et mønster-variant, ikke navn"},
+
+ "M3011651":  {"title": "Havemøbelsæt Med Hynder Massivt Teaktræ", "axes": {"color": "Hynde-farve", "variationAttribute2": "Konfiguration"}, "note": "strip 4-personers + specifik farve"},
+ "M3001853":  {"title": "Modulsofa-enhed Med Hynde Massivt Akacietræ", "axes": {"color": "Hynde-farve", "variationAttribute2": "Enhed"}, "note": "Category=modulsofa-enheder; strip Fodskammel (config=variant)"},
+ "M3700001193":{"title": "Liggestol/Solseng Massivt Akacietræ", "axes": {"variationAttribute1": "Model"}, "note": "type varierer (solseng/liggestol) → Model-akse"},
+ "M3013568":  {"title": "Børnesofa Og -stol Blødt Plys", "axes": {"color": "Farve", "variationAttribute2": "Form"}, "note": "form varierer (stol/sofa)"},
+ "M3032493":  {"title": "Børnesofa Blødt Plys", "axes": {"color": "Farve", "variationAttribute2": "Form"}, "note": "strip 2-personers; form varierer"},
+ "M3032495":  {"title": "Børnesofa Blødt Plys", "axes": {"color": "Farve", "variationAttribute2": "Form"}, "note": "strip 2-personers; form varierer"},
+
+ "_keep_titel_korrekt": {
+   "note": "Falske positiver — titlen er FAKTISK korrekt (fast attribut/produktnavn). Ingen ændring, kun rene option-navne.",
+   "M3016113":  {"axes": {"color": "Farve", "variationAttribute2": "Størrelse"}, "why": "materiale (fyrretræ) fast"},
+   "M30175411": {"axes": {"color": "Farve", "variationAttribute3": "Antal huller"}, "why": "materiale fast; huller varierer"},
+   "M3017940":  {"axes": {"color": "Farve"}, "why": "materiale (fyrretræ) fast"},
+   "M3029096":  {"axes": {"color": "Farve", "variationAttribute2": "Størrelse"}, "why": "materiale fast"},
+   "M3033116":  {"axes": {"color": "Farve"}, "why": "'Sofa' er produktnavn; 2-sædet fast"},
+   "M30478131": {"axes": {"variationAttribute2": "Hynde-farve"}, "why": "Sort=rattan fast; hynde varierer"},
+   "M37000005021":{"axes": {"color": "Farve", "variationAttribute2": "Bredde"}, "why": "100cm=højde fast (Size-kolonne); bredde varierer"},
+   "M3032151": {"axes": {"color": "Farve", "variationAttribute2": "Konfiguration"}, "why": "'med hynder' fast for alle"},
+   "M3032149": {"axes": {"color": "Farve", "variationAttribute2": "Konfiguration"}, "why": "'med hynder' fast"},
+   "M3032139": {"axes": {"color": "Farve", "variationAttribute2": "Konfiguration"}, "why": "'med hynder' fast"},
+   "M3032147": {"axes": {"color": "Farve", "variationAttribute2": "Konfiguration"}, "why": "'med hynder' fast"},
+   "M3032158": {"axes": {"color": "Farve", "variationAttribute2": "Konfiguration"}, "why": "'med hynder' fast"},
+   "M3032159": {"axes": {"color": "Farve", "variationAttribute2": "Konfiguration"}, "why": "'med hynder' fast"}
+ }
+}
