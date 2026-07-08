@@ -16,11 +16,15 @@ def clean(t):
 
 def housestyle(t):
     t = clean(t)
+    # citationstegn OM ord fjernes ("Lyon"→Lyon), men tomme-mål bevares (0,5" = tommer)
+    t = re.sub(r'(?<=[a-zæøåA-ZÆØÅ])["“”]|["“”](?=[a-zæøåA-ZÆØÅ])', "", t)
     t = TR.fix_feed_spelling(t)          # systematiske feed-fejl (case-bevarende)
     t = TR.fix_pcs_to_dele(t)            # pcs → dele
     t = " ".join(w[:1].upper() + w[1:] if w else w for w in t.split())  # Title Case
     t, _ = TR.fix_casing(t)              # LED/TV/USB/PVC/MDF/WPC osv. → versaler
-    return t
+    t = re.sub(r"\b(\w+)(?:\s+\1)+\b", r"\1", t, flags=re.IGNORECASE)  # kollapsér gentagne ord (Træ Træ, Cm Cm)
+    t = re.sub(r"(?:\s+(?:og|med|til|på|af|for))+\s*$", "", t, flags=re.IGNORECASE)  # hængende bindeord
+    return re.sub(r"\s+", " ", t).strip(" -,·")
 
 COLOR_UNIVERSE = set()
 _COLOR_RES = []   # LISTE af kompilerede chunk-regexes (én stor regex matcher ikke i Python re ved >~5000 ord)
