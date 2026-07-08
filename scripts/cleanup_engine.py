@@ -92,14 +92,68 @@ def build_spec(pkey, variants, feed, cfg, rum):
             "compare_at_price": int(cap) if cap else None, "cost": b2b,
             "weight_grams": wt, "inventory_quantity": int(float(str(row.get("Stock") or 0) or 0)),
             "barcode": str(row.get("EAN") or ""), "option_values": ovals,
-            "image_url": all_img[0] if all_img else None, "n_metafields": len(mf),
+            "image_url": all_img[0] if all_img else None, "metafields": mf, "n_metafields": len(mf),
             "status_feed": v.get("status")})
     return spec, flags
+
+def to_product_spec(CP, spec):
+    variants = []
+    for v in spec["variants"]:
+        variants.append(CP.VariantSpec(
+            sku=v["sku"], price=v["price"] or 0, cost=v["cost"] or 0,
+            weight_grams=v["weight_grams"], inventory_quantity=v["inventory_quantity"],
+            barcode=v["barcode"], compare_at_price=v["compare_at_price"],
+            option_values=[tuple(ov) for ov in v["option_values"]],
+            image_url=v["image_url"], metafields=v.get("metafields", []), google_mpn=v["sku"]))
+    tags = [t for t in (spec.get("tags") or "").split(",") if t]
+    return CP.ProductSpec(handle=None, title=spec["title"], body_html=spec["body_html"],
+                          vendor=spec["vendor"], product_type=spec["product_type"], tags=tags, status="ACTIVE",
+                          seo_title=spec["seo_title"], seo_description=spec["seo_description"],
+                          options_definition=spec["options_definition"], media_urls=spec["media_urls"], variants=variants)
+
+def old_products_for_skus(skus, exclude_id):
+    """Find live-produkter (≠ det nye) der holder disse SKUs → {product_id: handle}."""
+    found = {}
+    for sku in skus:
+        d = ME.gql('query($q:String!){productVariants(first:20,query:$q){edges{node{sku product{id handle}}}}}', {"q": f"sku:{sku}"})
+        for e in (((d.get("data") or {}).get("productVariants") or {}).get("edges") or []):
+            if (e["node"]["sku"] or "").strip() == str(sku):
+                p = e["node"]["product"]
+                if p["id"] != exclude_id:
+                    found[p["id"]] = p["handle"]
+    return found
+
+def execute_live(specs, CP, location_id, sb, log):
+    created = redirected = deleted = 0
+    for spec in specs:
+        skus = [v["sku"] for v in spec["variants"]]
+        ps = to_product_spec(CP, spec)
+        res = CP.call_product_set(ps, location_id)
+        errs = (res or {}).get("userErrors") or []
+        if errs or not (res or {}).get("product"):
+            log(f"  ✗ {spec['product_key']}: {errs[:2] or 'intet produkt'}"); continue
+        prod = res["product"]; new_id = prod["id"]; new_handle = prod["handle"]
+        try:
+            CP.publish_to_all_channels(new_id)
+        except Exception as e:
+            log(f"    (publish-advarsel: {e})")
+        created += 1
+        log(f"  ✓ oprettet {spec['product_key']} → {new_handle} ({len(skus)} var)")
+        ME.del_self_redirect(f"/products/{new_handle}", False, log)
+        olds = old_products_for_skus(skus, new_id)
+        for oid, ohandle in olds.items():
+            ME.create_redirect(f"/products/{ohandle}", f"/products/{new_handle}", False, log, sb)
+            redirected += 1
+            ME.delete_product(oid, ohandle, False, log)
+            deleted += 1
+    log(f"\n=== LIVE: {created} oprettet, {redirected} redirects, {deleted} gamle slettet ===")
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--keys", default="output/pilot_product_keys.json")
     ap.add_argument("--show", type=int, default=3)
+    ap.add_argument("--live", action="store_true", help="opret/redirect/slet LIVE (ellers dry-run)")
+    ap.add_argument("--only", default="", help="komma-separerede product_keys (fx til pilot-test)")
     a = ap.parse_args()
     keys = json.load(open(a.keys, encoding="utf-8"))
     print(f"pilot product_keys: {len(keys)}")
@@ -153,6 +207,19 @@ def main():
             print(f"     {v['sku']}: {v['option_values']} | {v['price']} kr (før {v['compare_at_price']}) | lager {v['inventory_quantity']} | {v['n_metafields']} mf | img={'ja' if v['image_url'] else 'nej'}")
         if spec["_flags"]:
             print(f"  ⚠ flags: {spec['_flags'][:5]}")
+
+    # ===== LIVE-UDFØRSEL =====
+    if a.live:
+        only = set(x.strip() for x in a.only.split(",") if x.strip())
+        tolive = [s for s in specs if not only or s["product_key"] in only]
+        if only:
+            tolive = [s for s in tolive if s["product_key"] in only]
+        import create_products_v2 as CP
+        location_id = CP.get_primary_location_id()   # GID-format (gid://shopify/Location/...)
+        print(f"\n>>> LIVE-UDFØRSEL på {len(tolive)} produkter (location {location_id}) <<<", flush=True)
+        for s in tolive:
+            print(f"   → {s['product_key']}: \"{s['title']}\" ({len(s['variants'])} var)")
+        execute_live(tolive, CP, location_id, sb, lambda m: print(m, flush=True))
 
 if __name__ == "__main__":
     main()
