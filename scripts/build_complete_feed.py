@@ -23,14 +23,20 @@ def housestyle(t):
     return t
 
 COLOR_UNIVERSE = set()
-_COLOR_RE = None
+_COLOR_RES = []   # LISTE af kompilerede chunk-regexes (én stor regex matcher ikke i Python re ved >~5000 ord)
 AXIS_LABELS = {}   # master_pid → {item_variant-nøgle: vidaXL's eget akse-navn} (fra scrape)
 
 def build_color_re():
-    """Præ-kompilér ÉN regex for hele farve-universet (i stedet for 834 separate re.sub pr. titel)."""
-    global _COLOR_RE
-    words = sorted((re.escape(c) for c in COLOR_UNIVERSE if len(c) > 2), key=len, reverse=True)
-    _COLOR_RE = re.compile(r"(?<=\W)(?:" + "|".join(words) + r")(?:farvet|farve)?(?=\W)") if words else None
+    """Præ-kompilér farve-universet i CHUNKS (Python re matcher upålideligt i én kæmpe alternation)."""
+    global _COLOR_RES
+    words = sorted((re.escape(c) for c in COLOR_UNIVERSE if len(c) >= 2), key=len, reverse=True)
+    _COLOR_RES = []
+    # SUFFIKS = danske tillægsords-bøjninger: hvid→hvide/hvidt, brun→brune, grøn→grønne (ne),
+    # creme→cremefarvede. Så vi kun har grund-farver i universet.
+    suf = r"(?:e|t|s|de|ne|ede|nt|farvet|farvede|farve)?"
+    for i in range(0, len(words), 800):
+        chunk = words[i:i + 800]
+        _COLOR_RES.append(re.compile(r"(?<=\W)(?:" + "|".join(chunk) + r")" + suf + r"(?=\W)"))
 
 _QTY = r"stk\.?|dele|delt|personers?|ruller|pk|pcs|sæt|pakke"
 # ét sammenhængende mål: NxN(xN)... evt. + NxN, evt. med enhed cm/mm/m
@@ -62,11 +68,15 @@ def strip_axes(title, values, strip_colors=False, strip_dims=False):
                        r"(?=\s)(?!\s*(?:[x×]|(?:cm|mm|m|l|kg|g|ml|cl|pr)(?![a-zæøå])))", " ", t)
         else:
             vn = re.sub(r"\s*x\s*", "x", vl)
-            for cand in {vl, vn, vl.split(",")[0].strip()}:
+            cands = {vl, vn, vl.split(",")[0].strip()}
+            if "-" in vl:
+                cands.add(vl.replace("-", " "))     # sonoma-eg → sonoma eg
+            for cand in cands:
                 if len(cand) > 1:
                     t = re.sub(r"(?<=\W)" + re.escape(cand) + r"(farvet|farve)?(?=\W)", " ", t)
-    if strip_colors and _COLOR_RE:
-        t = _COLOR_RE.sub(" ", t)
+    if strip_colors:
+        for cre in _COLOR_RES:
+            t = cre.sub(" ", t)
     return housestyle(re.sub(r"\s+", " ", t).strip(" -,·"))
 
 def nat_val(v):
@@ -123,13 +133,38 @@ def main():
         s = str(r.get("SKU") or "").strip().replace(".0", "")
         if s:
             feed[s] = r.get("Title") or ""
+    # generiske MATERIALE-ord: må ALDRIG i det globale farve-univers (vidaXL blander materiale ind i
+    # 'color'-feltet, fx farve='Træ') — ellers stripper de det FASTE materiale fra titler ("Konstrueret træ").
+    # Den specifikke variant-farve strippes stadig via produktets EGNE akse-værdier.
+    MATERIAL_STOP = {"træ", "stof", "metal", "stål", "jern", "glas", "plast", "plastik", "beton", "læder",
+                     "kunstlæder", "rattan", "polyrattan", "bambus", "aluminium", "polyester", "keramik",
+                     "resin", "marmor", "gummi", "kork", "filt", "skum", "krydsfiner", "spånplade", "finér",
+                     "velour", "fløjl", "bomuld", "jute", "sten", "kobber", "messing", "krom", "zink"}
     global COLOR_UNIVERSE
+    def add_color_forms(cl):
+        """Tilføj farve-VÆRDIEN + space/bindestreg-varianter. Bøjning (hvid→hvide) håndteres i
+        regex-SUFFIKSET (build_color_re), ikke ved for-generering."""
+        if not cl or len(cl) < 3 or cl in MATERIAL_STOP:
+            return
+        forms = {cl, cl.replace("-", " "), cl.replace(" ", ""), cl.replace("-", "")}
+        # vidaXL sammensætter "mørk/lys X" til ét ord med -e (Mørk lilla → mørkelilla; Lys brun → lysebrun)
+        for p2, joined in (("mørk ", "mørke"), ("lys ", "lyse")):
+            if cl.startswith(p2):
+                rest = cl[len(p2):]
+                forms |= {joined + rest, joined + " " + rest}
+        for f in forms:
+            if f and len(f) >= 2 and f not in MATERIAL_STOP:
+                COLOR_UNIVERSE.add(f)
     for s in feed:
-        c = (ME.OPTS.get(s) or {}).get("color")
-        if c and len(c) > 2:
-            cl = c.lower().strip(); COLOR_UNIVERSE.add(cl)
-            if cl.endswith("t") and len(cl) > 6:
-                COLOR_UNIVERSE.add(cl[:-1])
+        add_color_forms((ME.OPTS.get(s) or {}).get("color", ""))
+    # curated grund-farver (garanterer hvid/brun/creme/grøn/sort... selv hvis katalog kun har sammensatte)
+    for c in getattr(TR, "COLOR_LEX", set()):
+        cl = c.lower().strip()
+        if cl and len(cl) >= 2 and cl not in MATERIAL_STOP:
+            COLOR_UNIVERSE.add(cl)
+    # TRÆFINISH-ord (item_variant trunkerer "Sort Eg"→"Sort", så feed-titlens "eg" overlever)
+    for w in ("eg", "sonoma", "artisan", "røget"):
+        COLOR_UNIVERSE.add(w)
     build_color_re()
     global AXIS_LABELS
     if os.path.exists("output/axis_labels.json"):
