@@ -82,7 +82,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add output/combine_done.json output/handled_skus.json || true
+          git add output/combine_done.json output/handled_skus.json output/combine_skipped.json || true
           git commit -m "Combine progress - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
           git pull --no-rebase --no-edit origin main || true
           git push || echo "push failed (næste kørsel genoptager via journal)"

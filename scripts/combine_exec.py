@@ -117,6 +117,14 @@ def main():
             for i in range(0, len(pos), 250):
                 ME.gql(REORDER, {"p": pid, "pos": pos[i:i + 250]})
 
+    SKIPPED = "output/combine_skipped.json"
+    def record_skip(c, reason):
+        """Registrér en combine der ikke kan samles via standard-productSet (for stor / dublet-variant),
+        så den kan håndteres separat (large-flow / dup-SKU-projekt). Markeres done så cron kan nå i mål."""
+        sk = json.load(open(SKIPPED, encoding="utf-8")) if os.path.exists(SKIPPED) else []
+        sk.append({"mid": c["mid"], "title": c["title"], "n_skus": c["n_skus"], "reason": reason})
+        json.dump(sk, open(SKIPPED, "w", encoding="utf-8"), ensure_ascii=False)
+
     merged = vcount = redir = deleted = failed = 0
     for c in todo:
         if vcount >= a.max_variants:
@@ -128,6 +136,12 @@ def main():
             spec = build(c)
             if not spec:
                 log(f"   ✗ {c['mid']}: kunne ikke genskabe gruppe-spec"); failed += 1; continue
+            # FOR STOR: >250 varianter overskrider Shopifys productSet-loft + query-cost → kræver large-flow.
+            if len(spec.get("variants", [])) > 250:
+                record_skip(c, f"too_large_{len(spec['variants'])}_variants (kræver large-product-flow)")
+                log(f"   ⏭ {c['mid']} \"{c['title'][:34]}\": {len(spec['variants'])} var >250 — springer over (large-flow)")
+                done.add(c["mid"] + "|" + c["title"]); json.dump(sorted(done), open(DONE, "w", encoding="utf-8"), ensure_ascii=False)
+                continue
             # alle fragmenter der holder gruppens SKUs → anker = det med RENESTE handle (bedste SEO)
             frag = CE.old_products_for_skus(c["skus"], "none")   # {pid: handle}
             if not frag:
@@ -144,18 +158,30 @@ def main():
             # (første variant: kun SKU; øvrige: SKU + produktinfo + variantbilleder)
             ps = CE.to_product_spec(CP, spec)
             if want_handle:
-                # eksplicit handle → Shopify auto-suffikser IKKE (fejler HANDLE_NOT_UNIQUE); prøv -2,-3… selv
+                # eksplicit handle → Shopify auto-suffikser IKKE (fejler HANDLE_NOT_UNIQUE); prøv -2..-6 selv,
+                # og hvis stadig taget (mange ens produkter) → fald tilbage til at BEHOLDE eksisterende handle
+                # (merge lykkes, bare uden rename) frem for at fejle combinen.
                 h = want_handle; n = 1
                 while True:
                     res = CP.call_product_set(ps, loc, product_id=anchor_pid, handle=h)
                     errs = (res or {}).get("userErrors") or []
-                    if any(e.get("code") == "HANDLE_NOT_UNIQUE" for e in errs) and n < 9:
-                        n += 1; h = f"{want_handle}-{n}"; continue
+                    if any(e.get("code") == "HANDLE_NOT_UNIQUE" for e in errs):
+                        if n < 6:
+                            n += 1; h = f"{want_handle}-{n}"; continue
+                        want_handle = None   # fallback: behold eksisterende handle
+                        res = CP.call_product_set(ps, loc, product_id=anchor_pid)
+                        errs = (res or {}).get("userErrors") or []
                     break
             else:
                 res = CP.call_product_set(ps, loc, product_id=anchor_pid)
                 errs = (res or {}).get("userErrors") or []
             if errs or not (res or {}).get("product"):
+                # dublet-variant (2 SKU m. samme option-værdier) = dup-SKU-problem (eget projekt) → log+done+skip
+                if any(e.get("code") == "INVALID_VARIANT" for e in errs):
+                    record_skip(c, f"dup_variants: {str(errs[0].get('message',''))[:80]}")
+                    log(f"   ⏭ {c['mid']} \"{spec['title'][:34]}\": dublet-variant — springer over (dup-SKU-projekt)")
+                    done.add(c["mid"] + "|" + c["title"]); json.dump(sorted(done), open(DONE, "w", encoding="utf-8"), ensure_ascii=False)
+                    continue
                 log(f"   ✗ {c['mid']} \"{spec['title'][:34]}\": {errs[:2] or 'intet produkt'}"); failed += 1; continue
             pr = res["product"]; new_id = pr["id"]; new_handle = pr["handle"]
             # fjern evt. gammel self-redirect på ankerets endelige path (rest fra 70k-oprydning) — ellers
