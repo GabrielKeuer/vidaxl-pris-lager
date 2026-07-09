@@ -54,7 +54,9 @@ jobs:
       - name: Kør combine-executor
         env:
           SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
-          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          # Combine kræver write_products + write_content (301-redirects). SHOPIFY_COMBINE_TOKEN har begge;
+          # det almindelige SHOPIFY_ACCESS_TOKEN (inventory-sync) mangler write_content.
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_COMBINE_TOKEN }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           FEED_URL: ${{ vars.FEED_URL }}
