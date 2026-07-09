@@ -106,16 +106,101 @@ def main():
 
     def reorder(pid, want):
         """Reorder varianter efter spec'ens KENDTE tal-først-rækkefølge (want = SKU i to_rows-orden), så pos-1
-        GARANTERET = den variant build_spec gav produkt-indhold. Gen-udledt nøgle kan divergere fra build_spec
-        når option-værdier har flertydige tal (fx Model '2X...' vs 'Hjørnedel + 2x...') → metafelt-mismatch."""
-        d = ME.gql('query($id:ID!){product(id:$id){variants(first:250){edges{node{id sku}}}}}', {"id": pid})
-        vs = [e["node"] for e in (d.get("data") or {}).get("product", {}).get("variants", {}).get("edges", [])]
+        GARANTERET = den variant build_spec gav produkt-indhold. Paginerer (store produkter >250 varianter)."""
+        vs = []; after = None
+        while True:
+            d = ME.gql('query($id:ID!,$a:String){product(id:$id){variants(first:250,after:$a){'
+                       'pageInfo{hasNextPage endCursor} edges{node{id sku}}}}}', {"id": pid, "a": after})
+            pv = (d.get("data") or {}).get("product", {}).get("variants", {})
+            vs += [e["node"] for e in pv.get("edges", [])]
+            if pv.get("pageInfo", {}).get("hasNextPage"):
+                after = pv["pageInfo"]["endCursor"]
+            else:
+                break
         idx = {s: i for i, s in enumerate(want)}
         svs = sorted(vs, key=lambda v: idx.get((v["sku"] or "").strip(), 10**9))
         if [v["id"] for v in svs] != [v["id"] for v in vs]:
             pos = [{"id": v["id"], "position": i + 1} for i, v in enumerate(svs)]
             for i in range(0, len(pos), 250):
                 ME.gql(REORDER, {"p": pid, "pos": pos[i:i + 250]})
+
+    VBULK = ('mutation($productId:ID!,$variants:[ProductVariantsBulkInput!]!){'
+             'productVariantsBulkCreate(productId:$productId,variants:$variants){'
+             'productVariants{id sku} userErrors{field message code}}}')
+    def bulk_variant_input(v, opt_names):
+        """VariantSpec → productVariantsBulkCreate-input (overflow-varianter på store produkter, >250).
+        Ingen mediaId — de viser variantbilleder-metafelt-galleriet (native media er capped ved ~245)."""
+        vin = {
+            "optionValues": [{"optionName": nm, "name": val} for nm, val in v.option_values],
+            "price": str(v.price),
+            "barcode": v.barcode or None,
+            "inventoryItem": {"sku": v.sku, "cost": str(v.cost), "tracked": True, "requiresShipping": True,
+                              "measurement": {"weight": {"value": v.weight_grams / 1000.0, "unit": "KILOGRAMS"}}},
+            "inventoryPolicy": "DENY",
+            "inventoryQuantities": [{"locationId": loc, "availableQuantity": v.inventory_quantity}],
+            "metafields": v.metafields,
+            "taxable": True,
+        }
+        if v.compare_at_price is not None:
+            vin["compareAtPrice"] = str(v.compare_at_price)
+        return {k: vv for k, vv in vin.items() if vv is not None}
+
+    def merge_anchor(ps, anchor_pid, want_handle):
+        """Merge ps in-place på anker. (1) DEDUPÉR identiske option-kombos (dup-SKU) — behold første, drop resten.
+        (2) CHUNKED hvis >250 varianter: productSet de første 250 + productVariantsBulkCreate resten (≤250 ad
+        gangen). (3) handle-retry + fallback. Returnerer (res, errs, want_handle, dropped_skus)."""
+        seen = set(); kept = []; dropped = []
+        for v in ps.variants:
+            key = tuple((nm, val) for nm, val in v.option_values)
+            if key in seen:
+                dropped.append(v.sku)
+            else:
+                seen.add(key); kept.append(v)
+        ps.variants = kept
+        large = len(kept) > 250
+        ps.variants = kept[:250] if large else kept   # productSet: max 250
+        if want_handle:
+            h = want_handle; n = 1
+            while True:
+                res = CP.call_product_set(ps, loc, product_id=anchor_pid, handle=h)
+                errs = (res or {}).get("userErrors") or []
+                if any(e.get("code") == "HANDLE_NOT_UNIQUE" for e in errs):
+                    if n < 6:
+                        n += 1; h = f"{want_handle}-{n}"; continue
+                    want_handle = None
+                    res = CP.call_product_set(ps, loc, product_id=anchor_pid); errs = (res or {}).get("userErrors") or []
+                break
+        else:
+            res = CP.call_product_set(ps, loc, product_id=anchor_pid); errs = (res or {}).get("userErrors") or []
+        ps.variants = kept   # gendan fuld liste (til reorder-want-order)
+        if not (errs or not (res or {}).get("product")) and large:
+            new_id = res["product"]["id"]
+            rest = kept[250:]
+            for i in range(0, len(rest), 250):
+                chunk = [bulk_variant_input(v, ps.options_definition) for v in rest[i:i + 250]]
+                d = ME.gql(VBULK, {"productId": new_id, "variants": chunk})
+                berrs = ((d.get("data") or {}).get("productVariantsBulkCreate") or {}).get("userErrors") or []
+                if berrs:
+                    log(f"      ⚠ bulk-create chunk {i // 250 + 2}: {berrs[:1]}")
+            log(f"      + {len(rest)} overflow-varianter via bulk-create (i alt {len(kept)})")
+        return res, errs, want_handle, dropped
+
+    def create_single(sku):
+        """Gen-opret en droppet dup-SKU som sit eget single-produkt (så dedup ALDRIG taber en SKU — fx når
+        den droppede sad på selve ankeret og blev fjernet af productSet). Returnerer True ved succes."""
+        if sku not in feed.index:
+            return False
+        prod = {"key": f"{sku}_recover", "title": B.housestyle(B.clean(titles.get(sku, ""))), "specs": [], "skus": [sku]}
+        o = {sku: {k: v for k, v in (ME.OPTS.get(sku) or {}).items() if v}}
+        spec1, _ = CE.build_spec(prod["key"], FL.to_rows(prod, o), feed, cfg, rum)
+        if not spec1:
+            return False
+        r = CP.call_product_set(CE.to_product_spec(CP, spec1), loc)
+        if (r or {}).get("product"):
+            try: CP.publish_to_all_channels(r["product"]["id"])
+            except Exception: pass
+            return True
+        return False
 
     SKIPPED = "output/combine_skipped.json"
     def record_skip(c, reason):
@@ -136,12 +221,6 @@ def main():
             spec = build(c)
             if not spec:
                 log(f"   ✗ {c['mid']}: kunne ikke genskabe gruppe-spec"); failed += 1; continue
-            # FOR STOR: >250 varianter overskrider Shopifys productSet-loft + query-cost → kræver large-flow.
-            if len(spec.get("variants", [])) > 250:
-                record_skip(c, f"too_large_{len(spec['variants'])}_variants (kræver large-product-flow)")
-                log(f"   ⏭ {c['mid']} \"{c['title'][:34]}\": {len(spec['variants'])} var >250 — springer over (large-flow)")
-                done.add(c["mid"] + "|" + c["title"]); json.dump(sorted(done), open(DONE, "w", encoding="utf-8"), ensure_ascii=False)
-                continue
             # alle fragmenter der holder gruppens SKUs → anker = det med RENESTE handle (bedste SEO)
             frag = CE.old_products_for_skus(c["skus"], "none")   # {pid: handle}
             if not frag:
@@ -154,35 +233,14 @@ def main():
             old_handle = frag[anchor_pid]
             # variant-specifikt anker-handle → sæt rent titel-baseret handle (Gabriels valg); ellers behold.
             want_handle = generate_handle(spec["title"], set()) if ugly_handle(old_handle) else None
-            # IN-PLACE merge på ankeret (behold ID + SEO) — build_spec sætter produkt-indhold + metafelter
-            # (første variant: kun SKU; øvrige: SKU + produktinfo + variantbilleder)
+            # IN-PLACE merge på ankeret (behold ID + SEO). merge_anchor: dedup dup-varianter + chunked hvis >250.
             ps = CE.to_product_spec(CP, spec)
-            if want_handle:
-                # eksplicit handle → Shopify auto-suffikser IKKE (fejler HANDLE_NOT_UNIQUE); prøv -2..-6 selv,
-                # og hvis stadig taget (mange ens produkter) → fald tilbage til at BEHOLDE eksisterende handle
-                # (merge lykkes, bare uden rename) frem for at fejle combinen.
-                h = want_handle; n = 1
-                while True:
-                    res = CP.call_product_set(ps, loc, product_id=anchor_pid, handle=h)
-                    errs = (res or {}).get("userErrors") or []
-                    if any(e.get("code") == "HANDLE_NOT_UNIQUE" for e in errs):
-                        if n < 6:
-                            n += 1; h = f"{want_handle}-{n}"; continue
-                        want_handle = None   # fallback: behold eksisterende handle
-                        res = CP.call_product_set(ps, loc, product_id=anchor_pid)
-                        errs = (res or {}).get("userErrors") or []
-                    break
-            else:
-                res = CP.call_product_set(ps, loc, product_id=anchor_pid)
-                errs = (res or {}).get("userErrors") or []
+            res, errs, want_handle, dropped = merge_anchor(ps, anchor_pid, want_handle)
             if errs or not (res or {}).get("product"):
-                # dublet-variant (2 SKU m. samme option-værdier) = dup-SKU-problem (eget projekt) → log+done+skip
-                if any(e.get("code") == "INVALID_VARIANT" for e in errs):
-                    record_skip(c, f"dup_variants: {str(errs[0].get('message',''))[:80]}")
-                    log(f"   ⏭ {c['mid']} \"{spec['title'][:34]}\": dublet-variant — springer over (dup-SKU-projekt)")
-                    done.add(c["mid"] + "|" + c["title"]); json.dump(sorted(done), open(DONE, "w", encoding="utf-8"), ensure_ascii=False)
-                    continue
                 log(f"   ✗ {c['mid']} \"{spec['title'][:34]}\": {errs[:2] or 'intet produkt'}"); failed += 1; continue
+            if dropped:
+                log(f"      (dedup: {len(dropped)} dublet-variant-SKU udeladt — bevares som eget produkt)")
+                record_skip(c, f"dedup_{len(dropped)}_skus (dublet-varianter bevaret separat): {dropped[:5]}")
             pr = res["product"]; new_id = pr["id"]; new_handle = pr["handle"]
             # fjern evt. gammel self-redirect på ankerets endelige path (rest fra 70k-oprydning) — ellers
             # skygger den produktet + donor→anker afvises ('can't redirect to another redirect')
@@ -195,16 +253,25 @@ def main():
                 CP.publish_to_all_channels(new_id)
             except Exception:
                 pass
-            reorder(new_id, [v["sku"] for v in spec["variants"]])   # sortér option-værdier (tal-først)
+            reorder(new_id, [v.sku for v in ps.variants])   # sortér option-værdier (tal-først, dedupet liste)
             merged += 1; vcount += c["n_donors"]
-            # redirect + slet donor-fragmenterne (≠ anker). delete_product er idempotent (allerede-slettet = OK).
+            # dropped-SIKKER donor-sletning: donorer der stadig holder en droppet (dublet) SKU BEVARES —
+            # ellers tabes den droppede SKU. delete_product er idempotent (allerede-slettet = OK).
+            keep_pids = set(CE.old_products_for_skus(dropped, new_id).keys()) if dropped else set()
             for oid, oh in frag.items():
-                if oid == anchor_pid:
+                if oid == anchor_pid or oid in keep_pids:
                     continue
                 ME.create_redirect(f"/products/{oh}", f"/products/{new_handle}", False, lambda m: None, sb)
                 redir += 1
                 ME.delete_product(oid, oh, False, lambda m: None)
                 deleted += 1
+            # SIKKERHEDSNET: enhver droppet dup-SKU der IKKE længere er live (sad på ankeret → fjernet af
+            # productSet) gen-oprettes som eget single-produkt → dedup taber ALDRIG en SKU.
+            for dsku in dropped:
+                dd = ME.gql('query($q:String!){productVariants(first:3,query:$q){edges{node{sku}}}}', {"q": f"sku:{dsku}"})
+                if not any((e["node"]["sku"] or "").strip() == dsku for e in (dd.get("data") or {}).get("productVariants", {}).get("edges", [])):
+                    if create_single(dsku):
+                        log(f"      ↺ gen-oprettet droppet SKU {dsku} som eget produkt")
             done.add(c["mid"] + "|" + c["title"])
             json.dump(sorted(done), open(DONE, "w", encoding="utf-8"), ensure_ascii=False)
             # notér håndterede SKUs (så vi aldrig rører korrekte produkter igen)
