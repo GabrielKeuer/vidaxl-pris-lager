@@ -137,6 +137,11 @@ def main():
             deleted += 1
         done.add(c["mid"] + "|" + c["title"])
         json.dump(sorted(done), open(DONE, "w", encoding="utf-8"), ensure_ascii=False)
+        # notér håndterede SKUs (så vi aldrig rører korrekte produkter igen)
+        HS = "output/handled_skus.json"
+        hs = set(json.load(open(HS, encoding="utf-8")) if os.path.exists(HS) else [])
+        hs |= set(c["skus"])
+        json.dump(sorted(hs), open(HS, "w", encoding="utf-8"), ensure_ascii=False)
         if merged % 20 == 0:
             log(f"   … {merged} merges, ~{vcount} varianter, {deleted} donorer slettet", flush=True)
     log(f"\n=== FÆRDIG (denne kørsel): {merged} merges, ~{vcount} varianter tilføjet, {redir} redirects, {deleted} donorer slettet ===")
