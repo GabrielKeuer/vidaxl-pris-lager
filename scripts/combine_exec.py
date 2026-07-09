@@ -117,71 +117,82 @@ def main():
             for i in range(0, len(pos), 250):
                 ME.gql(REORDER, {"p": pid, "pos": pos[i:i + 250]})
 
-    merged = vcount = redir = deleted = 0
+    merged = vcount = redir = deleted = failed = 0
     for c in todo:
         if vcount >= a.max_variants:
             log(f"\n⏸ nåede {a.max_variants}-variant-grænsen — stopper. Kør igen (cron) for at fortsætte.")
             break
-        spec = build(c)
-        if not spec:
-            log(f"   ✗ {c['mid']}: kunne ikke genskabe gruppe-spec"); continue
-        # alle fragmenter der holder gruppens SKUs → anker = det med RENESTE handle (bedste SEO)
-        frag = CE.old_products_for_skus(c["skus"], "none")   # {pid: handle}
-        if not frag:
-            log(f"   ✗ {c['mid']}: ingen live-fragmenter fundet"); continue
-        anchor_pid = min(frag, key=lambda pid: (1 if _re.search(r"-\d+$", frag[pid]) else 0, len(frag[pid])))
-        old_handle = frag[anchor_pid]
-        # variant-specifikt anker-handle → sæt rent titel-baseret handle (Gabriels valg); ellers behold.
-        want_handle = generate_handle(spec["title"], set()) if ugly_handle(old_handle) else None
-        # IN-PLACE merge på ankeret (behold ID + SEO) — build_spec sætter produkt-indhold + metafelter
-        # (første variant: kun SKU; øvrige: SKU + produktinfo + variantbilleder)
-        ps = CE.to_product_spec(CP, spec)
-        if want_handle:
-            # eksplicit handle → Shopify auto-suffikser IKKE (fejler HANDLE_NOT_UNIQUE); prøv -2,-3… selv
-            h = want_handle; n = 1
-            while True:
-                res = CP.call_product_set(ps, loc, product_id=anchor_pid, handle=h)
-                errs = (res or {}).get("userErrors") or []
-                if any(e.get("code") == "HANDLE_NOT_UNIQUE" for e in errs) and n < 9:
-                    n += 1; h = f"{want_handle}-{n}"; continue
-                break
-        else:
-            res = CP.call_product_set(ps, loc, product_id=anchor_pid)
-            errs = (res or {}).get("userErrors") or []
-        if errs or not (res or {}).get("product"):
-            log(f"   ✗ {c['mid']} \"{spec['title'][:34]}\": {errs[:2] or 'intet produkt'}"); continue
-        pr = res["product"]; new_id = pr["id"]; new_handle = pr["handle"]
-        # fjern evt. gammel self-redirect på ankerets endelige path (rest fra 70k-oprydning) — ellers
-        # skygger den produktet + donor→anker afvises ('can't redirect to another redirect')
-        ME.del_self_redirect(f"/products/{new_handle}", False, lambda m: None)
-        # 301 fra det gamle (grimme) anker-handle → det nye rene (Shopify kan have suffikset)
-        if want_handle and new_handle != old_handle:
-            ME.create_redirect(f"/products/{old_handle}", f"/products/{new_handle}", False, lambda m: None, sb)
-            redir += 1
+        # ROBUST: én combine må ALDRIG vælte hele jobbet. Produkter kan være slettet undervejs (udgået),
+        # transiente API-fejl kan ske → log + spring over + fortsæt. Ikke-markeret done → genoptages næste kørsel.
         try:
-            CP.publish_to_all_channels(new_id)
-        except Exception:
-            pass
-        reorder(new_id, [v["sku"] for v in spec["variants"]])   # sortér option-værdier (tal-først)
-        merged += 1; vcount += c["n_donors"]
-        # redirect + slet donor-fragmenterne (≠ anker)
-        for oid, oh in frag.items():
-            if oid == anchor_pid:
+            spec = build(c)
+            if not spec:
+                log(f"   ✗ {c['mid']}: kunne ikke genskabe gruppe-spec"); failed += 1; continue
+            # alle fragmenter der holder gruppens SKUs → anker = det med RENESTE handle (bedste SEO)
+            frag = CE.old_products_for_skus(c["skus"], "none")   # {pid: handle}
+            if not frag:
+                # alle gruppens produkter er væk (fx udgået + slettet) → intet at samle, spring pænt over
+                log(f"   ⏭ {c['mid']} \"{c['title'][:34]}\": ingen live-fragmenter (udgået?) — springer over")
+                done.add(c["mid"] + "|" + c["title"])
+                json.dump(sorted(done), open(DONE, "w", encoding="utf-8"), ensure_ascii=False)
                 continue
-            ME.create_redirect(f"/products/{oh}", f"/products/{new_handle}", False, lambda m: None, sb)
-            redir += 1
-            ME.delete_product(oid, oh, False, lambda m: None)
-            deleted += 1
-        done.add(c["mid"] + "|" + c["title"])
-        json.dump(sorted(done), open(DONE, "w", encoding="utf-8"), ensure_ascii=False)
-        # notér håndterede SKUs (så vi aldrig rører korrekte produkter igen)
-        HS = "output/handled_skus.json"
-        hs = set(json.load(open(HS, encoding="utf-8")) if os.path.exists(HS) else [])
-        hs |= set(c["skus"])
-        json.dump(sorted(hs), open(HS, "w", encoding="utf-8"), ensure_ascii=False)
-        if merged % 20 == 0:
-            log(f"   … {merged} merges, ~{vcount} varianter, {deleted} donorer slettet")
-    log(f"\n=== FÆRDIG (denne kørsel): {merged} merges, ~{vcount} varianter tilføjet, {redir} redirects, {deleted} donorer slettet ===")
+            anchor_pid = min(frag, key=lambda pid: (1 if _re.search(r"-\d+$", frag[pid]) else 0, len(frag[pid])))
+            old_handle = frag[anchor_pid]
+            # variant-specifikt anker-handle → sæt rent titel-baseret handle (Gabriels valg); ellers behold.
+            want_handle = generate_handle(spec["title"], set()) if ugly_handle(old_handle) else None
+            # IN-PLACE merge på ankeret (behold ID + SEO) — build_spec sætter produkt-indhold + metafelter
+            # (første variant: kun SKU; øvrige: SKU + produktinfo + variantbilleder)
+            ps = CE.to_product_spec(CP, spec)
+            if want_handle:
+                # eksplicit handle → Shopify auto-suffikser IKKE (fejler HANDLE_NOT_UNIQUE); prøv -2,-3… selv
+                h = want_handle; n = 1
+                while True:
+                    res = CP.call_product_set(ps, loc, product_id=anchor_pid, handle=h)
+                    errs = (res or {}).get("userErrors") or []
+                    if any(e.get("code") == "HANDLE_NOT_UNIQUE" for e in errs) and n < 9:
+                        n += 1; h = f"{want_handle}-{n}"; continue
+                    break
+            else:
+                res = CP.call_product_set(ps, loc, product_id=anchor_pid)
+                errs = (res or {}).get("userErrors") or []
+            if errs or not (res or {}).get("product"):
+                log(f"   ✗ {c['mid']} \"{spec['title'][:34]}\": {errs[:2] or 'intet produkt'}"); failed += 1; continue
+            pr = res["product"]; new_id = pr["id"]; new_handle = pr["handle"]
+            # fjern evt. gammel self-redirect på ankerets endelige path (rest fra 70k-oprydning) — ellers
+            # skygger den produktet + donor→anker afvises ('can't redirect to another redirect')
+            ME.del_self_redirect(f"/products/{new_handle}", False, lambda m: None)
+            # 301 fra det gamle (grimme) anker-handle → det nye rene (Shopify kan have suffikset)
+            if want_handle and new_handle != old_handle:
+                ME.create_redirect(f"/products/{old_handle}", f"/products/{new_handle}", False, lambda m: None, sb)
+                redir += 1
+            try:
+                CP.publish_to_all_channels(new_id)
+            except Exception:
+                pass
+            reorder(new_id, [v["sku"] for v in spec["variants"]])   # sortér option-værdier (tal-først)
+            merged += 1; vcount += c["n_donors"]
+            # redirect + slet donor-fragmenterne (≠ anker). delete_product er idempotent (allerede-slettet = OK).
+            for oid, oh in frag.items():
+                if oid == anchor_pid:
+                    continue
+                ME.create_redirect(f"/products/{oh}", f"/products/{new_handle}", False, lambda m: None, sb)
+                redir += 1
+                ME.delete_product(oid, oh, False, lambda m: None)
+                deleted += 1
+            done.add(c["mid"] + "|" + c["title"])
+            json.dump(sorted(done), open(DONE, "w", encoding="utf-8"), ensure_ascii=False)
+            # notér håndterede SKUs (så vi aldrig rører korrekte produkter igen)
+            HS = "output/handled_skus.json"
+            hs = set(json.load(open(HS, encoding="utf-8")) if os.path.exists(HS) else [])
+            hs |= set(c["skus"])
+            json.dump(sorted(hs), open(HS, "w", encoding="utf-8"), ensure_ascii=False)
+            if merged % 20 == 0:
+                log(f"   … {merged} merges, ~{vcount} varianter, {deleted} donorer slettet")
+        except Exception as e:
+            log(f"   ✗ {c['mid']} \"{c.get('title','')[:34]}\": uventet fejl — {str(e)[:160]} (springer over)")
+            failed += 1
+            continue
+    log(f"\n=== FÆRDIG (denne kørsel): {merged} merges, ~{vcount} varianter tilføjet, {redir} redirects, {deleted} donorer slettet, {failed} sprunget over ===")
     log(f"    total gjort: {len(done)}/{len(plan)}")
 
 if __name__ == "__main__":
