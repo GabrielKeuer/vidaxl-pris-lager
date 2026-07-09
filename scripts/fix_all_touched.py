@@ -3,7 +3,7 @@
 descriptionHtml mangler. Bruger create-funktionerne + produktets FØRSTE variant som kilde. --live."""
 import sys, os, io, zipfile, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, r"C:\Users\APC\dropxl-product-automation\scripts")
+sys.path.insert(0, __import__("os").environ.get("DROPXL_SCRIPTS", r"C:\Users\APC\dropxl-product-automation\scripts"))
 sys.stdout.reconfigure(encoding="utf-8")
 import pandas as pd
 import merge_executor as ME

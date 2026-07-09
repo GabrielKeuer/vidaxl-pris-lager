@@ -6,7 +6,7 @@ gen-kørsel). Default = DRY-RUN; --live udfører. --limit N = kun første N prod
 import sys, os, io, zipfile, json, argparse, re
 from collections import defaultdict, Counter
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, r"C:\Users\APC\dropxl-product-automation\scripts")
+sys.path.insert(0, __import__("os").environ.get("DROPXL_SCRIPTS", r"C:\Users\APC\dropxl-product-automation\scripts"))
 sys.stdout.reconfigure(encoding="utf-8")
 import merge_executor as ME
 import build_complete_feed as B
@@ -39,12 +39,18 @@ def regroup_master(mid, live, opts, titles, lbl):
     for s in live:
         vals = [opts[s].get(k) for k in axes]
         resid[s] = B.strip_axes(B.clean(titles.get(s, "")), vals, strip_colors=has_color, strip_dims=has_size)
-    groups = defaultdict(list)
+    # fuzzy-cluster inden for master_pid (fanger irregulær ental/flertal via keys_match)
+    clusters = []  # [rep_key, [skus]]
     for s in live:
-        groups[RG.canonical(resid[s])].append(s)
+        k = RG.canonical(resid[s])
+        for c in clusters:
+            if RG.keys_match(k, c[0]):
+                c[1].append(s); break
+        else:
+            clusters.append([k, [s]])
     out = []
     gi = 0
-    for key, gsk in groups.items():
+    for key, gsk in clusters:
         gav = defaultdict(set)
         for s in gsk:
             for k in axes:

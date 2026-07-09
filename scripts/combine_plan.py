@@ -6,7 +6,7 @@ split) → COMBINE: vælg anker (flest SKUs), flet donorer ind, forud-genereret 
 import sys, os, io, zipfile, csv, json
 from collections import defaultdict
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, r"C:\Users\APC\dropxl-product-automation\scripts")
+sys.path.insert(0, __import__("os").environ.get("DROPXL_SCRIPTS", r"C:\Users\APC\dropxl-product-automation\scripts"))
 sys.stdout.reconfigure(encoding="utf-8")
 import merge_executor as ME
 import build_complete_feed as B

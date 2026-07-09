@@ -1,0 +1,98 @@
+name: Combine Executor (vidaXL katalog-samling)
+
+# COMBINE-ONLY: samler fragmenterede vidaXL-produkter til variant-produkter (in-place på anker, 301+slet
+# donorer). Splitter INTET. ~1000 varianter/dag, resumbar via output/combine_done.json (committes tilbage).
+# ON/OFF = om workflowen er ENABLED i GitHub (schedule fyrer kun når enabled). Manuel dispatch = default dry-run.
+# Kræver dropxl-product-automation (create_products_v2 + product_utils) → cross-repo checkout via DROPXL_PAT.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run | live'
+        required: true
+        default: 'dry-run'
+      budget:
+        description: 'Max varianter denne kørsel (live)'
+        required: false
+        default: '1000'
+      limit:
+        description: 'Kun N combines (test, 0=alle)'
+        required: false
+        default: '0'
+  schedule:
+    - cron: '0 2 * * *'   # dagligt 02:00 UTC — fyrer KUN når workflowen er enabled
+
+concurrency:
+  group: combine-executor
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout vidaxl-pris-lager
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.DROPXL_PAT }}   # så git push virker på protected/normal main
+
+      - name: Checkout dropxl-product-automation (create_products_v2 + product_utils)
+        uses: actions/checkout@v4
+        with:
+          repository: GabrielKeuer/dropxl-product-automation
+          token: ${{ secrets.DROPXL_PAT }}
+          path: dropxl
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install requests pandas beautifulsoup4 supabase lxml anthropic
+
+      - name: Kør combine-executor
+        env:
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          FEED_URL: ${{ vars.FEED_URL }}
+          DROPXL_SCRIPTS: ${{ github.workspace }}/dropxl/scripts
+        run: |
+          set -e
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "▶ Daglig LIVE-batch (budget ${{ vars.COMBINE_DAILY_BUDGET || '1000' }})"
+            python scripts/combine_exec.py --live --max-variants "${{ vars.COMBINE_DAILY_BUDGET || '1000' }}"
+          else
+            MODE="${{ github.event.inputs.mode }}"
+            LIM="${{ github.event.inputs.limit }}"
+            LIMARG=""; if [ "$LIM" != "0" ]; then LIMARG="--limit $LIM"; fi
+            if [ "$MODE" = "live" ]; then
+              python scripts/combine_exec.py --live --max-variants "${{ github.event.inputs.budget }}" $LIMARG
+            else
+              python scripts/combine_exec.py $LIMARG
+            fi
+          fi
+
+      - name: Commit fremdrift (combine_done + handled_skus)
+        if: always()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add output/combine_done.json output/handled_skus.json || true
+          git commit -m "Combine progress - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
+          git pull --no-rebase --no-edit origin main || true
+          git push || echo "push failed (næste kørsel genoptager via journal)"
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: 'Combine executor failed',
+              body: 'combine_exec --live failed. Check the Actions tab. Resumbar via combine_done.json.'
+            })

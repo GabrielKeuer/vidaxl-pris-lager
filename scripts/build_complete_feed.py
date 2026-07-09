@@ -6,7 +6,7 @@ Kører til sidst en fuld AUDIT af feedet. Output: Desktop/komplet_feed.csv + out
 import sys, os, io, zipfile, csv, re, json
 from collections import defaultdict, Counter
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, r"C:\Users\APC\dropxl-product-automation\scripts")
+sys.path.insert(0, __import__("os").environ.get("DROPXL_SCRIPTS", r"C:\Users\APC\dropxl-product-automation\scripts"))
 sys.stdout.reconfigure(encoding="utf-8")
 import merge_executor as ME
 import title_rules as TR   # FEED_SPELLING (Utrækkelig→Udtrækkelig), pcs→dele, casing (LED/PVC/MDF)
@@ -35,12 +35,14 @@ def build_color_re():
     global _COLOR_RES
     words = sorted((re.escape(c) for c in COLOR_UNIVERSE if len(c) >= 2), key=len, reverse=True)
     _COLOR_RES = []
+    # FORSTAVELSE = mørk/lys foran en farve (feed: "Mørk blå" mens item_variant: "Mørkeblå" → strip begge)
+    pre = r"(?:mørke?\s+|lyse?\s+)?"
     # SUFFIKS = danske tillægsords-bøjninger: hvid→hvide/hvidt, brun→brune, grøn→grønne (ne),
     # creme→cremefarvede. Så vi kun har grund-farver i universet.
     suf = r"(?:e|t|s|de|ne|ede|nt|farvet|farvede|farve)?"
     for i in range(0, len(words), 800):
         chunk = words[i:i + 800]
-        _COLOR_RES.append(re.compile(r"(?<=\W)(?:" + "|".join(chunk) + r")" + suf + r"(?=\W)"))
+        _COLOR_RES.append(re.compile(r"(?<=\W)" + pre + r"(?:" + "|".join(chunk) + r")" + suf + r"(?=\W)"))
 
 _QTY = r"stk\.?|dele|delt|personers?|ruller|pk|pcs|sæt|pakke"
 # ét sammenhængende mål: NxN(xN)... evt. + NxN, evt. med enhed cm/mm/m

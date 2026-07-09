@@ -28,11 +28,13 @@ SYSTEM = (
     "helt forskellig funktion/type) → del i separate produkter.\n"
     "Titel-regler: ren dansk, UDEN de attributter der er variant-akser (dem vælger kunden). Behold FASTE "
     "egenskaber (materiale hvis ens, g/m², mål hvis fast). Ingen 'vidaXL'. Dublet-titler OK.\n"
-    "For HVER variant: angiv akse-værdi udledt af DENS feed-titel (fx materialet 'Mangotræ', hynde-farven "
-    "'Antracitgrå', størrelsen '120x35x45 cm'). Er produktet single: variant_akse=null.\n"
-    'Svar KUN med JSON: {"produkter":[{"titel":"...","variant_akse":"Farve"|"Materiale"|"Størrelse"|'
-    '"Antal"|null,"varianter":[{"sku":"123","akse_vaerdi":"Mangotræ"}]}]}. HVER input-SKU i præcis ét '
-    "produkt med sin akse-værdi (akse_vaerdi=null hvis single)."
+    "Et produkt kan have FLERE variant-akser (fx Farve OG Størrelse). Identificér ALLE akser der varierer, "
+    "og angiv for HVER variant en værdi for HVER akse (udledt af dens feed-titel). VIGTIGT: hver SKU SKAL "
+    "have en UNIK kombination af akse-værdier — hvis to SKUs ville få samme kombination, mangler du en akse "
+    "(fx både Farve og Størrelse), ELLER de er forskellige produkter der skal SPLITTES. Vælg den/de KORREKTE "
+    "akser (put ikke farve ind i en 'Størrelse'-akse). Er produktet single: akser=[].\n"
+    'Svar KUN med JSON: {"produkter":[{"titel":"...","akser":["Farve","Størrelse"],"varianter":[{"sku":"123",'
+    '"akse_vaerdier":{"Farve":"Hvid","Størrelse":"120x35x45 cm"}}]}]}. HVER input-SKU i præcis ét produkt.'
 )
 
 def housestyle(t):
@@ -77,30 +79,53 @@ def main():
         flagged = [m for m in only if m in plan]
     elif n:
         flagged = flagged[:n]
-    print(f"flaggede master_pids: {len(flagged)}")
-    out = {}; bad_cover = []
-    for i, mid in enumerate(flagged, 1):
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+    OUTF = "output/flagged_resolved.json"
+    out = json.load(open(OUTF, encoding="utf-8")) if os.path.exists(OUTF) else {}
+    if "--redo-bad" in sys.argv:      # re-kør KUN de master_pids der fejlede validering
+        val = json.load(open("output/flagged_validation.json", encoding="utf-8"))
+        bad = set()
+        for k, lst in val.items():
+            for x in lst:
+                bad.add(x if isinstance(x, str) else x["mid"])
+        todo = [m for m in flagged if m in bad]
+        print(f"--redo-bad: {len(todo)} problematiske master_pids re-køres med multi-akse-prompt")
+    elif "--fresh" in sys.argv:
+        out = {}; todo = flagged
+    else:
+        todo = [m for m in flagged if m not in out]
+    lock = threading.Lock(); done = [0]; bad_cover = []; still_bad = []
+    def work(mid):
         insk = [s for s in plan[mid]["skus"] if feed.get(s)]
         rows = [{"sku": s, "title": feed[s]} for s in insk]
         if not rows:
-            continue
+            return
         res = call(mid, rows)
         if not res or not res.get("produkter"):
-            continue
+            return
         prods = res["produkter"]
-        # house-style titler
         for p in prods:
             p["titel"] = housestyle(p.get("titel", ""))
-        # VALIDÉR: hver input-SKU dækket præcis én gang
         covered = [v["sku"] for p in prods for v in (p.get("varianter") or [])]
-        if sorted(covered) != sorted(insk):
-            bad_cover.append(mid)
-        out[mid] = prods
-        tag = "SPLIT" if len(prods) > 1 else "variant/single"
-        print(f"[{i}/{len(flagged)}] {mid} → {len(prods)} produkt(er) [{tag}]", flush=True)
-        time.sleep(0.1)
-    json.dump(out, open("output/flagged_resolved.json", "w", encoding="utf-8"), ensure_ascii=False, indent=1)
-    print(f"\n=== {len(out)} flaggede løst. VALIDERING: {len(bad_cover)} m. SKU-dæknings-fejl {bad_cover[:5]} ===")
+        # validér unikke akse-kombinationer pr. produkt
+        combo_ok = True
+        for p in prods:
+            combos = [tuple(sorted((v.get("akse_vaerdier") or {}).items())) for v in (p.get("varianter") or [])]
+            if len(combos) != len(set(combos)):
+                combo_ok = False
+        with lock:
+            out[mid] = prods
+            if sorted(covered) != sorted(insk) or not combo_ok:
+                still_bad.append(mid)
+            done[0] += 1
+            if done[0] % 20 == 0:
+                json.dump(out, open(OUTF, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+                print(f"  …{done[0]}/{len(todo)}", flush=True)
+    with ThreadPoolExecutor(max_workers=6) as ex:
+        list(ex.map(work, todo))
+    json.dump(out, open(OUTF, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+    print(f"\n=== {len(out)} løst. Denne kørsel: {len(todo)} behandlet, {len(still_bad)} stadig m. problem {still_bad[:5]} ===")
 
 if __name__ == "__main__":
     main()
