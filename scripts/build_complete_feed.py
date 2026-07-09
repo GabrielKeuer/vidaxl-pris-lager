@@ -300,8 +300,8 @@ def main():
             seen_names.add(nm)
             uniq.append(ns)
         specs = uniq
-        # OPTION-RÆKKEFØLGE: Farve altid først (variant-swatch), resten i deres rækkefølge
-        specs = sorted(specs, key=lambda ns: 0 if ns[0] == "Farve" else 1)
+        # KOLONNE-RÆKKEFØLGE: Farve → Størrelse → resten (vilkårligt)
+        specs = sorted(specs, key=lambda ns: 0 if ns[0] == "Farve" else (1 if ns[0] in SIZE_AXES else 2))
         # per-SKU option-værdier (kapitalisér første bogstav — "sofabord"→"Sofabord", "90 cm" urørt)
         def cap1(v):
             v = v.strip()

@@ -1,0 +1,806 @@
+{
+ "dup_kombo": [
+  {
+   "mid": "M3014664",
+   "titel": "Spisebordssæt Til Haven I Sort Og Brun",
+   "akser": [
+    "Antal dele"
+   ],
+   "dubletter": [
+    "(('Antal dele', '7 dele'),)"
+   ]
+  },
+  {
+   "mid": "M3006916",
+   "titel": "TV-skabssæt 5 Dele Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Hvid'),)",
+    "(('Farve', 'Sonoma-eg'),)",
+    "(('Farve', 'Betongrå'),)"
+   ]
+  },
+  {
+   "mid": "M3013392",
+   "titel": "Spisebordssæt Til Haven",
+   "akser": [
+    "Farve",
+    "Dele"
+   ],
+   "dubletter": [
+    "(('Dele', '5 dele'), ('Farve', 'Egetræsfarve'))",
+    "(('Dele', '5 dele'), ('Farve', 'Sort'))"
+   ]
+  },
+  {
+   "mid": "M30289051",
+   "titel": "Have Spisebordssæt Brun Massiv Teaktræ",
+   "akser": [
+    "Antal dele"
+   ],
+   "dubletter": [
+    "(('Antal dele', '7 pcs'),)"
+   ]
+  },
+  {
+   "mid": "M3029533",
+   "titel": "Spisebordssæt Til Haven Med Hynder, Polyrattan Og Stål",
+   "akser": [
+    "Antal dele"
+   ],
+   "dubletter": [
+    "(('Antal dele', '3 dele'),)",
+    "(('Antal dele', '5 dele'),)",
+    "(('Antal dele', '7 dele'),)"
+   ]
+  },
+  {
+   "mid": "M3028517",
+   "titel": "Havebord Med U-formede Ben, Massivt Akacietræ",
+   "akser": [
+    "Størrelse"
+   ],
+   "dubletter": [
+    "('140x80x75 cm',)"
+   ]
+  },
+  {
+   "mid": "M3038907",
+   "titel": "Spisebordssæt Til Haven, Med Hynder, Polyrattan, Lysegrå",
+   "akser": [
+    "Antal dele"
+   ],
+   "dubletter": [
+    "(('Antal dele', '5 dele'),)",
+    "(('Antal dele', '7 dele'),)"
+   ]
+  },
+  {
+   "mid": "M3038923",
+   "titel": "Spisebordssæt Til Haven Med Hynder I Polyrattan, Beige",
+   "akser": [
+    "Antal dele"
+   ],
+   "dubletter": [
+    "(('Antal dele', '5 dele'),)",
+    "(('Antal dele', '7 dele'),)"
+   ]
+  },
+  {
+   "mid": "M3036473",
+   "titel": "Sofasæt Til Haven 8 Dele Med Hynder Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Beige'),)",
+    "(('Farve', 'Lysegrå'),)",
+    "(('Farve', 'Sort'),)"
+   ]
+  },
+  {
+   "mid": "M3036396",
+   "titel": "Spisebordssæt Til Haven Med Hynder I Polyrattan",
+   "akser": [
+    "Antal dele",
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Antal dele', '5 dele'), ('Farve', 'Sort'))",
+    "(('Antal dele', '5 dele'), ('Farve', 'Brun'))",
+    "(('Antal dele', '5 dele'), ('Farve', 'Grå'))"
+   ]
+  },
+  {
+   "mid": "M3036419",
+   "titel": "Sofasæt Til Haven 5 Dele Med Hynder Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Lysegrå'),)",
+    "(('Farve', 'Grå'),)"
+   ]
+  },
+  {
+   "mid": "M3036425",
+   "titel": "Sofasæt Til Haven 8 Dele Med Hynder Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Beige'),)",
+    "(('Farve', 'Lysegrå'),)"
+   ]
+  },
+  {
+   "mid": "M3036435",
+   "titel": "Sofasæt Til Haven 5 Dele Med Hynder, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Grå'),)"
+   ]
+  },
+  {
+   "mid": "M3036441",
+   "titel": "Sofasæt Til Haven 8 Dele Med Hynder, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Grå'),)",
+    "(('Farve', 'Beige'),)"
+   ]
+  },
+  {
+   "mid": "M3036451",
+   "titel": "Sofasæt Til Haven 5 Dele Med Hynder, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Lysegrå'),)",
+    "(('Farve', 'Grå'),)"
+   ]
+  },
+  {
+   "mid": "M3036453",
+   "titel": "Sofasæt Til Haven 7 Dele Med Hynder Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Beige'),)",
+    "(('Farve', 'Grå'),)"
+   ]
+  },
+  {
+   "mid": "M3036457",
+   "titel": "Sofasæt Til Haven 8 Dele Med Hynder Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Lysegrå'),)",
+    "(('Farve', 'Grå'),)"
+   ]
+  },
+  {
+   "mid": "M3036467",
+   "titel": "Sofasæt Til Haven 5 Dele Med Hynder, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Grå'),)",
+    "(('Farve', 'Lysegrå'),)"
+   ]
+  },
+  {
+   "mid": "M3036469",
+   "titel": "Sofasæt Til Haven 7 Dele Med Hynder Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Beige'),)",
+    "(('Farve', 'Grå'),)"
+   ]
+  },
+  {
+   "mid": "M3036562",
+   "titel": "Sofasæt Til Haven 5 Dele Med Hynder Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Grå'),)"
+   ]
+  },
+  {
+   "mid": "M3036580",
+   "titel": "Sofasæt Til Haven 7 Dele Med Hynder, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Beige'),)",
+    "(('Farve', 'Grå'),)",
+    "(('Farve', 'Sort'),)"
+   ]
+  },
+  {
+   "mid": "M3036596",
+   "titel": "Sofasæt Til Haven, 7 Dele, Med Hynder, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Grå'),)",
+    "(('Farve', 'Beige'),)"
+   ]
+  },
+  {
+   "mid": "M3036594",
+   "titel": "Sofasæt Til Haven 5 Dele Med Hynder I Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Grå'),)"
+   ]
+  },
+  {
+   "mid": "M3037086",
+   "titel": "Sofasæt Til Haven 9 Dele Med Hynder, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Beige'),)",
+    "(('Farve', 'Sort'),)",
+    "(('Farve', 'Grå'),)"
+   ]
+  },
+  {
+   "mid": "M3037800",
+   "titel": "Spisebordssæt Til Haven Med Hynder, Polyrattan, Beige",
+   "akser": [
+    "Antal dele"
+   ],
+   "dubletter": [
+    "(('Antal dele', '11 dele'),)"
+   ]
+  },
+  {
+   "mid": "M3038333",
+   "titel": "Bistrosæt 3 Dele Stof Og Massivt Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Cremehvid'),)",
+    "(('Farve', 'Antracitgrå'),)",
+    "(('Farve', 'Bladmønstrede'),)"
+   ]
+  },
+  {
+   "mid": "M3043538",
+   "titel": "Badeværelsesmøbel Sæt Med Skuffe 3 Pcs Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Brun'),)"
+   ]
+  },
+  {
+   "mid": "M3043844",
+   "titel": "Vaskeskabsbase Porto 2 Stk. Med Opbevaring, Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Grå'),)",
+    "(('Farve', 'Brun'),)",
+    "(('Farve', 'Hvid'),)"
+   ]
+  },
+  {
+   "mid": "M30446261",
+   "titel": "Havesofa Sæt Brun Massivt Akacietræ",
+   "akser": [
+    "Antal"
+   ],
+   "dubletter": [
+    "('4 stk',)",
+    "('6 stk',)",
+    "('5 stk',)"
+   ]
+  },
+  {
+   "mid": "M30091411",
+   "titel": "Sammenklappelig Stol Med Pude 49 X 57.5 X 92 Cm",
+   "akser": [
+    "Farve",
+    "Antal"
+   ],
+   "dubletter": [
+    "(('Antal', '4 stk'), ('Farve', 'Hvid'))",
+    "(('Antal', '4 stk'), ('Farve', 'Grå'))",
+    "(('Antal', '6 stk'), ('Farve', 'Hvid'))"
+   ]
+  },
+  {
+   "mid": "M3048910",
+   "titel": "Spisebordssæt Til Haven Med Hynder, Polyrattan, Glasbord",
+   "akser": [
+    "Farve",
+    "Antal dele"
+   ],
+   "dubletter": [
+    "(('Antal dele', '5 dele'), ('Farve', 'Brun'))",
+    "(('Antal dele', '5 dele'), ('Farve', 'Sort'))",
+    "(('Antal dele', '5 dele'), ('Farve', 'Grå'))"
+   ]
+  },
+  {
+   "mid": "M30303531",
+   "titel": "Highboard 2 Dele 69,5 X 34 X 180 Cm Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort eg'),)",
+    "(('Farve', 'Artisan egetræ'),)",
+    "(('Farve', 'Gammelt træ'),)"
+   ]
+  },
+  {
+   "mid": "M30303531",
+   "titel": "Highboard Med Skuffe 2 Dele Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Gammelt træ'),)",
+    "(('Farve', 'Sort eg'),)"
+   ]
+  },
+  {
+   "mid": "M30316261",
+   "titel": "Highboard 2 Pcs",
+   "akser": [
+    "Materiale"
+   ],
+   "dubletter": [
+    "('Artisan Egetræ 69,5 x 34 x 180 cm',)"
+   ]
+  },
+  {
+   "mid": "M30303491",
+   "titel": "Highboard 2 Stk. 69,5 X 34 X 180 Cm Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort eg'),)",
+    "(('Farve', 'Artisan Egetræ'),)",
+    "(('Farve', 'Gammelt træ'),)"
+   ]
+  },
+  {
+   "mid": "M30303491",
+   "titel": "Highboard Med Skuffe 2 Stk. Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Gammelt træ'),)",
+    "(('Farve', 'Sort eg'),)"
+   ]
+  },
+  {
+   "mid": "M30306451",
+   "titel": "Vægmonteret Skab 2 Pcs 69,5 X 34 X 90 Cm",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort eg'),)",
+    "(('Farve', 'Artisan egetræ'),)",
+    "(('Farve', 'Gammelt træ'),)"
+   ]
+  },
+  {
+   "mid": "M30306521",
+   "titel": "Highboard 2 Stk. 69,5 X 34 X 180 Cm",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Artisan egetræ'),)"
+   ]
+  },
+  {
+   "mid": "M30306521",
+   "titel": "Highboard Med Skuffe 2 Stk. 69,5 X 34 X 180 Cm",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Gammelt træ'),)"
+   ]
+  },
+  {
+   "mid": "M3045274",
+   "titel": "Klædeskab Med Spejllys Og 3 Skuffer, Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Brun'),)",
+    "(('Farve', 'Grå'),)"
+   ]
+  },
+  {
+   "mid": "M30316241",
+   "titel": "Væggeskabe 2 Stk, 69,5 X 34 X 90 Cm, Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Sort eg'),)",
+    "(('Farve', 'Gammelt træ'),)",
+    "(('Farve', 'Artisan egetræ'),)"
+   ]
+  },
+  {
+   "mid": "M30316301",
+   "titel": "Highboard 2 Stk Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Sort eg',)",
+    "('Gammelt træ',)",
+    "('Artisan Egetræ',)"
+   ]
+  },
+  {
+   "mid": "M30316301",
+   "titel": "Highboard Med Skuffe 2 Stk Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Gammelt træ',)",
+    "('Sort eg',)"
+   ]
+  },
+  {
+   "mid": "M30172591",
+   "titel": "Box Spring Seng Med Hovedgærde 200 X 160 Cm Fløjl",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Mørkegrå'),)",
+    "(('Farve', 'Lysegrå'),)"
+   ]
+  },
+  {
+   "mid": "M30459221",
+   "titel": "Havesofa Sæt Med Pude, 9 Dele, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Beige',)",
+    "('Lysegrå',)"
+   ]
+  },
+  {
+   "mid": "M3044381",
+   "titel": "Havesofa Med Hynder, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Brun',)",
+    "('Beige',)",
+    "('Sort',)"
+   ]
+  },
+  {
+   "mid": "M3044381",
+   "titel": "Sofasæt Til Haven, 4 Dele, L-formet, Med Hynder, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Sort',)"
+   ]
+  },
+  {
+   "mid": "M3044381",
+   "titel": "Sofasæt Til Haven, 3 Dele, Med Hynder, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Sort',)"
+   ]
+  },
+  {
+   "mid": "M3044381",
+   "titel": "5-personers Havesofa Med Hynder, Polyrattan",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Brun',)",
+    "('Beige',)"
+   ]
+  },
+  {
+   "mid": "M30486201",
+   "titel": "Udendørs Sofagruppe 9 Dele I Massivt Akacietræ",
+   "akser": [
+    "Pudefarve"
+   ],
+   "dubletter": [
+    "(('Pudefarve', 'Fløde'),)",
+    "(('Pudefarve', 'Sort'),)",
+    "(('Pudefarve', 'Lys Grå'),)"
+   ]
+  },
+  {
+   "mid": "M30486201",
+   "titel": "Udendørs Sofagruppe 9 Dele I Hvid, 79 X 79 X 37 Cm",
+   "akser": [
+    "Pudefarve"
+   ],
+   "dubletter": [
+    "(('Pudefarve', 'Cremefarvet'),)",
+    "(('Pudefarve', 'Sort'),)"
+   ]
+  },
+  {
+   "mid": "M30316331",
+   "titel": "Highboard 2 Stk. Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "(('Farve', 'Artisan Eg'),)"
+   ]
+  },
+  {
+   "mid": "M30306481",
+   "titel": "Highboard 69,5 X 34 X 180 Cm Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Gammelt træ',)"
+   ]
+  },
+  {
+   "mid": "M30303521",
+   "titel": "Highboard 69,5 X 34 X 180 Cm I Ingeniørtræ Og Glas",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Sort eg',)",
+    "('Gammelt træ',)"
+   ]
+  },
+  {
+   "mid": "M30306501",
+   "titel": "Highboard 69,5 X 34 X 180 Cm Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Gammelt træ',)",
+    "('Artisan Egetræ',)"
+   ]
+  },
+  {
+   "mid": "M30306491",
+   "titel": "Highboard 69,5 X 34 X 180 Cm Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Gammelt træ',)",
+    "('Artisan Egetræ',)"
+   ]
+  },
+  {
+   "mid": "M370000271991",
+   "titel": "Udendørs Sofa Naturfarvet",
+   "akser": [
+    "Materiale"
+   ],
+   "dubletter": [
+    "('Massivt akacietræ',)",
+    "('Akacietræ og polyester',)"
+   ]
+  },
+  {
+   "mid": "M3031787",
+   "titel": "Rumdeler Massivt Kejsertræ Hvid",
+   "akser": [
+    "Antal"
+   ],
+   "dubletter": [
+    "('6 paneler',)",
+    "('5 paneler',)"
+   ]
+  },
+  {
+   "mid": "M3001511",
+   "titel": "Foldbart Pop-up Festtelt Med 4 Sidevægge",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Brun',)"
+   ]
+  },
+  {
+   "mid": "M3034148",
+   "titel": "Spisebord PANAMA Massivt Fyrretræ",
+   "akser": [
+    "Størrelse"
+   ],
+   "dubletter": [
+    "('160x80x75 cm, grå',)"
+   ]
+  },
+  {
+   "mid": "M30386851",
+   "titel": "Staplestol Brun 56 X 57 X 87 Cm Massivt Akacietræ",
+   "akser": [
+    "Antal"
+   ],
+   "dubletter": [
+    "('4 stk',)",
+    "('2 stk',)"
+   ]
+  },
+  {
+   "mid": "M30449311",
+   "titel": "Havestol Med Hynde Brun Massivt Akacietræ",
+   "akser": [
+    "Størrelse"
+   ],
+   "dubletter": [
+    "('140 x 100 x 91 cm',)",
+    "('2 stk',)",
+    "('50 x 50 x 91 cm',)"
+   ]
+  },
+  {
+   "mid": "M370000256941",
+   "titel": "Have Slange 5-Lags Grøn Og Gul PVC",
+   "akser": [
+    "Størrelse"
+   ],
+   "dubletter": [
+    "(\"1/2'' 20 m\",)",
+    "(\"1/2'' 50 m\",)",
+    "(\"1/2'' 10 m\",)"
+   ]
+  },
+  {
+   "mid": "M30079911",
+   "titel": "TV-møbelsæt Vægmonteret 3 Dele 60 X 30 X 30 Cm Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Brun',)"
+   ]
+  },
+  {
+   "mid": "M30079911",
+   "titel": "TV-møbelsæt 3 Dele 60 X 30 X 30 Cm Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Brun',)"
+   ]
+  },
+  {
+   "mid": "M3017943",
+   "titel": "Bænk 112,5x51,5x96,5 Cm Massivt Fyrretræ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Grå',)"
+   ]
+  },
+  {
+   "mid": "M30489671",
+   "titel": "Opbevaringshovedgavl Med Opbevaring Konstrueret Træ",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Sort eg',)",
+    "('Sonoma-eg',)"
+   ]
+  },
+  {
+   "mid": "M30080431",
+   "titel": "Flydende Hylde Med LED Lys, 2 Stk. 40 X 28,5 X 40 Cm",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Brun',)"
+   ]
+  },
+  {
+   "mid": "M3045937",
+   "titel": "Sidebordssæt Med Hylde 2 Stk.",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Brun',)"
+   ]
+  },
+  {
+   "mid": "M30493931",
+   "titel": "Have Privatliv Skærm 32 X 32 X 150 Cm",
+   "akser": [
+    "Farve"
+   ],
+   "dubletter": [
+    "('Sølv',)"
+   ]
+  }
+ ],
+ "tom_akse": [
+  {
+   "mid": "M30459221",
+   "titel": "Havesofa Sæt Med Pude, 8 Dele, Polyrattan"
+  },
+  {
+   "mid": "M30459221",
+   "titel": "Havesofa Sæt Med Pude, 9 Dele, Polyrattan"
+  }
+ ],
+ "titel_har_akse": [
+  {
+   "mid": "M30015111",
+   "titel": "Festtelt 17 Stk. Med Blå Ramme, Oxford Stof",
+   "laekket": [
+    "Blå"
+   ]
+  }
+ ]
+}

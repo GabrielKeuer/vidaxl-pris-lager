@@ -1,0 +1,1954 @@
+{
+ "M298465": {
+  "grunde": "titel_har_akse (['Massivt mangotræ'])",
+  "titel": "Konsolbord 120x35x76 Cm Massivt Mangotræ Og Stål",
+  "akser": [
+   "variationAttribute1",
+   "variationAttribute2"
+  ],
+  "category": "Sideborde",
+  "skus": [
+   {
+    "sku": "247336",
+    "iv": {
+     "variationAttribute1": "120 cm",
+     "variationAttribute2": "Massivt mangotræ (hvide ben)"
+    },
+    "mat": "Massivt mangotræ, stål",
+    "size": "N/A",
+    "HxLxW": "76 cm/120 cm/35 cm/",
+    "diam": ""
+   },
+   {
+    "sku": "247334",
+    "iv": {
+     "variationAttribute1": "120 cm",
+     "variationAttribute2": "Massivt mangotræ"
+    },
+    "mat": "Massivt mangotræ, stål",
+    "size": "N/A",
+    "HxLxW": "76 cm/120 cm/35 cm/",
+    "diam": ""
+   },
+   {
+    "sku": "352058",
+    "iv": {
+     "variationAttribute1": "110 cm",
+     "variationAttribute2": "Massivt genanvendt træ"
+    },
+    "mat": "Massivt genbrugstræ med en blandet farvefinish, jern",
+    "size": "N/A",
+    "HxLxW": "75 cm/110 cm/35 cm/",
+    "diam": ""
+   },
+   {
+    "sku": "353909",
+    "iv": {
+     "variationAttribute1": "110 cm",
+     "variationAttribute2": "Massivt ru mangotræ"
+    },
+    "mat": "Massivt og ru mangotræ, metal",
+    "size": "N/A",
+    "HxLxW": "76 cm/110 cm/35 cm/",
+    "diam": ""
+   }
+  ]
+ },
+ "M3011651": {
+  "grunde": "titel_har_akse (['4-personers'])",
+  "titel": "4-personers Havesofa Med Cremefarvede Hynder Massivt Teaktræ",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Havemøbelsæt",
+  "skus": [
+   {
+    "sku": "3087207",
+    "iv": {
+     "color": "Grå",
+     "variationAttribute2": "2-sædet"
+    },
+    "mat": "Fintslebet teaktræ med vandbaseret finish + stof (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3087199",
+    "iv": {
+     "color": "Grå",
+     "variationAttribute2": "2x hjørnedel + midterdel + fodskammel + bord"
+    },
+    "mat": "Fintslebet teaktræ med vandbaseret finish + stof (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3087201",
+    "iv": {
+     "color": "Grå",
+     "variationAttribute2": "2x hjørnedel + midterdel + lænestol + fodskammel + bord"
+    },
+    "mat": "Fintslebet teaktræ med vandbaseret finish + stof (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3087192",
+    "iv": {
+     "color": "Creme",
+     "variationAttribute2": "hjørnedel + 2x midterdel + 2x fodskammel + bord"
+    },
+    "mat": "Fintslebet teaktræ med vandbaseret finish + stof (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3087195",
+    "iv": {
+     "color": "Grå",
+     "variationAttribute2": "hjørnedel + midterdel + fodskammel + bord"
+    },
+    "mat": "Fintslebet teaktræ med vandbaseret finish + stof (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3015762": {
+  "grunde": "over_3_akser (4: ['color', 'variationAttribute2', 'variationAttribute3', 'variationAttribute4'])",
+  "titel": "Sengegavl 90x7x118/128 Cm Fløjl",
+  "akser": [
+   "color",
+   "variationAttribute2",
+   "variationAttribute3",
+   "variationAttribute4"
+  ],
+  "category": "Hovedgærder og fodgærder",
+  "skus": [
+   {
+    "sku": "3116704",
+    "iv": {
+     "color": "Lysegrå",
+     "variationAttribute2": "90 cm",
+     "variationAttribute3": "2",
+     "variationAttribute4": "Høj"
+    },
+    "mat": "Fløjl (100% polyester), konstrueret træ, massivt lærketræ",
+    "size": "90 cm",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3116702",
+    "iv": {
+     "color": "Mørkeblå",
+     "variationAttribute2": "80 cm",
+     "variationAttribute3": "2",
+     "variationAttribute4": "Høj"
+    },
+    "mat": "Fløjl (100% polyester), konstrueret træ, massivt lærketræ",
+    "size": "80 cm",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3116700",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "80 cm",
+     "variationAttribute3": "2",
+     "variationAttribute4": "Høj"
+    },
+    "mat": "Fløjl (100% polyester), konstrueret træ, massivt lærketræ",
+    "size": "80 cm",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3116706",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "90 cm",
+     "variationAttribute3": "2",
+     "variationAttribute4": "Høj"
+    },
+    "mat": "Fløjl (100% polyester), konstrueret træ, massivt lærketræ",
+    "size": "90 cm",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3116709",
+    "iv": {
+     "color": "Lyserød",
+     "variationAttribute2": "90 cm",
+     "variationAttribute3": "2",
+     "variationAttribute4": "Høj"
+    },
+    "mat": "Fløjl (100% polyester), konstrueret træ, massivt lærketræ",
+    "size": "90 cm",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3700001193": {
+  "grunde": "titel_har_akse (['Liggestol'])",
+  "titel": "2-personers Liggestol Massivt Akacietræ",
+  "akser": [
+   "variationAttribute1"
+  ],
+  "category": "Solsenge & liggestole",
+  "skus": [
+   {
+    "sku": "311874",
+    "iv": {
+     "variationAttribute1": "2-personers solseng"
+    },
+    "mat": "Massivt akacietræ med en grå finish",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "311872",
+    "iv": {
+     "variationAttribute1": "Liggestol"
+    },
+    "mat": "Massivt akacietræ med en grå finish",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3006504": {
+  "grunde": "titel_kun_maal",
+  "titel": "3x3x2,6 M 160 G/m²",
+  "akser": [
+   "color",
+   "variationAttribute2",
+   "variationAttribute3"
+  ],
+  "category": "Festtelte & havepavilloner",
+  "skus": [
+   {
+    "sku": "313606",
+    "iv": {
+     "color": "Gråbrun",
+     "variationAttribute2": "3 x 3 x 2.6 m",
+     "variationAttribute3": "med stolpeovertræk"
+    },
+    "mat": "Stof + stål",
+    "size": "3 x 3 x 2.6 m",
+    "HxLxW": "2.6 m//3 m/3 m",
+    "diam": ""
+   },
+   {
+    "sku": "313605",
+    "iv": {
+     "color": "Creme",
+     "variationAttribute2": "3 x 3 x 2.6 m",
+     "variationAttribute3": "med stolpeovertræk"
+    },
+    "mat": "Stof + stål",
+    "size": "3 x 3 x 2.6 m",
+    "HxLxW": "2.6 m//3 m/3 m",
+    "diam": ""
+   },
+   {
+    "sku": "313608",
+    "iv": {
+     "color": "Creme",
+     "variationAttribute2": "3 x 3 x 2.6 m",
+     "variationAttribute3": "uden stolpeovertræk"
+    },
+    "mat": "Stof + stål",
+    "size": "3 x 3 x 2.6 m",
+    "HxLxW": "2.6 m//3 m/3 m",
+    "diam": ""
+   },
+   {
+    "sku": "313607",
+    "iv": {
+     "color": "Antracitgrå",
+     "variationAttribute2": "3 x 3 x 2.6 m",
+     "variationAttribute3": "med stolpeovertræk"
+    },
+    "mat": "Stof + stål",
+    "size": "3 x 3 x 2.6 m",
+    "HxLxW": "2.6 m//3 m/3 m",
+    "diam": ""
+   },
+   {
+    "sku": "313611",
+    "iv": {
+     "color": "Creme",
+     "variationAttribute2": "3 x 4 x 2.6 m",
+     "variationAttribute3": "med stolpeovertræk"
+    },
+    "mat": "Stof + stål",
+    "size": "3 x 4 x 2.6 m",
+    "HxLxW": "2.6 m//3 m/4 m",
+    "diam": ""
+   }
+  ]
+ },
+ "M3001853": {
+  "grunde": "titel_har_akse (['Fodskammel'])",
+  "titel": "Havebord Og Fodskammel Med Hynde Massivt Akacietræ",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Enheder til udendørs modulsofa",
+  "skus": [
+   {
+    "sku": "316084",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "fodskammel + bord"
+    },
+    "mat": "Massivt akacietræ",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "316087",
+    "iv": {
+     "color": "Cremefarvet",
+     "variationAttribute2": "hjørnedel + bord"
+    },
+    "mat": "Massivt akacietræ",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "316088",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "hjørnedel + bord"
+    },
+    "mat": "Massivt akacietræ",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "316247",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "2-sædet"
+    },
+    "mat": "Massivt akacietræ",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "46691",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "Fodskammel"
+    },
+    "mat": "",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3032151": {
+  "grunde": "titel_har_akse (['med hynder'])",
+  "titel": "Sofasæt 4 Dele Med Hynder Velour",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Sofaer",
+  "skus": [
+   {
+    "sku": "3201491",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "med hynder og fodskamler"
+    },
+    "mat": "Velour (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3201476",
+    "iv": {
+     "color": "Lysegrå",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Velour (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3201482",
+    "iv": {
+     "color": "Gul",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Velour (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3201478",
+    "iv": {
+     "color": "Mørkegrøn",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Velour (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3201486",
+    "iv": {
+     "color": "Lysegrå",
+     "variationAttribute2": "med hynder og fodskamler"
+    },
+    "mat": "Velour (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3032149": {
+  "grunde": "titel_har_akse (['med hynder'])",
+  "titel": "Sofasæt 3 Dele Med Hynder Stof",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Sofaer",
+  "skus": [
+   {
+    "sku": "3201453",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "med hynder og fodskamler"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3201445",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3201449",
+    "iv": {
+     "color": "Lysegul",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3201451",
+    "iv": {
+     "color": "Gråbrun",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3201447",
+    "iv": {
+     "color": "Brun",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3032139": {
+  "grunde": "titel_har_akse (['med hynder'])",
+  "titel": "Sofasæt 4 Dele Med Hynder Stof",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Sofaer",
+  "skus": [
+   {
+    "sku": "3201250",
+    "iv": {
+     "color": "Lysegrå",
+     "variationAttribute2": "med hynder og fodskamler"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201243",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201264",
+    "iv": {
+     "color": "Vinrød",
+     "variationAttribute2": "med puder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201245",
+    "iv": {
+     "color": "Brun",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201242",
+    "iv": {
+     "color": "Lysegrå",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   }
+  ]
+ },
+ "M3032147": {
+  "grunde": "titel_har_akse (['med hynder'])",
+  "titel": "Sofasæt 3 Dele Med Hynder Kunstlæder",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Sofaer",
+  "skus": [
+   {
+    "sku": "3201426",
+    "iv": {
+     "color": "Vinrød",
+     "variationAttribute2": "med hynder og fodskamler"
+    },
+    "mat": "Kunstlæder (75 % polyvinylchlorid, 20 % polyester, 5 % bomuld), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201418",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Kunstlæder (75 % polyvinylchlorid, 20 % polyester, 5 % bomuld), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201420",
+    "iv": {
+     "color": "Grå",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Kunstlæder (75 % polyvinylchlorid, 20 % polyester, 5 % bomuld), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201424",
+    "iv": {
+     "color": "Creme",
+     "variationAttribute2": "med hynder og fodskamler"
+    },
+    "mat": "Kunstlæder (75 % polyvinylchlorid, 20 % polyester, 5 % bomuld), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201423",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "med hynder og fodskamler"
+    },
+    "mat": "Kunstlæder (75 % polyvinylchlorid, 20 % polyester, 5 % bomuld), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   }
+  ]
+ },
+ "M3032158": {
+  "grunde": "titel_har_akse (['med hynder'])",
+  "titel": "Sofasæt 3 Dele Med Hynder Stof",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Sofaer",
+  "skus": [
+   {
+    "sku": "3201657",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "med hynder og fodskamler"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//158 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201652",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//158 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201649",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//158 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201655",
+    "iv": {
+     "color": "Gråbrun",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//158 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201660",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "med hynder og fodskamler"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//158 cm/77 cm",
+    "diam": ""
+   }
+  ]
+ },
+ "M3032159": {
+  "grunde": "titel_har_akse (['med hynder'])",
+  "titel": "Sofasæt 3 Dele Med Hynder Stof",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Sofaer",
+  "skus": [
+   {
+    "sku": "3201673",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "med hynder og fodskamler"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201670",
+    "iv": {
+     "color": "Vinrød",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201664",
+    "iv": {
+     "color": "Lysegrå",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201665",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "med hynder"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   },
+   {
+    "sku": "3201672",
+    "iv": {
+     "color": "Lysegrå",
+     "variationAttribute2": "med hynder og fodskamler"
+    },
+    "mat": "Stof (100 % polyester), metal, textilene, krydsfiner",
+    "size": "N/A",
+    "HxLxW": "80 cm//198 cm/77 cm",
+    "diam": ""
+   }
+  ]
+ },
+ "M3032268": {
+  "grunde": "over_3_akser (4: ['color', 'variationAttribute2', 'variationAttribute3', 'variationAttribute4'])",
+  "titel": "Massagestol Velour",
+  "akser": [
+   "color",
+   "variationAttribute2",
+   "variationAttribute3",
+   "variationAttribute4"
+  ],
+  "category": "Lænestole",
+  "skus": [
+   {
+    "sku": "3204290",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "1",
+     "variationAttribute3": "Eldrevet tilbagelæningsfunktion",
+     "variationAttribute4": "Ja"
+    },
+    "mat": "Fløjl (100 % polyester), metal, krydsfiner",
+    "size": "",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3204299",
+    "iv": {
+     "color": "Blå",
+     "variationAttribute2": "1",
+     "variationAttribute3": "Eldrevet tilbagelæningsfunktion",
+     "variationAttribute4": "Ja"
+    },
+    "mat": "Fløjl (100 % polyester), metal, krydsfiner",
+    "size": "",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3204296",
+    "iv": {
+     "color": "Gul",
+     "variationAttribute2": "1",
+     "variationAttribute3": "Eldrevet tilbagelæningsfunktion",
+     "variationAttribute4": "Ja"
+    },
+    "mat": "Fløjl (100 % polyester), metal, krydsfiner",
+    "size": "",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3204285",
+    "iv": {
+     "color": "Gul",
+     "variationAttribute2": "1",
+     "variationAttribute3": "Eldrevet tilbagelæningsfunktion",
+     "variationAttribute4": "Nej"
+    },
+    "mat": "Fløjl (100 % polyester), metal, krydsfiner",
+    "size": "",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "3204298",
+    "iv": {
+     "color": "Creme",
+     "variationAttribute2": "1",
+     "variationAttribute3": "Eldrevet tilbagelæningsfunktion",
+     "variationAttribute4": "Ja"
+    },
+    "mat": "Fløjl (100 % polyester), metal, krydsfiner",
+    "size": "",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M30478131": {
+  "grunde": "titel_har_akse (['Sort'])",
+  "titel": "Havesofa Sæt Med Pude Med Opbevaring 7 Pcs Sort Poly Rattan",
+  "akser": [
+   "variationAttribute2"
+  ],
+  "category": "Havemøbelsæt",
+  "skus": [
+   {
+    "sku": "3359874",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "Cremehvid"
+    },
+    "mat": "Poly rattan",
+    "size": "55 x 55 x 37 cm",
+    "HxLxW": "85/264/154/",
+    "diam": ""
+   },
+   {
+    "sku": "3359880",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "Sort"
+    },
+    "mat": "Poly rattan",
+    "size": "55 x 55 x 37 cm",
+    "HxLxW": "85/264/154/",
+    "diam": ""
+   }
+  ]
+ },
+ "M3013568": {
+  "grunde": "titel_har_akse (['Sofa'])",
+  "titel": "Sofa Til Børn Blødt Plys",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Møbler til baby & småbørn",
+  "skus": [
+   {
+    "sku": "341836",
+    "iv": {
+     "color": "Creme",
+     "variationAttribute2": "Stol"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "341839",
+    "iv": {
+     "color": "Lysegrå og hvid",
+     "variationAttribute2": "Sofa"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "341834",
+    "iv": {
+     "color": "Lysegrå",
+     "variationAttribute2": "Stol"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "341835",
+    "iv": {
+     "color": "Antracitgrå",
+     "variationAttribute2": "Stol"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3032493": {
+  "grunde": "titel_har_akse (['Sofa'])",
+  "titel": "2-personers Sofa Til Børn Blødt Plys Med Lysgrå",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Møbler til baby & småbørn",
+  "skus": [
+   {
+    "sku": "357010",
+    "iv": {
+     "color": "Lysegrå og hvid",
+     "variationAttribute2": "2-sædet"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "357027",
+    "iv": {
+     "color": "Lyserød",
+     "variationAttribute2": "Sovesofa"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "357015",
+    "iv": {
+     "color": "Lyserød",
+     "variationAttribute2": "2-sædet"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "357018",
+    "iv": {
+     "color": "Antracitgrå",
+     "variationAttribute2": "Sofa"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "357012",
+    "iv": {
+     "color": "Antracitgrå",
+     "variationAttribute2": "2-sædet"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3032495": {
+  "grunde": "titel_har_akse (['Sofa'])",
+  "titel": "2-personers Sofa Til Børn Blødt Plys",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Møbler til baby & småbørn",
+  "skus": [
+   {
+    "sku": "357048",
+    "iv": {
+     "color": "Antracitgrå",
+     "variationAttribute2": "2-sædet"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "357054",
+    "iv": {
+     "color": "Antracitgrå",
+     "variationAttribute2": "Sofa"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "357058",
+    "iv": {
+     "color": "Lysegrå og hvid",
+     "variationAttribute2": "Sovesofa"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "357057",
+    "iv": {
+     "color": "Lyserød",
+     "variationAttribute2": "Sofa"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "357060",
+    "iv": {
+     "color": "Antracitgrå",
+     "variationAttribute2": "Sovesofa"
+    },
+    "mat": "Blødt plys (100 % polyester)",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3032891": {
+  "grunde": "over_3_akser (4: ['color', 'variationAttribute2', 'variationAttribute3', 'variationAttribute4'])",
+  "titel": "Rumdeler 4 Paneler Polyrattan",
+  "akser": [
+   "color",
+   "variationAttribute2",
+   "variationAttribute3",
+   "variationAttribute4"
+  ],
+  "category": "Rumdelere",
+  "skus": [
+   {
+    "sku": "365362",
+    "iv": {
+     "color": "Grå",
+     "variationAttribute2": "196 x 200 cm",
+     "variationAttribute3": "4",
+     "variationAttribute4": "Vævet design"
+    },
+    "mat": "Polyrattan (PE-rattan), pulverlakeret stål",
+    "size": "196 x 200 cm",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "365364",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "245 x 200 cm",
+     "variationAttribute3": "5",
+     "variationAttribute4": "Vævet design"
+    },
+    "mat": "Polyrattan (PE-rattan), pulverlakeret stål",
+    "size": "245 x 200 cm",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "365376",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "196 x 180 cm",
+     "variationAttribute3": "4",
+     "variationAttribute4": "Vævning i linjer"
+    },
+    "mat": "Polyrattan (PE-rattan), pulverlakeret stål",
+    "size": "196 x 180 cm",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "365367",
+    "iv": {
+     "color": "Beige",
+     "variationAttribute2": "245 x 200 cm",
+     "variationAttribute3": "5",
+     "variationAttribute4": "Vævet design"
+    },
+    "mat": "Polyrattan (PE-rattan), pulverlakeret stål",
+    "size": "245 x 200 cm",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "365368",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "294 x 200 cm",
+     "variationAttribute3": "6",
+     "variationAttribute4": "Vævet design"
+    },
+    "mat": "Polyrattan (PE-rattan), pulverlakeret stål",
+    "size": "294 x 200 cm",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3033116": {
+  "grunde": "titel_har_akse (['Sofa'])",
+  "titel": "2-personers Chesterfield-sofa Stof",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Sofaer",
+  "skus": [
+   {
+    "sku": "372551",
+    "iv": {
+     "color": "Mørkegrøn",
+     "variationAttribute2": "2-sædet"
+    },
+    "mat": "Stof (100 % polyester), krydsfiner, massivt træ",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "372550",
+    "iv": {
+     "color": "Mørkebrun",
+     "variationAttribute2": "2-sædet"
+    },
+    "mat": "Stof (100 % polyester), krydsfiner, massivt træ",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "372552",
+    "iv": {
+     "color": "Gråbrun",
+     "variationAttribute2": "2-sædet"
+    },
+    "mat": "Stof (100 % polyester), krydsfiner, massivt træ",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "372549",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "2-sædet"
+    },
+    "mat": "Stof (100 % polyester), krydsfiner, massivt træ",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "372548",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "2-sædet"
+    },
+    "mat": "Stof (100 % polyester), krydsfiner, massivt træ",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3035139": {
+  "grunde": "titel_har_akse (['Rund'])",
+  "titel": "Parasolfod Med Håndtag Til Ø38/48 Mm Stænger Rund",
+  "akser": [
+   "variationAttribute1",
+   "variationAttribute2"
+  ],
+  "category": "Parasolfødder",
+  "skus": [
+   {
+    "sku": "4007987",
+    "iv": {
+     "variationAttribute1": "Firkantet",
+     "variationAttribute2": "27 kg"
+    },
+    "mat": "",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   },
+   {
+    "sku": "4007986",
+    "iv": {
+     "variationAttribute1": "Rund",
+     "variationAttribute2": "25 kg"
+    },
+    "mat": "",
+    "size": "N/A",
+    "HxLxW": "///",
+    "diam": ""
+   }
+  ]
+ },
+ "M30113801": {
+  "grunde": "titel_har_akse (['120 x 120 cm'])",
+  "titel": "Anti-slip Shaggy Tæppe 120 X 120 Cm Pp",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Tæpper",
+  "skus": [
+   {
+    "sku": "4019788",
+    "iv": {
+     "color": "Creme",
+     "variationAttribute2": "Ø 120 cm"
+    },
+    "mat": "PP",
+    "size": "120 x 120 cm",
+    "HxLxW": "2/120/120/",
+    "diam": ""
+   },
+   {
+    "sku": "4019785",
+    "iv": {
+     "color": "Creme",
+     "variationAttribute2": "200 x 200 cm"
+    },
+    "mat": "PP",
+    "size": "200 x 200 cm",
+    "HxLxW": "2/200/200/",
+    "diam": ""
+   },
+   {
+    "sku": "4019790",
+    "iv": {
+     "color": "Brun",
+     "variationAttribute2": "80 x 150 cm"
+    },
+    "mat": "PP",
+    "size": "80 x 150 cm",
+    "HxLxW": "2/80/150/",
+    "diam": ""
+   },
+   {
+    "sku": "4019775",
+    "iv": {
+     "color": "Mørkegrå",
+     "variationAttribute2": "Ø 160 cm"
+    },
+    "mat": "PP",
+    "size": "160 x 160 cm",
+    "HxLxW": "2/160/160/",
+    "diam": ""
+   },
+   {
+    "sku": "4019781",
+    "iv": {
+     "color": "Grå",
+     "variationAttribute2": "Ø 120 cm"
+    },
+    "mat": "PP",
+    "size": "120 x 120 cm",
+    "HxLxW": "2/120/120/",
+    "diam": ""
+   }
+  ]
+ },
+ "M30322531": {
+  "grunde": "titel_har_akse (['1,55 x 1,55 m', '1,2 x 1,8 m'])",
+  "titel": "Frostbeskyttelses Plantefleece Dække 5 Pcs 1,55 X 1 M",
+  "akser": [
+   "color",
+   "variationAttribute2",
+   "variationAttribute3"
+  ],
+  "category": "Havearbejde – tilbehør",
+  "skus": [
+   {
+    "sku": "42021035",
+    "iv": {
+     "color": "Hvid",
+     "variationAttribute2": "1 x 1,55 m",
+     "variationAttribute3": "5"
+    },
+    "mat": "Non-woven stof",
+    "size": "1,55 x 1 m",
+    "HxLxW": "1//1.55/",
+    "diam": ""
+   },
+   {
+    "sku": "42021047",
+    "iv": {
+     "color": "Grøn",
+     "variationAttribute2": "1 x 1,55 m",
+     "variationAttribute3": "5"
+    },
+    "mat": "Non-woven stof",
+    "size": "1,55 x 1 m",
+    "HxLxW": "1//1.55/",
+    "diam": ""
+   },
+   {
+    "sku": "42021075",
+    "iv": {
+     "color": "Grøn",
+     "variationAttribute2": "2,5 x 3,5 m",
+     "variationAttribute3": "1"
+    },
+    "mat": "Non-woven stof",
+    "size": "3,5 x 2,5 m",
+    "HxLxW": "2.5//3.5/",
+    "diam": ""
+   },
+   {
+    "sku": "42021042",
+    "iv": {
+     "color": "Beige",
+     "variationAttribute2": "1,55 x 1,55 m",
+     "variationAttribute3": "5"
+    },
+    "mat": "Non-woven stof",
+    "size": "1,55 x 1,55 m",
+    "HxLxW": "1.55//1.55/",
+    "diam": ""
+   },
+   {
+    "sku": "42021043",
+    "iv": {
+     "color": "Beige",
+     "variationAttribute2": "1,2 x 1,8 m",
+     "variationAttribute3": "5"
+    },
+    "mat": "Non-woven stof",
+    "size": "1,8 x 1,2 m",
+    "HxLxW": "1.2//1.8/",
+    "diam": ""
+   }
+  ]
+ },
+ "M37000012271": {
+  "grunde": "titel_har_akse (['135 x 200 cm'])",
+  "titel": "Vinter Dyne 135 X 200 Cm Mikrofiber Og Teddy Fleece",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Quilttæpper & sengetæpper",
+  "skus": [
+   {
+    "sku": "42026306",
+    "iv": {
+     "color": "Antracit",
+     "variationAttribute2": "135 x 220 cm"
+    },
+    "mat": "Mikrofiber  og teddy fleece",
+    "size": "135 x 200 cm",
+    "HxLxW": "/200/135/",
+    "diam": ""
+   },
+   {
+    "sku": "42026310",
+    "iv": {
+     "color": "Antracit",
+     "variationAttribute2": "240 x 220 cm"
+    },
+    "mat": "Mikrofiber  og teddy fleece",
+    "size": "220 x 240 cm",
+    "HxLxW": "/240/220/",
+    "diam": ""
+   },
+   {
+    "sku": "42026341",
+    "iv": {
+     "color": "Lyserød",
+     "variationAttribute2": "200 x 240 cm"
+    },
+    "mat": "Mikrofiber  og teddy fleece",
+    "size": "200 x 240 cm",
+    "HxLxW": "/240/200/",
+    "diam": ""
+   },
+   {
+    "sku": "42026358",
+    "iv": {
+     "color": "Gråbrun",
+     "variationAttribute2": "240 x 220 cm"
+    },
+    "mat": "Mikrofiber  og teddy fleece",
+    "size": "220 x 240 cm",
+    "HxLxW": "/240/220/",
+    "diam": ""
+   },
+   {
+    "sku": "42026350",
+    "iv": {
+     "color": "Gråbrun",
+     "variationAttribute2": "140 x 200 cm"
+    },
+    "mat": "Mikrofiber  og teddy fleece",
+    "size": "140 x 220 cm",
+    "HxLxW": "/200/140/",
+    "diam": ""
+   }
+  ]
+ },
+ "M3033307": {
+  "grunde": "titel_har_akse (['Rund'])",
+  "titel": "Parasolfod Resin Halv Rund Bronzefarvet 9 Kg",
+  "akser": [
+   "variationAttribute1"
+  ],
+  "category": "Parasolfødder",
+  "skus": [
+   {
+    "sku": "43655",
+    "iv": {
+     "variationAttribute1": "halvrund"
+    },
+    "mat": "Resin + stål",
+    "size": "N/A",
+    "HxLxW": "/50 cm/50 cm/",
+    "diam": "50 cm"
+   },
+   {
+    "sku": "43656",
+    "iv": {
+     "variationAttribute1": "Rund"
+    },
+    "mat": "Resin + stål",
+    "size": "N/A",
+    "HxLxW": "/45.5 cm/45.5 cm/",
+    "diam": "45.5 cm"
+   }
+  ]
+ },
+ "M3016113": {
+  "grunde": "titel_har_akse (['massivt fyrretræ'])",
+  "titel": "Sofabord Massivt Fyrretræ",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Sofaborde",
+  "skus": [
+   {
+    "sku": "814265",
+    "iv": {
+     "color": "Hvid",
+     "variationAttribute2": "45 x 45 x 40 cm"
+    },
+    "mat": "Massivt fyrretræ",
+    "size": "45 x 45 x 40 cm",
+    "HxLxW": "40 cm/45 cm/45 cm/",
+    "diam": ""
+   },
+   {
+    "sku": "814272",
+    "iv": {
+     "color": "honningfarvet",
+     "variationAttribute2": "55 x 55 x 40 cm"
+    },
+    "mat": "Massivt fyrretræ",
+    "size": "55 x 55 x 40 cm",
+    "HxLxW": "40 cm/55 cm/55 cm/",
+    "diam": ""
+   },
+   {
+    "sku": "814276",
+    "iv": {
+     "color": "Grå",
+     "variationAttribute2": "110 x 50 x 40 cm"
+    },
+    "mat": "Massivt fyrretræ",
+    "size": "110 x 50 x 40 cm",
+    "HxLxW": "40 cm/110 cm/50 cm/",
+    "diam": ""
+   },
+   {
+    "sku": "814264",
+    "iv": {
+     "color": "Naturfarvet",
+     "variationAttribute2": "45 x 45 x 40 cm"
+    },
+    "mat": "Massivt fyrretræ (ubehandlet)",
+    "size": "45 x 45 x 40 cm",
+    "HxLxW": "40 cm/45 cm/45 cm/",
+    "diam": ""
+   },
+   {
+    "sku": "814294",
+    "iv": {
+     "color": "Naturfarvet",
+     "variationAttribute2": "100 x 100 x 40 cm"
+    },
+    "mat": "Massivt fyrretræ (ubehandlet)",
+    "size": "100 x 100 x 40 cm",
+    "HxLxW": "40 cm/100 cm/100 cm/",
+    "diam": ""
+   }
+  ]
+ },
+ "M30175411": {
+  "grunde": "titel_har_akse (['massivt fyrretræ'])",
+  "titel": "Vinskab 56x25x56 Cm Massivt Fyrretræ",
+  "akser": [
+   "color",
+   "variationAttribute3"
+  ],
+  "category": "Vin- & spiritusskabe",
+  "skus": [
+   {
+    "sku": "821537",
+    "iv": {
+     "color": "Naturfarvet",
+     "variationAttribute2": "1",
+     "variationAttribute3": "med 25 huller"
+    },
+    "mat": "Massivt fyrretræ (ubehandlet)",
+    "size": "N/A",
+    "HxLxW": "56 cm//56 cm/25 cm",
+    "diam": ""
+   },
+   {
+    "sku": "821543",
+    "iv": {
+     "color": "Hvid",
+     "variationAttribute2": "1",
+     "variationAttribute3": "med 12 huller"
+    },
+    "mat": "Massivt fyrretræ",
+    "size": "N/A",
+    "HxLxW": "62 cm//62 cm/25 cm",
+    "diam": ""
+   },
+   {
+    "sku": "821763",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "1",
+     "variationAttribute3": "med 4 huller"
+    },
+    "mat": "Massivt fyrretræ",
+    "size": "N/A",
+    "HxLxW": "62 cm//62 cm/25 cm",
+    "diam": ""
+   },
+   {
+    "sku": "821761",
+    "iv": {
+     "color": "Grå",
+     "variationAttribute2": "1",
+     "variationAttribute3": "med 4 huller"
+    },
+    "mat": "Massivt fyrretræ",
+    "size": "N/A",
+    "HxLxW": "62 cm//62 cm/25 cm",
+    "diam": ""
+   },
+   {
+    "sku": "821760",
+    "iv": {
+     "color": "Hvid",
+     "variationAttribute2": "1",
+     "variationAttribute3": "med 4 huller"
+    },
+    "mat": "Massivt fyrretræ",
+    "size": "N/A",
+    "HxLxW": "62 cm//62 cm/25 cm",
+    "diam": ""
+   }
+  ]
+ },
+ "M3017940": {
+  "grunde": "titel_har_akse (['massivt fyrretræ'])",
+  "titel": "Skrivebord 110x50x93 Cm Massivt Fyrretræ",
+  "akser": [
+   "color"
+  ],
+  "category": "Skriveborde",
+  "skus": [
+   {
+    "sku": "823529",
+    "iv": {
+     "color": "Naturfarvet"
+    },
+    "mat": "Massivt fyrretræ (ubehandlet), kunstlæder (100% polyurethan)",
+    "size": "N/A",
+    "HxLxW": "93 cm//110 cm/50 cm",
+    "diam": ""
+   },
+   {
+    "sku": "823530",
+    "iv": {
+     "color": "Hvid"
+    },
+    "mat": "Massivt fyrretræ, kunstlæder (100 % polyuretan)",
+    "size": "N/A",
+    "HxLxW": "93 cm//110 cm/50 cm",
+    "diam": ""
+   }
+  ]
+ },
+ "M3029096": {
+  "grunde": "titel_har_akse (['massivt fyrretræ'])",
+  "titel": "Bordplade 70x35x2,5 Cm Massivt Fyrretræ Oval",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Bordplader",
+  "skus": [
+   {
+    "sku": "824315",
+    "iv": {
+     "color": "Naturfarvet",
+     "variationAttribute2": "70 x 35 x 2.5 cm"
+    },
+    "mat": "Massivt fyrretræ (ubehandlet)",
+    "size": "70 x 35 x 2.5 cm",
+    "HxLxW": "2.5 cm///",
+    "diam": ""
+   },
+   {
+    "sku": "824331",
+    "iv": {
+     "color": "Hvid",
+     "variationAttribute2": "100 x 50 x 2.5 cm"
+    },
+    "mat": "Massivt fyrretræ",
+    "size": "100 x 50 x 2.5 cm",
+    "HxLxW": "2.5 cm///",
+    "diam": ""
+   },
+   {
+    "sku": "824320",
+    "iv": {
+     "color": "Naturfarvet",
+     "variationAttribute2": "80 x 40 x 2.5 cm"
+    },
+    "mat": "Massivt fyrretræ (ubehandlet)",
+    "size": "80 x 40 x 2.5 cm",
+    "HxLxW": "2.5 cm///",
+    "diam": ""
+   },
+   {
+    "sku": "824326",
+    "iv": {
+     "color": "Hvid",
+     "variationAttribute2": "90 x 45 x 2.5 cm"
+    },
+    "mat": "Massivt fyrretræ",
+    "size": "90 x 45 x 2.5 cm",
+    "HxLxW": "2.5 cm///",
+    "diam": ""
+   },
+   {
+    "sku": "824325",
+    "iv": {
+     "color": "Naturfarvet",
+     "variationAttribute2": "90 x 45 x 2.5 cm"
+    },
+    "mat": "Massivt fyrretræ (ubehandlet)",
+    "size": "90 x 45 x 2.5 cm",
+    "HxLxW": "2.5 cm///",
+    "diam": ""
+   }
+  ]
+ },
+ "M3030974": {
+  "grunde": "titel_har_akse (['massivt fyrretræ'])",
+  "titel": "Havebord Gabiondesign Massivt Fyrretræ",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Haveborde",
+  "skus": [
+   {
+    "sku": "834362",
+    "iv": {
+     "color": "Fyrretræ naturlig",
+     "variationAttribute2": "100 x 70 x 72 cm"
+    },
+    "mat": "",
+    "size": "100 x 70 x 72 cm",
+    "HxLxW": "72 cm//100 cm/70 cm",
+    "diam": ""
+   },
+   {
+    "sku": "834363",
+    "iv": {
+     "color": "Douglasgran naturlig",
+     "variationAttribute2": "100 x 70 x 72 cm"
+    },
+    "mat": "",
+    "size": "100 x 70 x 72 cm",
+    "HxLxW": "72 cm//100 cm/70 cm",
+    "diam": ""
+   },
+   {
+    "sku": "834368",
+    "iv": {
+     "color": "Fyrretræ naturlig",
+     "variationAttribute2": "100 x 102 x 72 cm"
+    },
+    "mat": "",
+    "size": "100 x 102 x 72 cm",
+    "HxLxW": "72 cm//100 cm/102 cm",
+    "diam": ""
+   },
+   {
+    "sku": "834365",
+    "iv": {
+     "color": "Fyrretræ naturlig",
+     "variationAttribute2": "70 x 100 x 72 cm"
+    },
+    "mat": "",
+    "size": "70 x 100 x 72 cm",
+    "HxLxW": "72 cm//100 cm/70 cm",
+    "diam": ""
+   },
+   {
+    "sku": "834367",
+    "iv": {
+     "color": "Mørkebrun",
+     "variationAttribute2": "70 x 100 x 72 cm"
+    },
+    "mat": "",
+    "size": "70 x 100 x 72 cm",
+    "HxLxW": "72 cm//100 cm/70 cm",
+    "diam": ""
+   }
+  ]
+ },
+ "M30455901": {
+  "grunde": "titel_har_akse (['Regn'])",
+  "titel": "Regn Paraply Stativ 28 X 12 X 41 Cm Stål",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Paraplyholdere & –stativer",
+  "skus": [
+   {
+    "sku": "868527",
+    "iv": {
+     "color": "Sennepsgul",
+     "variationAttribute2": "Krydsmønster"
+    },
+    "mat": "Stål",
+    "size": "28 x 12 x 41 cm",
+    "HxLxW": "41/28/12/",
+    "diam": ""
+   },
+   {
+    "sku": "868519",
+    "iv": {
+     "color": "Lyserød",
+     "variationAttribute2": "Regn"
+    },
+    "mat": "Stål",
+    "size": "28 x 12 x 41 cm",
+    "HxLxW": "41/28/12/",
+    "diam": ""
+   },
+   {
+    "sku": "868521",
+    "iv": {
+     "color": "Sennepsgul",
+     "variationAttribute2": "Regn"
+    },
+    "mat": "Stål",
+    "size": "28 x 12 x 41 cm",
+    "HxLxW": "41/28/12/",
+    "diam": ""
+   },
+   {
+    "sku": "868531",
+    "iv": {
+     "color": "Lyserød",
+     "variationAttribute2": "Diagonale linjer"
+    },
+    "mat": "Stål",
+    "size": "28 x 12 x 41 cm",
+    "HxLxW": "41/28/12/",
+    "diam": ""
+   },
+   {
+    "sku": "868520",
+    "iv": {
+     "color": "Antracit",
+     "variationAttribute2": "Regn"
+    },
+    "mat": "Stål",
+    "size": "28 x 12 x 41 cm",
+    "HxLxW": "41/28/12/",
+    "diam": ""
+   }
+  ]
+ },
+ "M37000005021": {
+  "grunde": "titel_har_akse (['100 cm'])",
+  "titel": "Hovedgærde Eg 100 Cm Konstrueret",
+  "akser": [
+   "color",
+   "variationAttribute2"
+  ],
+  "category": "Hovedgærder og fodgærder",
+  "skus": [
+   {
+    "sku": "887594",
+    "iv": {
+     "color": "Sort",
+     "variationAttribute2": "200 cm"
+    },
+    "mat": "Konstrueret træ",
+    "size": "100 cm",
+    "HxLxW": "100/203/7/",
+    "diam": ""
+   },
+   {
+    "sku": "887609",
+    "iv": {
+     "color": "Højglans hvid",
+     "variationAttribute2": "180 cm"
+    },
+    "mat": "Konstrueret træ",
+    "size": "100 cm",
+    "HxLxW": "100/183/7/",
+    "diam": ""
+   },
+   {
+    "sku": "887597",
+    "iv": {
+     "color": "Betongrå",
+     "variationAttribute2": "200 cm"
+    },
+    "mat": "Konstrueret træ",
+    "size": "100 cm",
+    "HxLxW": "100/203/7/",
+    "diam": ""
+   },
+   {
+    "sku": "887593",
+    "iv": {
+     "color": "Hvid",
+     "variationAttribute2": "200 cm"
+    },
+    "mat": "Konstrueret træ",
+    "size": "100 cm",
+    "HxLxW": "100/203/7/",
+    "diam": ""
+   },
+   {
+    "sku": "887601",
+    "iv": {
+     "color": "Brun eg",
+     "variationAttribute2": "200 cm"
+    },
+    "mat": "Konstrueret træ",
+    "size": "100 cm",
+    "HxLxW": "100/203/7/",
+    "diam": ""
+   }
+  ]
+ },
+ "M3700001940": {
+  "grunde": "titel_tom",
+  "titel": "",
+  "akser": [
+   "color"
+  ],
+  "category": "Sofaborde",
+  "skus": [
+   {
+    "sku": "899922",
+    "iv": {
+     "color": "Betongrå"
+    },
+    "mat": "",
+    "size": "",
+    "HxLxW": "50/51.5/50/",
+    "diam": ""
+   },
+   {
+    "sku": "899920",
+    "iv": {
+     "color": "Sort eg"
+    },
+    "mat": "",
+    "size": "",
+    "HxLxW": "50/51.5/50/",
+    "diam": ""
+   },
+   {
+    "sku": "899924",
+    "iv": {
+     "color": "Grå Sonoma"
+    },
+    "mat": "",
+    "size": "",
+    "HxLxW": "50/51.5/50/",
+    "diam": ""
+   },
+   {
+    "sku": "899926",
+    "iv": {
+     "color": "Artisan eg"
+    },
+    "mat": "",
+    "size": "",
+    "HxLxW": "50/51.5/50/",
+    "diam": ""
+   }
+  ]
+ }
+}

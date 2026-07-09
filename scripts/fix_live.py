@@ -55,7 +55,10 @@ def regroup_master(mid, live, opts, titles, lbl):
         # SKUs med tom akse-værdi bliver singles med deres fulde feed-titel.
         vskus = [s for s in gsk if gaxes and all(opts[s].get(k) for k in gaxes)]
         if len(vskus) >= 2 and RG.valid_group_title(rep):
-            specs = sorted([(namef(k), [k]) for k in gaxes], key=lambda ns: 0 if ns[0] == "Farve" else 1)
+            # KOLONNE-rækkefølge: Farve → Størrelse → resten (vilkårligt)
+            def _colord(nm):
+                return 0 if nm == "Farve" else (1 if nm in SIZE_AXES else 2)
+            specs = sorted([(namef(k), [k]) for k in gaxes], key=lambda ns: _colord(ns[0]))
             gi += 1
             out.append({"key": f"{mid}_g{gi}", "title": rep, "specs": specs, "skus": vskus})
             singles = [s for s in gsk if s not in vskus]
