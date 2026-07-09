@@ -18,6 +18,9 @@ MATERIAL_STOP = {"træ", "stof", "metal", "stål", "jern", "glas", "plast", "pla
                  "velour", "fløjl", "bomuld", "jute", "sten", "kobber", "messing", "krom", "zink"}
 SIZE_AXES = {"Størrelse", "Højde", "Bredde", "Længde", "Dybde", "Bordlængde", "Diameter"}
 
+BASE_COL = ("grå", "blå", "grøn", "hvid", "sort", "brun", "rød", "gul", "beige", "creme",
+            "lilla", "rosa", "turkis", "sølv", "guld", "orange", "lyserød")
+
 def setup_universe(feed):
     def addf(cl):
         if not cl or len(cl) < 3 or cl in MATERIAL_STOP:
@@ -26,6 +29,13 @@ def setup_universe(feed):
         for p2, j in (("mørk ", "mørke"), ("lys ", "lyse")):
             if cl.startswith(p2):
                 forms |= {j + cl[len(p2):], j + " " + cl[len(p2):]}
+        # GENEREL regel: split sammensat farve ved grund-farve-endelse, uanset mellemrum/bindestreg
+        # (Betongrå = Beton Grå = beton-grå; Antracitgrå = Antracit Grå; Lysegrå = Lyse Grå)
+        cc = cl.replace(" ", "").replace("-", "")
+        for b in BASE_COL:
+            if cc.endswith(b) and len(cc) > len(b) + 2:
+                forms.add(cc[:-len(b)] + " " + b)
+                break
         for f in forms:
             if f and len(f) >= 2 and f not in MATERIAL_STOP:
                 B.COLOR_UNIVERSE.add(f)

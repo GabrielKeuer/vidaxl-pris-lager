@@ -67,12 +67,18 @@ def regroup_master(mid, live, opts, titles, lbl):
                         "specs": [], "skus": [s]})
     return out
 
+def variant_sort_key(s, names, opts):
+    """TAL-FØRST: ikke-Farve options (Størrelse/Watt/mål — naturlig rækkefølge) sorteres FØR Farve
+    (vilkårlig rækkefølge). Delt nøgle mellem to_rows (variant_position) og reorder-steppet, så den
+    variant der ender FØRST er den samme hvis indhold ligger på produkt-niveau."""
+    nonf = [B.nat_val(cap1(" ".join(opts[s].get(k, "") for k in ks))) for nm, ks in names if nm != "Farve"]
+    farve = [B.nat_val(cap1(" ".join(opts[s].get(k, "") for k in ks))) for nm, ks in names if nm == "Farve"]
+    return tuple(nonf + farve)
+
 def to_rows(prod, opts):
     """konvertér nyt produkt → br_variant_feed-format rækker (som build_spec forventer)."""
     names = prod["specs"][:3]
-    def sortkey(s):
-        return tuple(B.nat_val(cap1(" ".join(opts[s].get(k, "") for k in ks))) for _, ks in names)
-    skus = sorted(prod["skus"], key=sortkey) if names else sorted(prod["skus"])
+    skus = sorted(prod["skus"], key=lambda s: variant_sort_key(s, names, opts)) if names else sorted(prod["skus"])
     rows = []
     for pos, s in enumerate(skus, 1):
         row = {"sku": s, "product_key": prod["key"], "product_title": prod["title"],

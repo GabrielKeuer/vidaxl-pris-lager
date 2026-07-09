@@ -20,13 +20,14 @@ ADJ = {"massivt", "massiv", "konstrueret", "udendørs", "indendørs", "foldbar",
        "sammenklappelig", "imprægneret", "ubehandlet", "hærdet", "pulverlakeret", "galvaniseret", "rustfrit",
        "vævet", "blødt", "flydende", "høj", "lav", "lille", "stor", "rund", "firkantet", "oval", "manuel"}
 
+_CONN = {"og", "med", "samt"}
 def canonical(r):
     """intelligent nøgle: format-forskelle er ligegyldige (sonoma-eg=sonoma eg, 39 x 35=39x35,
-    39,5=39.5), kun reelle ord + rækkefølge-uafhængig."""
-    r = r.lower().replace("-", " ").replace(",", ".")
+    39,5=39.5, store/små), bindeord (+/og/med) er ligegyldige, rækkefølge-uafhængig."""
+    r = r.lower().replace("-", " ").replace(",", ".").replace("+", " ").replace("&", " ")
     r = re.sub(r"\s*[x×]\s*", "x", r)          # 39 x 35 x 80 → 39x35x80
     toks = re.findall(r"[a-zæøå0-9.]+", r)
-    toks = [t.strip(".") for t in toks if t.strip(".")]
+    toks = [t.strip(".") for t in toks if t.strip(".") and t not in _CONN]
     return " ".join(sorted(toks))
 
 def _is_mat(w):
