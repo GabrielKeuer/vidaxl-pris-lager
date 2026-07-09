@@ -87,14 +87,37 @@ jobs:
           git pull --no-rebase --no-edit origin main || true
           git push || echo "push failed (næste kørsel genoptager via journal)"
 
+      - name: Tjek om FÆRDIG → besked + auto-stop
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.DROPXL_PAT }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          read REMAIN DONE_N < <(python scripts/combine_remaining.py)
+          echo "Combines gjort: $DONE_N | tilbage: $REMAIN"
+          if [ "$REMAIN" = "0" ]; then
+            echo "🎉 ALLE COMBINES FÆRDIGE — sender besked + stopper cron"
+            if [ -n "$SLACK_WEBHOOK_URL" ]; then
+              curl -s -X POST -H 'Content-type: application/json' \
+                --data "{\"text\":\"🎉 vidaXL combine-samling FÆRDIG — alle $DONE_N combines kørt. Cron auto-stoppet.\"}" \
+                "$SLACK_WEBHOOK_URL" || true
+            fi
+            gh issue create \
+              --title "🎉 Combine cron FÆRDIG — alle produkter samlet" \
+              --body "combine_execute har samlet alle $DONE_N combines. Workflowen er nu auto-disabled. Næste fase: split (parkeret) + tænd daglig create igen." || true
+            gh workflow disable combine_execute.yml || true
+          fi
+
       - name: Notify on failure
         if: failure()
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: 'Combine executor failed',
-              body: 'combine_exec --live failed. Check the Actions tab. Resumbar via combine_done.json.'
-            })
+        env:
+          GH_TOKEN: ${{ secrets.DROPXL_PAT }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            curl -s -X POST -H 'Content-type: application/json' \
+              --data '{"text":"⚠️ Combine executor fejlede — tjek GitHub Actions. Resumbar via combine_done.json."}' \
+              "$SLACK_WEBHOOK_URL" || true
+          fi
+          gh issue create --title "Combine executor failed" \
+            --body "combine_exec --live fejlede. Tjek Actions-fanen. Resumbar via combine_done.json." || true
