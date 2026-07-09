@@ -1,0 +1,44 @@
+name: Activate not-stocked inventory (one-off fix)
+
+# ENGANGS-REMEDIERING: aktiverer vidaXL-varianter der ikke er stocked paa lager-lokationen
+# (aarsag til at Sync Inventory Hourly fejler). Scanner friskt + aktiverer med feed-lager.
+# KRAEVER write_inventory (samme secret som sync_inventory). Manuel dispatch: default dry-run.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run | live'
+        required: true
+        default: 'dry-run'
+
+concurrency:
+  group: activate-notstocked
+  cancel-in-progress: false
+
+jobs:
+  activate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install requests
+
+    - name: Activate not-stocked items
+      env:
+        SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+        SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+      run: |
+        if [ "${{ github.event.inputs.mode }}" = "live" ]; then
+          python scripts/activate_notstocked.py --live
+        else
+          python scripts/activate_notstocked.py
+        fi
