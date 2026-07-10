@@ -11,20 +11,19 @@ adskilte flows (dropxl `daily_create`/`daily_create_large` + vidaxl-pris-lager `
 
 ## 🔖 GENOPTAG HER (multi-session — læs FØRST)
 
-**Bygget indtil nu (2026-07-10):**
+**Bygget + valideret (2026-07-10):**
 - ✅ `scripts/unified_sync.py` — Fase 1-DRIVER: én gruppering over hele feedet + change-detektion via live-snapshot
-  (sku2pid) + klassificering (CREATE / MERGE_nyvariant / MERGE_konsolidér / UNCHANGED / PARK_split / SKIP_lavt_lager).
-  **KUN klassificering/DRY-RUN — ingen apply endnu.** Kør: `python scripts/unified_sync.py [--refresh] [--limit N] [--only MID]`.
-  Output: `output/unified_dryrun.json`. Verificeret på 200 masters (kører).
+  (sku2pid, paginerer >250-var-produkter) + klassificering (CREATE / MERGE_nyvariant / MERGE_konsolidér / UNCHANGED /
+  PARK_split / SKIP_lavt_lager). Fuld dry-run kørt: 16 CREATE, 583 MERGE, 10.717 UNCHANGED, 19.769 PARK_split (=
+  split-backlog), 17 SKIP. `output/unified_dryrun.json`.
+- ✅ `scripts/catalog_engine.py` — **Fase 0 FÆRDIG:** delt `process_group(group, opts, ctx, create_if_missing, dry_run,
+  log)` med CREATE-gren (productSet uden product_id) + MERGE-gren (in-place, som combine) + dedup + chunked-large +
+  create_single-sikkerhedsnet + tal-först-reorder + rent handle + 301/slet-donorer + PARK-detektion. **VALIDERET LIVE:**
+  oprettede M3004066 "Barstole Massivt Akacietræ" (4 var, Antal-akse 2/4/6/8, ACTIVE+publiceret, alle stocked+prissat,
+  1.variant kun-sku, øvrige produktinfo+variantbilleder). `combine_exec.py` URØRT (kører stadig live).
 
 **MANGLER at bygge (næste sessioner, i rækkefølge):**
-1. **Fase 0 — `scripts/catalog_engine.py`:** udtræk combine_exec's per-gruppe-kerne til en delt
-   `process_group(group, create_if_missing=True, dry_run=...)`. **RØR IKKE `combine_exec.py`** mens combine-cron'en
-   kører live (backlog ~561 tilbage) — byg catalog_engine som NY fil; migrér combine_exec til at bruge den FØRST
-   når backlog er færdig + catalog_engine er testet. process_group skal kunne: (a) OPRET nyt (productSet uden
-   product_id + publicér) når ingen live-fragmenter, (b) MERGE in-place (som combine_exec i dag) når fragmenter
-   findes. Genbrug merge_anchor/dedup/create_single/chunked/reorder/handle/redirect fra combine_exec (kopiér ind).
-2. **Fase 1b — wire `unified_sync --live` → process_group** + tilføj DELTA-change-detektion (state/last_catalog_skus.csv
+1. **Fase 1b — wire `unified_sync --live` → `catalog_engine.process_group`** + tilføj DELTA-change-detektion (state/last_catalog_skus.csv
    snapshot: kun masters m. tilføjede/manglende feed-SKU processeres; unified_sync klassificerer i dag ALLE masters).
 3. **Fase 1c — create-filtre-paritet:** i dag kun MIN_STOCK_PRIMARY=20 approksimeret; tilføj MIN_STOCK_VARIANT=4 +
    aktiv-hovedkategori-tjek (som daily_create).
