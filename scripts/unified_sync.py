@@ -30,18 +30,33 @@ def load_live_snapshot(force=False):
         print(f"live-snapshot (cache): {len(d)} produkter (brug --refresh for frisk)")
         return d
     Q = ('query($a:String){products(first:80,query:"vendor:vidaXL",after:$a){pageInfo{hasNextPage endCursor} '
-         'edges{node{id handle title createdAt variants(first:250){edges{node{sku}}}}}}}')
-    after = None; out = []; pg = 0
+         'edges{node{id handle title createdAt variantsCount{count} variants(first:250){edges{node{sku}}}}}}}')
+    after = None; out = []; pg = 0; big = []
     while True:
         d = ME.gql(Q, {"a": after}); pr = (d.get("data") or {}).get("products") or {}
         for e in pr.get("edges", []):
             n = e["node"]
             n["skus"] = [v["node"]["sku"] for v in n["variants"]["edges"] if v["node"].get("sku")]
+            if (n.get("variantsCount") or {}).get("count", 0) > 250:
+                big.append(n["id"])   # >250 varianter → capped, hentes fuldt bagefter
             del n["variants"]; out.append(n)
         pg += 1
         if pg % 40 == 0: print(f"  …{len(out)} live", flush=True)
         if pr.get("pageInfo", {}).get("hasNextPage"): after = pr["pageInfo"]["endCursor"]
         else: break
+    # >250-varianter: paginér fuldt så snapshot IKKE misser SKU >250 (ellers fejl-klassificering)
+    bymap = {p["id"]: p for p in out}
+    for pid in big:
+        allsk = []; af = None
+        while True:
+            d = ME.gql('query($id:ID!,$a:String){product(id:$id){variants(first:250,after:$a){'
+                       'pageInfo{hasNextPage endCursor} edges{node{sku}}}}}', {"id": pid, "a": af})
+            pv = (d.get("data") or {}).get("product", {}).get("variants", {})
+            allsk += [x["node"]["sku"] for x in pv.get("edges", []) if x["node"].get("sku")]
+            if pv.get("pageInfo", {}).get("hasNextPage"): af = pv["pageInfo"]["endCursor"]
+            else: break
+        bymap[pid]["skus"] = allsk
+    if big: print(f"  (paginerede {len(big)} store produkter >250 var fuldt)")
     json.dump(out, open(cache, "w", encoding="utf-8"), ensure_ascii=False)
     for p in out: p["skuset"] = set(p["skus"])
     print(f"live-snapshot (frisk): {len(out)} produkter → {cache}")
