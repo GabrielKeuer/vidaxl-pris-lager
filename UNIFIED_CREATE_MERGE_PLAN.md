@@ -4,8 +4,44 @@
 grupperings-logik — opretter nye produkter OG opdaterer/merger eksisterende konsistent. Erstatter de to
 adskilte flows (dropxl `daily_create`/`daily_create_large` + vidaxl-pris-lager `combine_execute`).
 
-**Status:** DESIGN. Intet live ændres før dry-run + lille live-test er grønne. Combine-backlog (664/1218)
-kører færdig først (den er bevist); det samlede flow overtager derefter både create og merge.
+**Status:** DESIGN + Fase 1 påbegyndt. Intet live ændres før dry-run + lille live-test er grønne. Combine-backlog
+(~664/1218) kører færdig først (den er bevist); det samlede flow overtager derefter både create og merge.
+
+---
+
+## 🔖 GENOPTAG HER (multi-session — læs FØRST)
+
+**Bygget indtil nu (2026-07-10):**
+- ✅ `scripts/unified_sync.py` — Fase 1-DRIVER: én gruppering over hele feedet + change-detektion via live-snapshot
+  (sku2pid) + klassificering (CREATE / MERGE_nyvariant / MERGE_konsolidér / UNCHANGED / PARK_split / SKIP_lavt_lager).
+  **KUN klassificering/DRY-RUN — ingen apply endnu.** Kør: `python scripts/unified_sync.py [--refresh] [--limit N] [--only MID]`.
+  Output: `output/unified_dryrun.json`. Verificeret på 200 masters (kører).
+
+**MANGLER at bygge (næste sessioner, i rækkefølge):**
+1. **Fase 0 — `scripts/catalog_engine.py`:** udtræk combine_exec's per-gruppe-kerne til en delt
+   `process_group(group, create_if_missing=True, dry_run=...)`. **RØR IKKE `combine_exec.py`** mens combine-cron'en
+   kører live (backlog ~561 tilbage) — byg catalog_engine som NY fil; migrér combine_exec til at bruge den FØRST
+   når backlog er færdig + catalog_engine er testet. process_group skal kunne: (a) OPRET nyt (productSet uden
+   product_id + publicér) når ingen live-fragmenter, (b) MERGE in-place (som combine_exec i dag) når fragmenter
+   findes. Genbrug merge_anchor/dedup/create_single/chunked/reorder/handle/redirect fra combine_exec (kopiér ind).
+2. **Fase 1b — wire `unified_sync --live` → process_group** + tilføj DELTA-change-detektion (state/last_catalog_skus.csv
+   snapshot: kun masters m. tilføjede/manglende feed-SKU processeres; unified_sync klassificerer i dag ALLE masters).
+3. **Fase 1c — create-filtre-paritet:** i dag kun MIN_STOCK_PRIMARY=20 approksimeret; tilføj MIN_STOCK_VARIANT=4 +
+   aktiv-hovedkategori-tjek (som daily_create).
+4. **Fase 2 — fuld dry-run** (frisk snapshot, EFTER combine-backlog er færdig — ellers moving target) → diff mod
+   Shopify + mod hvad daily_create ville lave → dokumentér ønskede vs uønskede afvigelser.
+5. **Fase 3 — lille live-test** (5-10 masters: nye + ny-variant-til-eksisterende + dublet) → slavisk validering
+   (SKU-sæt/titel/1.variant/metafelter/stocked/pris/handle/residual-match).
+6. **Fase 4 — cutover:** `unified_execute.yml`-workflow (vidaxl-pris-lager, cross-repo DROPXL_PAT + SHOPIFY_COMBINE_TOKEN
+   + SUPABASE + FEED_URL); disable dropxl `daily_create`+`daily_create_large`; behold daily_delete + sync_inventory + repricing.
+
+**KRITISKE FAKTA (må ikke glemmes):**
+- Combine-cron (`combine_execute.yml`) er LIVE (~664/1218). `combine_exec.py` MÅ IKKE brydes → byg unified som separate filer.
+- Unified bor i vidaxl-pris-lager, importerer create_products_v2/product_utils fra dropxl via `DROPXL_SCRIPTS`-env (cross-repo).
+- Token: `SHOPIFY_COMBINE_TOKEN` (write_products+write_content) til create+merge+redirects. Almindeligt SHOPIFY_ACCESS_TOKEN
+  mangler write_content. Lager-aktivering sker under write_products (bevist).
+- `PARK_split` i dry-run = split-backloggen (eksisterende produkter der ikke matcher unified-grupperingen → parkeres, vi splitter ikke).
+- INTET live før Fase 3 grøn.
 
 ---
 
