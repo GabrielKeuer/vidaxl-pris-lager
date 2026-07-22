@@ -82,7 +82,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add output/combine_done.json output/handled_skus.json output/combine_skipped.json || true
+          git add output/combine_done.json output/handled_skus.json output/combine_skipped.json output/combine_progress.json || true
           git commit -m "Combine progress - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
           git pull --no-rebase --no-edit origin main || true
           git push || echo "push failed (næste kørsel genoptager via journal)"
@@ -106,6 +106,27 @@ jobs:
               --title "🎉 Combine cron FÆRDIG — alle produkter samlet" \
               --body "combine_execute har samlet alle $DONE_N combines. Workflowen er nu auto-disabled." || true
             gh workflow disable combine_execute.yml || true
+          fi
+
+      - name: Stall-alarm (0 merges men rest tilbage = tomgang → mail)
+        if: always()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          # Fanger lydløs tomgang (som 13-22/7: forældet plan → alle grupper sprunget over hver nat).
+          # Kun ved schedule/live — dry-run skriver ingen progress-fil.
+          if [ -f output/combine_progress.json ]; then
+            MERGED=$(python -c "import json;print(json.load(open('output/combine_progress.json'))['merged_last_run'])")
+            REMAIN=$(python -c "import json;print(json.load(open('output/combine_progress.json'))['remaining'])")
+            SKIP=$(python -c "import json;print(json.load(open('output/combine_progress.json'))['skipped_last_run'])")
+            if [ "$MERGED" = "0" ] && [ "$REMAIN" != "0" ]; then
+              echo "⚠ TOMGANG: 0 merges, $REMAIN tilbage, $SKIP sprunget over — sender alarm"
+              if [ -n "$RESEND_API_KEY" ]; then
+                curl -s -X POST https://api.resend.com/emails \
+                  -H "Authorization: Bearer $RESEND_API_KEY" -H "Content-Type: application/json" \
+                  -d "{\"from\":\"BoligRetning <onboarding@resend.dev>\",\"to\":[\"kontakt@boligretning.dk\"],\"subject\":\"⚠️ Combine-cron i TOMGANG ($REMAIN tilbage, 0 merges)\",\"text\":\"Nattens combine-koersel udfoerte 0 merges men $REMAIN grupper er stadig tilbage ($SKIP sprunget over). Typisk aarsag: planen er foraeldet ift. nutidens gruppering/feed -> koer combine_plan.py igen. Cronen naar ALDRIG i maal af sig selv i denne tilstand.\"}" || true
+              fi
+            fi
           fi
 
       - name: Notify on failure (email + issue)

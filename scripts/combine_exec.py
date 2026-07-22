@@ -287,6 +287,14 @@ def main():
             continue
     log(f"\n=== FÆRDIG (denne kørsel): {merged} merges, ~{vcount} varianter tilføjet, {redir} redirects, {deleted} donorer slettet, {failed} sprunget over ===")
     log(f"    total gjort: {len(done)}/{len(plan)}")
+    # FREMDRIFTSFIL: lille maskinlæsbar status pr. kørsel — bruges af (a) workflowets stall-alarm
+    # (0 merges + rest>0 = tomgang, fx forældet plan → mail i stedet for 9 dages stilhed som 13-22/7),
+    # og (b) hub'ens /katalog/merge-status (viser ÆGTE combine-fremdrift, ikke det gamle merge-spors journal).
+    import datetime as _dt
+    json.dump({"plan_total": len(plan), "done": len(done), "remaining": len(plan) - len(done),
+               "merged_last_run": merged, "variants_last_run": vcount, "skipped_last_run": failed,
+               "updated_at": _dt.datetime.utcnow().isoformat() + "Z"},
+              open("output/combine_progress.json", "w", encoding="utf-8"))
 
 if __name__ == "__main__":
     main()
