@@ -3,10 +3,12 @@ name: Unified Create+Merge (vidaXL katalog)
 # SAMLET create+merge-flow (erstatter dropxl daily_create + combine_execute ved cutover — Fase 4).
 # Én grupperings-logik: nye produkter oprettes OG nye varianter lander på det RIGTIGE residual-produkt.
 # Delta-baseret (state/last_catalog_skus.csv committes tilbage) — rører kun ændrede masters.
-# INGEN SCHEDULE endnu: kun manuel dispatch, default DRY-RUN. Cutover (schedule + disable dropxl-create)
-# sker først efter Fase 3 (lille live-test) er grøn og Gabriel har givet eksplicit go.
+# CUTOVER 23/7-2026 (Gabriels go efter Fase 3 grøn: 65 tjek/0 fejl): dagligt schedule LIVE.
+# Søndag køres --full (sikkerhedsnet mod misset delta). dropxl daily_create/daily_create_large er pensioneret.
 
 on:
+  schedule:
+    - cron: '30 3 * * *'   # dagligt 03:30 UTC — LIVE m. dagsbudget; søndag = fuld scan (fallback)
   workflow_dispatch:
     inputs:
       mode:
@@ -66,12 +68,17 @@ jobs:
         run: |
           set -e
           ARGS="--refresh"
-          if [ "${{ github.event.inputs.full }}" = "true" ]; then ARGS="$ARGS --full"; fi
-          if [ -n "${{ github.event.inputs.only }}" ]; then ARGS="$ARGS --only ${{ github.event.inputs.only }}"; fi
-          if [ "${{ github.event.inputs.mode }}" = "live" ]; then
-            python scripts/unified_sync.py $ARGS --live --budget "${{ github.event.inputs.budget }}"
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            if [ "$(date +%u)" = "7" ]; then ARGS="$ARGS --full"; fi
+            python scripts/unified_sync.py $ARGS --live --budget "${{ vars.UNIFIED_DAILY_BUDGET || '500' }}"
           else
-            python scripts/unified_sync.py $ARGS
+            if [ "${{ github.event.inputs.full }}" = "true" ]; then ARGS="$ARGS --full"; fi
+            if [ -n "${{ github.event.inputs.only }}" ]; then ARGS="$ARGS --only ${{ github.event.inputs.only }}"; fi
+            if [ "${{ github.event.inputs.mode }}" = "live" ]; then
+              python scripts/unified_sync.py $ARGS --live --budget "${{ github.event.inputs.budget }}"
+            else
+              python scripts/unified_sync.py $ARGS
+            fi
           fi
 
       - name: Commit state + journal (kun live ændrer noget)
