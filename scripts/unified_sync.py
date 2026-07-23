@@ -12,7 +12,7 @@ Kun masters hvis feed-SKU-sæt har ÆNDRET sig (tilføjet/fjernet/ny master) pro
 Snapshot opdateres KUN efter succesfuld LIVE-behandling (dry-run rører intet — heller ikke state).
 
 CREATE-FILTRE (paritet m. dropxl daily_create, verificeret mod create_products_v2.py:1574-1580+1689):
-  produkt:  mindst ét SKU m. Stock ≥ 20 OG B2B-pris > 0 OG aktiv hovedkategori (hub-config Import?=JA)
+  produkt:  mindst ét SKU m. Stock ≥ 10 OG B2B-pris > 0 OG aktiv hovedkategori (hub-config Import?=JA)
   variant:  kun SKU m. Stock ≥ 4 OG B2B-pris > 0 medtages ved CREATE (og som NYE varianter ved merge)
   merge:    eksisterende varianter fjernes ALDRIG pga. lavt lager (kun daily_delete fjerner)
 
@@ -147,7 +147,7 @@ def main():
             kat[s] = str(v).split(" > ")[0] if v is not None else ""
 
     def create_primary_ok(skus):
-        """Produkt-niveau create-filter: mindst ét SKU m. stock≥20 + pris>0 + aktiv kategori."""
+        """Produkt-niveau create-filter: mindst ét SKU m. stock≥10 + pris>0 + aktiv kategori."""
         for s in skus:
             if stock.get(s, 0) >= MIN_STOCK_PRIMARY and price.get(s, 0) > 0 and (not aktive or kat.get(s, "") in aktive):
                 return True
