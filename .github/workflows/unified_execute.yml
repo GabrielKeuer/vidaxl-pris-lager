@@ -1,0 +1,96 @@
+name: Unified Create+Merge (vidaXL katalog)
+
+# SAMLET create+merge-flow (erstatter dropxl daily_create + combine_execute ved cutover — Fase 4).
+# Én grupperings-logik: nye produkter oprettes OG nye varianter lander på det RIGTIGE residual-produkt.
+# Delta-baseret (state/last_catalog_skus.csv committes tilbage) — rører kun ændrede masters.
+# INGEN SCHEDULE endnu: kun manuel dispatch, default DRY-RUN. Cutover (schedule + disable dropxl-create)
+# sker først efter Fase 3 (lille live-test) er grøn og Gabriel har givet eksplicit go.
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'dry-run | live'
+        required: true
+        default: 'dry-run'
+      budget:
+        description: 'Max varianter at røre (live)'
+        required: false
+        default: '500'
+      full:
+        description: 'true = ignorér delta-snapshot (fuld scan)'
+        required: false
+        default: 'false'
+      only:
+        description: 'Kun én master_pid (test)'
+        required: false
+        default: ''
+
+concurrency:
+  group: unified-create-merge
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Checkout vidaxl-pris-lager
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.DROPXL_PAT }}
+
+      - name: Checkout dropxl-product-automation (create_products_v2 + product_utils)
+        uses: actions/checkout@v4
+        with:
+          repository: GabrielKeuer/dropxl-product-automation
+          token: ${{ secrets.DROPXL_PAT }}
+          path: dropxl
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: pip install requests pandas beautifulsoup4 supabase lxml anthropic openpyxl
+
+      - name: Kør unified sync
+        env:
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          # write_products + write_content (301-redirects ved merge) — samme token som combine
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_COMBINE_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          FEED_URL: ${{ vars.FEED_URL }}
+          DROPXL_SCRIPTS: ${{ github.workspace }}/dropxl/scripts
+        run: |
+          set -e
+          ARGS="--refresh"
+          if [ "${{ github.event.inputs.full }}" = "true" ]; then ARGS="$ARGS --full"; fi
+          if [ -n "${{ github.event.inputs.only }}" ]; then ARGS="$ARGS --only ${{ github.event.inputs.only }}"; fi
+          if [ "${{ github.event.inputs.mode }}" = "live" ]; then
+            python scripts/unified_sync.py $ARGS --live --budget "${{ github.event.inputs.budget }}"
+          else
+            python scripts/unified_sync.py $ARGS
+          fi
+
+      - name: Commit state + journal (kun live ændrer noget)
+        if: always()
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add state/last_catalog_skus.csv output/unified_journal.jsonl output/unified_dryrun.json 2>/dev/null || true
+          git commit -m "Unified sync - $(date +'%Y-%m-%d %H:%M')" || echo "No changes"
+          git pull --no-rebase --no-edit origin main || true
+          git push || echo "push failed (genoptages næste kørsel)"
+
+      - name: Fejl-mail
+        if: failure()
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: |
+          if [ -n "$RESEND_API_KEY" ]; then
+            curl -s -X POST https://api.resend.com/emails \
+              -H "Authorization: Bearer $RESEND_API_KEY" -H "Content-Type: application/json" \
+              -d '{"from":"BoligRetning <onboarding@resend.dev>","to":["kontakt@boligretning.dk"],"subject":"⚠️ Unified create+merge fejlede","text":"unified_sync fejlede. Tjek GitHub Actions i vidaxl-pris-lager. Delta-snapshot er kun opdateret for fuldt behandlede masters - naeste koersel genoptager."}' || true
+          fi
