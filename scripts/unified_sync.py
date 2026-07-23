@@ -31,7 +31,7 @@ import cleanup_engine as CE
 import pricing as PR
 import catalog_engine as ENG
 
-MIN_STOCK_PRIMARY = 20
+MIN_STOCK_PRIMARY = 10   # 23/7-2026: Gabriel sænkede fra 20 (krav: mindst ÉN variant m. lager ≥ 10 for at oprette gruppen)
 MIN_STOCK_VARIANT = 4
 STATE_PATH = "state/last_catalog_skus.csv"
 JOURNAL = "output/unified_journal.jsonl"
