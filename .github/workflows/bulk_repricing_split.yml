@@ -1,0 +1,59 @@
+name: Bulk Repricing SPLIT (pris-test)
+
+# ADDITIVT: rører ikke Bulk Repricing / Sync Prices. Kun manuel (workflow_dispatch).
+# dry_run=true (default) skriver INTET. Fuld live kræver hub_settings.pricing_mode.mode='split_test'
+# (medmindre --limit/canary). Bygger på price-split-test-branchen.
+
+on:
+  workflow_dispatch:
+    inputs:
+      experiment_id:
+        description: 'pricing_experiment.id (tom = seneste vidaXL-eksperiment)'
+        required: false
+        default: ''
+      dry_run:
+        description: 'true = preview uden push til Shopify'
+        required: false
+        default: 'true'
+      limit:
+        description: 'Canary: kun de N første produkter (tom = hele kataloget)'
+        required: false
+        default: ''
+
+jobs:
+  split-reprice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run split repricing
+        env:
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          EXPERIMENT_ID: ${{ github.event.inputs.experiment_id }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+          LIMIT: ${{ github.event.inputs.limit }}
+        run: |
+          ARGS=""
+          [ -n "$EXPERIMENT_ID" ] && ARGS="$ARGS --experiment-id $EXPERIMENT_ID"
+          [ -n "$LIMIT" ] && ARGS="$ARGS --limit $LIMIT"
+          if [ "$DRY_RUN" = "true" ]; then
+            python scripts/bulk_repricing_split.py --dry-run $ARGS
+          else
+            python scripts/bulk_repricing_split.py --live $ARGS
+          fi
+      - name: Upload dry-run CSV
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: split-bulk-dryrun
+          path: output/split-bulk-dryrun.csv
+          if-no-files-found: ignore
