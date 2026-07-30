@@ -15,8 +15,16 @@ on:
         description: 'true = preview uden push til Shopify'
         required: false
         default: 'true'
+      canary:
+        description: 'Stratificeret canary: ~N produkter (spredt over typer+priser+A/B). Tom = hele kataloget'
+        required: false
+        default: ''
+      revert:
+        description: 'true = rul canary tilbage til 1,65x (kun m. canary+live)'
+        required: false
+        default: 'false'
       limit:
-        description: 'Canary: kun de N første produkter (tom = hele kataloget)'
+        description: '(avanceret) kun de N FØRSTE produkter'
         required: false
         default: ''
 
@@ -40,11 +48,15 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           EXPERIMENT_ID: ${{ github.event.inputs.experiment_id }}
           DRY_RUN: ${{ github.event.inputs.dry_run }}
+          CANARY: ${{ github.event.inputs.canary }}
+          REVERT: ${{ github.event.inputs.revert }}
           LIMIT: ${{ github.event.inputs.limit }}
         run: |
           ARGS=""
           [ -n "$EXPERIMENT_ID" ] && ARGS="$ARGS --experiment-id $EXPERIMENT_ID"
+          [ -n "$CANARY" ] && ARGS="$ARGS --canary $CANARY"
           [ -n "$LIMIT" ] && ARGS="$ARGS --limit $LIMIT"
+          [ "$REVERT" = "true" ] && ARGS="$ARGS --revert"
           if [ "$DRY_RUN" = "true" ]; then
             python scripts/bulk_repricing_split.py --dry-run $ARGS
           else
