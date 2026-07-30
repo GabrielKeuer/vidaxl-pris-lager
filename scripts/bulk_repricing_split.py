@@ -35,26 +35,44 @@ from sync_prices_v2 import (
 from bulk_repricing import _bulk_export_vendor_products, _gid_num, _now
 
 
-def _load_assignment(sb, experiment_id):
-    """handle -> markup (float) for eksperimentets tildeling."""
+def _load_assignment(sb, experiment_id, full=False):
+    """handle -> markup (float). full=True: også product_type/price/gruppe (til canary-sampling)."""
     out = {}
+    rows_full = []
+    cols = "handle, markup, product_type, price, gruppe" if full else "handle, markup"
     frm = 0
     while True:
-        res = sb.table("pricing_experiment_assignment").select("handle, markup") \
+        res = sb.table("pricing_experiment_assignment").select(cols) \
             .eq("experiment_id", experiment_id).range(frm, frm + 999).execute()
         rows = res.data or []
         for r in rows:
             if r.get("handle"):
                 out[r["handle"]] = float(r["markup"])
+                if full:
+                    rows_full.append(r)
         if len(rows) < 1000:
             break
         frm += 1000
-    return out
+    return (out, rows_full) if full else out
 
 
-def run_split_bulk(sb, vendor, cfg, assignment, dry_run, limit=None):
+def _select_canary(rows_full, n):
+    """DETERMINISTISK stratificeret udvalg af ~n produkter: sortér på (produkttype, pris, handle)
+    og tag hver k'te → spreder over typer + prisklasser + begge grupper. Samme sæt hver gang
+    (så --revert rammer præcis de samme produkter)."""
+    rows = sorted(rows_full, key=lambda r: (r.get("product_type") or "", float(r.get("price") or 0), r["handle"]))
+    if n >= len(rows):
+        return {r["handle"] for r in rows}
+    step = len(rows) / float(n)
+    picked = {rows[int(i * step)]["handle"] for i in range(n)}
+    return picked
+
+
+def run_split_bulk(sb, vendor, cfg, assignment, dry_run, limit=None, canary_handles=None, revert=False):
     """Fictive bulk MED per-gruppe markup. Kopi af bulk_repricing.run_fictive_bulk,
-    ændring markeret med  # SPLIT."""
+    ændring markeret med  # SPLIT.
+      canary_handles: behandl KUN disse produkter (superviseret canary).
+      revert=True: brug config'ens basis-markup (1,65) i stedet for gruppens → rul canary tilbage."""
     feed_b2b = {}
     if (vendor or "").lower() == "vidaxl":
         print("📥 Henter vidaXL offer-feed (b2b = kost-sandhed)...")
@@ -77,11 +95,14 @@ def run_split_bulk(sb, vendor, cfg, assignment, dry_run, limit=None):
     seen_products = set()
     print(f"🔎 Bulk-eksporterer '{vendor}'-produkter (SPLIT fictive mode)...")
     for v in _bulk_export_vendor_products(vendor, None):
-        # SPLIT: canary-grænse tælles på PRODUKTER (ikke varianter)
+        # SPLIT: --limit tælles på PRODUKTER (ikke varianter)
         if limit is not None:
             seen_products.add(v["handle"])
             if len(seen_products) > limit:
                 break
+        # SPLIT: canary — behandl KUN de udvalgte produkter
+        if canary_handles is not None and v["handle"] not in canary_handles:
+            continue
         checked += 1
         sku = v["sku"]
         if not sku:
@@ -92,7 +113,8 @@ def run_split_bulk(sb, vendor, cfg, assignment, dry_run, limit=None):
             counters["ikke_i_split"] += 1
             continue
         counters["A" if abs(grp_markup - 1.6) < 1e-6 else "B"] += 1
-        cfg_grp = {**cfg, "fixed_markup": grp_markup}   # SPLIT: kun markup ændres
+        # SPLIT: revert → basis-markup (config'ens 1,65); ellers gruppens markup
+        cfg_grp = cfg if revert else {**cfg, "fixed_markup": grp_markup}
 
         if feed_b2b:
             b2b = feed_b2b.get(str(sku).strip())
@@ -174,6 +196,10 @@ def main():
     ap.add_argument("--dry-run", action="store_true")
     ap.add_argument("--live", action="store_true")
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--canary", type=int, default=None,
+                    help="Stratificeret canary: kun ~N produkter (spredt over typer+priser+A/B)")
+    ap.add_argument("--revert", action="store_true",
+                    help="Rul (canary) tilbage til config'ens basis-markup (1,65)")
     ap.add_argument("--force", action="store_true")
     args = ap.parse_args()
     dry_run = not args.live  # default = dry-run medmindre --live
@@ -191,26 +217,34 @@ def main():
         sys.exit("❌ Intet pricing_experiment fundet")
     print(f"🧪 Eksperiment: {exp['navn']} ({exp['id']}) status={exp['status']}")
 
-    # Gensidig eksklusivitet: fuld --live kræver pricing_mode=split_test (ikke ved canary/--force)
-    if args.live and args.limit is None and not args.force:
+    er_delmaengde = (args.limit is not None) or (args.canary is not None)
+    # Gensidig eksklusivitet: FULD --live (hele kataloget) kræver pricing_mode=split_test.
+    # Canary/limit-delmængder er superviserede test → tillades uden flag.
+    if args.live and not er_delmaengde and not args.force:
         pm = sb.table("hub_settings").select("value").eq("key", "pricing_mode").maybe_single().execute().data
         mode = (pm or {}).get("value", {})
         mode = mode.get("mode") if isinstance(mode, dict) else mode
         if mode != "split_test":
-            sys.exit(f"❌ pricing_mode={mode!r} — sæt hub_settings.pricing_mode.mode='split_test' før fuld --live (eller brug --limit til canary)")
+            sys.exit(f"❌ pricing_mode={mode!r} — sæt hub_settings.pricing_mode.mode='split_test' før fuld --live (eller brug --canary til test)")
 
     cfg = load_pricing_config(sb, vendor=args.vendor, product_type=None)
     if not cfg or cfg.get("mode") != "fictive_discount":
         sys.exit(f"❌ {args.vendor}-config er ikke fictive_discount")
 
-    assignment = _load_assignment(sb, exp["id"])
+    assignment, rows_full = _load_assignment(sb, exp["id"], full=True)
     print(f"📋 Tildeling: {len(assignment)} produkter")
     if not assignment:
         sys.exit("❌ Tom tildeling")
 
-    mode_str = "DRY-RUN" if dry_run else ("CANARY-LIVE" if args.limit else "FULD LIVE")
-    print(f"🚀 {mode_str} — vendor={args.vendor} limit={args.limit}")
-    rc = run_split_bulk(sb, args.vendor, cfg, assignment, dry_run, limit=args.limit)
+    canary_handles = None
+    if args.canary:
+        canary_handles = _select_canary(rows_full, args.canary)
+        print(f"🐤 Canary: {len(canary_handles)} produkter (stratificeret){' · REVERT' if args.revert else ''}")
+
+    mode_str = "DRY-RUN" if dry_run else ("CANARY-LIVE" if er_delmaengde else "FULD LIVE")
+    print(f"🚀 {mode_str} — vendor={args.vendor} canary={args.canary} revert={args.revert}")
+    rc = run_split_bulk(sb, args.vendor, cfg, assignment, dry_run,
+                        limit=args.limit, canary_handles=canary_handles, revert=args.revert)
     sys.exit(rc)
 
 
