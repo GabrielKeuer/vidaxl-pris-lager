@@ -535,3 +535,8 @@
 {"mid": "M3042959", "title": "Køkken Væg Hjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253318140253", "handle": "koekken-vaeg-hjoerneskab-lucca-konstrueret-trae", "n_skus": 7, "dropped": 3, "at": "2026-08-03T04:45:33.593143+00:00"}
 {"mid": "M3042959", "title": "Køkkenskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253316469085", "handle": "koekkenskab-lucca-konstrueret-trae", "n_skus": 6, "dropped": 3, "at": "2026-08-03T04:45:39.463148+00:00"}
 {"mid": "M30456021", "title": "Platform Sengestel Velourstof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15469292749149", "handle": "platform-sengestel-velourstof", "n_skus": 38, "dropped": 5, "at": "2026-08-03T04:45:57.406795+00:00"}
+{"mid": "M3036438", "title": "Havesofasæt 7 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-08-04T04:38:03.918089+00:00"}
+{"mid": "M3036438", "title": "Havesofasæt 8 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-08-04T04:38:04.183254+00:00"}
+{"mid": "M3036519", "title": "Havesofasæt 8 Dele Med Hynder Polyrattan", "action": "SKIP", "n_skus": 2, "at": "2026-08-04T04:38:04.730262+00:00"}
+{"mid": "M30456021", "title": "Platform Sengestel Velourstof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15469292749149", "handle": "platform-sengestel-velourstof", "n_skus": 38, "dropped": 5, "at": "2026-08-04T04:38:25.906676+00:00"}
+{"mid": "M30499281", "title": "Hjørnesengramme Med Madras Med Hovedgærde 2 Stk. Grøn Fløjl", "action": "SKIP", "n_skus": 1, "at": "2026-08-04T04:38:26.244229+00:00"}
