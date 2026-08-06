@@ -542,3 +542,5 @@
 {"mid": "M30499281", "title": "Hjørnesengramme Med Madras Med Hovedgærde 2 Stk. Grøn Fløjl", "action": "SKIP", "n_skus": 1, "at": "2026-08-04T04:38:26.244229+00:00"}
 {"mid": "M298619", "title": "TV-bord 120x39x58 Cm Grå", "action": "SKIP", "n_skus": 1, "at": "2026-08-05T04:37:00.900982+00:00"}
 {"mid": "M3008791", "title": "Selvklæbende Folie Til Møbler 500x90 Cm PVC Lyst Egetræ", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16391669514589", "handle": "selvklaebende-folie-til-mobler-500x90-cm-pvc-lyst-egetrae", "n_skus": 1, "dropped": 0, "at": "2026-08-05T04:37:04.540747+00:00"}
+{"mid": "M3042563", "title": "Daybed Med Udtræk Og Skuffer Uden Madras Hvid", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15466126901597", "handle": "daybed-med-udtraek-og-skuffer-uden-madras-80x200-cm", "n_skus": 4, "dropped": 1, "at": "2026-08-06T06:13:17.143456+00:00"}
+{"mid": "M30456021", "title": "Platform Sengestel Velourstof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15469292749149", "handle": "platform-sengestel-velourstof", "n_skus": 38, "dropped": 5, "at": "2026-08-06T06:13:43.330196+00:00"}
