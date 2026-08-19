@@ -712,3 +712,6 @@
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Gammelt Træ 80 X 200 Cm", "action": "SKIP", "n_skus": 1, "at": "2026-08-16T04:17:05.703805+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Grå Sonoma 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-08-16T04:17:05.973381+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Artisan-eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-08-16T04:17:06.236435+00:00"}
+{"mid": "M3028418", "title": "Bordplade Bambus", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15256480612701", "handle": "bordplade-bambus", "n_skus": 33, "dropped": 0, "at": "2026-08-19T04:09:35.351624+00:00"}
+{"mid": "M3029722", "title": "Kommode 69,5x34x90 Cm Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15619353968989", "handle": "kommode-695x34x90-cm-konstrueret-trae", "n_skus": 4, "dropped": 0, "at": "2026-08-19T04:09:39.487267+00:00"}
+{"mid": "M3033807", "title": "Liggestol Med Hynde 63x200x81 Cm Polyrattan", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15251035357533", "handle": "liggestol-med-hynde-63x200x81-cm-polyrattan", "n_skus": 6, "dropped": 0, "at": "2026-08-19T04:09:44.367003+00:00"}
