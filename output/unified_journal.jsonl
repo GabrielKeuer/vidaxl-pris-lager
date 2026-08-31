@@ -890,3 +890,4 @@
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Gammelt Træ 80 X 200 Cm", "action": "SKIP", "n_skus": 1, "at": "2026-08-30T09:29:56.687172+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Grå Sonoma 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-08-30T09:29:57.102100+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Artisan-eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-08-30T09:29:57.320491+00:00"}
+{"mid": "M2915231", "title": "Balkon Afskærmning Polyester", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16479337021789", "handle": "balkon-afskaermning-polyester", "n_skus": 1, "dropped": 0, "at": "2026-08-31T10:01:15.664519+00:00"}
