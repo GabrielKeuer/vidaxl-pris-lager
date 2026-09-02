@@ -891,3 +891,6 @@
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Grå Sonoma 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-08-30T09:29:57.102100+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Artisan-eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-08-30T09:29:57.320491+00:00"}
 {"mid": "M2915231", "title": "Balkon Afskærmning Polyester", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16479337021789", "handle": "balkon-afskaermning-polyester", "n_skus": 1, "dropped": 0, "at": "2026-08-31T10:01:15.664519+00:00"}
+{"mid": "M3000928", "title": "Bogreol 98x30x98 Cm Grå Sonoma-eg", "action": "SKIP", "n_skus": 1, "at": "2026-09-02T08:05:24.858661+00:00"}
+{"mid": "M37000005341", "title": "Badeværelsesspejlskab", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16439471112541", "handle": "badevaerelsesspejlskab", "n_skus": 10, "dropped": 0, "at": "2026-09-02T08:05:32.910657+00:00"}
+{"mid": "M37000005371", "title": "Badeværelsesspejlskab Beton", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16442317209949", "handle": "badevaerelsesspejlskab-beton-2", "n_skus": 3, "dropped": 0, "at": "2026-09-02T08:05:36.342284+00:00"}
