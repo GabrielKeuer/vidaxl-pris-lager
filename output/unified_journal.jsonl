@@ -894,3 +894,6 @@
 {"mid": "M3000928", "title": "Bogreol 98x30x98 Cm Grå Sonoma-eg", "action": "SKIP", "n_skus": 1, "at": "2026-09-02T08:05:24.858661+00:00"}
 {"mid": "M37000005341", "title": "Badeværelsesspejlskab", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16439471112541", "handle": "badevaerelsesspejlskab", "n_skus": 10, "dropped": 0, "at": "2026-09-02T08:05:32.910657+00:00"}
 {"mid": "M37000005371", "title": "Badeværelsesspejlskab Beton", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16442317209949", "handle": "badevaerelsesspejlskab-beton-2", "n_skus": 3, "dropped": 0, "at": "2026-09-02T08:05:36.342284+00:00"}
+{"mid": "M3044370", "title": "Sengeramme Uden Madras Foldbare Stål", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253189263709", "handle": "sengeramme-uden-madras-foldbare-stal", "n_skus": 8, "dropped": 0, "at": "2026-09-03T08:15:50.928923+00:00"}
+{"mid": "M37000007041", "title": "Badeværelsesskabsæt 3 Stk. Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16171073405277", "handle": "badevaerelsesskabsaet-3-dele-konstrueret-trae", "n_skus": 44, "dropped": 0, "at": "2026-09-03T08:16:10.541568+00:00"}
+{"mid": "M3700001119", "title": "Badeværelsesskabsæt 4 Stk. Konstrueret Træ", "action": "SKIP", "n_skus": 4, "at": "2026-09-03T08:16:11.664825+00:00"}
