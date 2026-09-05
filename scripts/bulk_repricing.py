@@ -229,23 +229,6 @@ def _bulk_export_vendor_products(vendor, ptype, poll=15, max_wait_min=45):
     return variants
 
 
-def _log_price_changes(sb, rows):
-    """Skriv præcise prisændringer til price_changes (data-ordre 5/9: hvad, fra hvad,
-    til hvad, hvornår — pr. SKU m. job-reference). Fejl her må ALDRIG vælte en
-    repricing: try/except, chunket insert."""
-    if not rows:
-        return
-    logget = 0
-    try:
-        for i in range(0, len(rows), 500):
-            chunk = rows[i:i + 500]
-            sb.table("price_changes").insert(chunk).execute()
-            logget += len(chunk)
-        print(f"🧾 price_changes: {logget} ændringer logget")
-    except Exception as e:
-        print(f"⚠ price_changes-logning fejlede (ikke kritisk, {logget} nåede ind): {e}")
-
-
 def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
     """Fictive-mode bulk (Benuta/Sollux/Kayoom + vidaXL-fictive).
 
@@ -283,7 +266,6 @@ def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
     on_sale_rows = []      # rows til push_to_shopify
     variants_map = {}      # sku -> [variant_id, product_id] (numeriske)
     state_rows = []        # spejl til vidaxl_pricing_state (b2b/pris/førpris)
-    change_rows = []       # præcis ændringslog → price_changes
     checked = 0
     counters = {"feed_missing": 0, "cost_update": 0, "price_update": 0}
     print(f"🔎 Bulk-eksporterer '{vendor}'-produkter fra Shopify (fictive mode)...")
@@ -325,15 +307,6 @@ def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
         })
         state_rows.append({"sku": sku, "b2b_cost": b2b,
                            "normal_price": nc_ or np_, "sale_price": np_})
-        if np_ != cur_p or nc_ != cur_c:
-            change_rows.append({
-                "vendor": vendor, "product_type": ptype, "sku": sku,
-                "old_price": cur_p or None, "new_price": np_,
-                "old_compare_at": cur_c, "new_compare_at": nc_,
-                "old_cost": cur_cost or None, "new_cost": b2b,
-                "source": "bulk_repricing", "job_id": job_id,
-                "config_mode": "fictive_discount",
-            })
     print(f"   counters: {counters}")
 
     total_changes = len(on_sale_rows)
@@ -366,8 +339,6 @@ def run_fictive_bulk(sb, job_id, vendor, ptype, cfg, dry_run):
     errors = stats.get("errors", 0)
     error_rate = errors / (applied + errors) if (applied + errors) else 0
     ok = error_rate <= 0.01
-    if applied > 0:
-        _log_price_changes(sb, change_rows)
     samples = stats.get("error_samples") or []
     sample_str = "; ".join(f"{c}× {m}" for m, c in samples[:3])
     dups = stats.get("skipped_duplicate", 0)
@@ -486,7 +457,6 @@ def main():
 
         # 3. Beregn ændringer (kun SKUs for valgt vendor + evt. product_type)
         today_rows, on_sale_rows, state_updates = [], [], []
-        change_rows = []  # præcis ændringslog → price_changes
         c = {"normal": 0, "warmup": 0, "on_sale": 0, "on_sale_edge_cleared": 0,
              "skip_unchanged": 0, "skip_no_state": 0, "skip_no_cost": 0,
              "skip_filter": 0, "skip_no_variant": 0}
@@ -558,15 +528,6 @@ def main():
                 c["on_sale"] += 1
                 if edge:
                     c["on_sale_edge_cleared"] += 1
-                change_rows.append({
-                    "vendor": vendor, "product_type": ptype, "sku": sku,
-                    "old_price": old_sale or None, "new_price": new_sale_int,
-                    "old_compare_at": old_normal or None,
-                    "new_compare_at": None if edge else new_normal,
-                    "old_cost": float(st.get("b2b_cost") or 0) or None, "new_cost": b2b,
-                    "source": "bulk_repricing", "job_id": job_id,
-                    "config_mode": "real_discount",
-                })
             else:
                 # normal / warmup
                 if new_normal == old_normal:
@@ -589,14 +550,6 @@ def main():
                     "sale_price": new_sale,
                 })
                 c["warmup" if status == "warmup" else "normal"] += 1
-                change_rows.append({
-                    "vendor": vendor, "product_type": ptype, "sku": sku,
-                    "old_price": old_normal or None, "new_price": new_normal,
-                    "old_compare_at": None, "new_compare_at": None,
-                    "old_cost": float(st.get("b2b_cost") or 0) or None, "new_cost": b2b,
-                    "source": "bulk_repricing", "job_id": job_id,
-                    "config_mode": "real_discount",
-                })
 
         total_changes = len(today_rows) + len(on_sale_rows)
         summary = (f"normal={c['normal']} warmup={c['warmup']} on_sale={c['on_sale']} "
@@ -655,8 +608,6 @@ def main():
         total_attempted = applied + errors
         error_rate = errors / total_attempted if total_attempted else 0
         ok = error_rate <= 0.01
-        if applied > 0:
-            _log_price_changes(sb, change_rows)
         _update_job(sb, job_id,
                     status="completed" if ok else "failed",
                     actual_count=applied,
