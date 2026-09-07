@@ -972,3 +972,6 @@
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Gammelt Træ 80 X 200 Cm", "action": "SKIP", "n_skus": 1, "at": "2026-09-06T08:09:03.425145+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Grå Sonoma 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-09-06T08:09:03.653085+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Artisan-eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-09-06T08:09:03.877762+00:00"}
+{"mid": "M30172461", "title": "Box Spring Seng Med Hovedgærde Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15626151493981", "handle": "box-spring-seng-med-madras-stof-4", "n_skus": 48, "dropped": 0, "at": "2026-09-07T08:35:42.294798+00:00"}
+{"mid": "M30172561", "title": "Box Spring Seng Med Hovedgærde Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15565120307549", "handle": "box-spring-seng-med-hovedgaerde-stof-3", "n_skus": 46, "dropped": 0, "at": "2026-09-07T08:36:01.428627+00:00"}
+{"mid": "M30172881", "title": "Box Spring Seng Med Pude Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15626135306589", "handle": "box-spring-seng-med-pude-stof-2", "n_skus": 25, "dropped": 0, "at": "2026-09-07T08:36:13.367377+00:00"}
