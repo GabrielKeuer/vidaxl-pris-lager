@@ -1098,3 +1098,7 @@
 {"mid": "M2915231", "title": "Balkon Afskærmning Polyester Rektangulær", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16563989414237", "handle": "balkon-afskaermning-polyester-rektangulaer", "n_skus": 1, "dropped": 0, "at": "2026-09-18T08:27:12.922479+00:00"}
 {"mid": "M3031658", "title": "Højskab 69,5x34x180 Cm Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15619356000605", "handle": "hoejskab-695x34x180-cm-konstrueret-trae-4", "n_skus": 17, "dropped": 0, "at": "2026-09-18T08:27:22.820935+00:00"}
 {"mid": "M30454461", "title": "Hovedgærde Gråbrun Stof", "action": "SKIP", "n_skus": 1, "at": "2026-09-18T08:27:23.242513+00:00"}
+{"mid": "M3028685", "title": "Væghylde 60x20x4 Cm Behandlet Massivt Egetræ Lysebrun", "action": "SKIP", "n_skus": 1, "at": "2026-09-19T08:14:54.653418+00:00"}
+{"mid": "M3036437", "title": "Havesofasæt 7 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-09-19T08:14:55.498636+00:00"}
+{"mid": "M30456021", "title": "Platform Sengestel Velourstof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15469292749149", "handle": "platform-sengestel-velourstof", "n_skus": 42, "dropped": 5, "at": "2026-09-19T08:15:15.733374+00:00"}
+{"mid": "M37000007041", "title": "Badeværelsesskabsæt 3 Stk. Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16171073405277", "handle": "badevaerelsesskabsaet-3-dele-konstrueret-trae", "n_skus": 54, "dropped": 0, "at": "2026-09-19T08:15:36.937409+00:00"}
