@@ -1166,3 +1166,7 @@
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Gammelt Træ 80 X 200 Cm", "action": "SKIP", "n_skus": 1, "at": "2026-09-20T08:55:56.823205+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Grå Sonoma 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-09-20T08:55:57.040420+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Artisan-eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-09-20T08:55:57.260087+00:00"}
+{"mid": "M3012778", "title": "Massagestol Velour", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16577075183965", "handle": "massagestol-velour", "n_skus": 5, "dropped": 0, "at": "2026-09-21T09:13:58.528601+00:00"}
+{"mid": "M3015675", "title": "Lænestol Kunstlæder", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16577075380573", "handle": "laenestol-kunstlaeder-6", "n_skus": 2, "dropped": 0, "at": "2026-09-21T09:14:01.346168+00:00"}
+{"mid": "M3015680", "title": "Massagestol Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15465600385373", "handle": "massagestol-stof-11", "n_skus": 5, "dropped": 0, "at": "2026-09-21T09:14:06.143120+00:00"}
+{"mid": "M3038461", "title": "Lænestol Kunstlæder", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16577075675485", "handle": "laenestol-kunstlaeder-10", "n_skus": 3, "dropped": 0, "at": "2026-09-21T09:14:09.528562+00:00"}
