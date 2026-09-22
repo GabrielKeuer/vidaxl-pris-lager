@@ -1,0 +1,57 @@
+name: Ayyildiz Inventory Sync
+
+on:
+  # Ayyildiz opdaterer Bestand_aktuell.csv dagligt (offentlig URL). To kørsler dagligt.
+  schedule:
+    - cron: '0 6,16 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Kun rapportér (ingen ændringer)'
+        required: false
+        default: 'false'
+
+concurrency:
+  group: ayyildiz-inventory-sync
+  cancel-in-progress: true
+
+jobs:
+  sync-ayyildiz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🔄 Sync Ayyildiz inventory
+        env:
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          python scripts/sync_ayyildiz_inventory.py
+
+      - name: 🔔 Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '❌ Ayyildiz Inventory Sync Failed',
+              body: `Ayyildiz inventory sync failed at ${new Date().toISOString()}\n\nCheck the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.`,
+              labels: ['ayyildiz', 'bug', 'automated']
+            })
