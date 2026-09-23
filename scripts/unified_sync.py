@@ -134,27 +134,39 @@ def main():
     # aktive hovedkategorier (hub-config, Import?=JA) — PARITET m. daily_create (1c)
     aktive = set()
     kat = {}
+    udelad = []
     try:
         from product_utils import load_config
         import create_products_v2 as CPmod
-        cfg_df, _, _, _ = load_config(CPmod.CONFIG_PATH)
+        cfg_df, _underkat, _, _ = load_config(CPmod.CONFIG_PATH)
         aktive = set(cfg_df[cfg_df["Import?"] == "JA"]["Kategori_Config"].tolist())
+        # 23/9-2026: UDELAD-overrides (hub_settings.product_automation_subcategory_overrides, handling UDELAD) — kategoristier der aldrig oprettes
+        try:
+            udelad = [str(p).strip() for p, h in zip(_underkat.get("Underkategori_Config", []), _underkat.get("Handling", []))
+                      if str(h).strip().upper() == "UDELAD" and str(p).strip()]
+        except Exception:
+            udelad = []
+        if udelad: print(f"UDELAD-stier ({len(udelad)}): {', '.join(udelad)}")
         print(f"aktive hovedkategorier (hub-config): {len(aktive)}")
     except Exception as e:
         print(f"⚠ kategori-config kunne ikke hentes ({e}) — kategori-filter er ÅBENT (alle kategorier)")
+    katfuld = {}
     if "Category" in feed.columns:
         for s, v in feed["Category"].items():
             kat[s] = str(v).split(" > ")[0] if v is not None else ""
+            katfuld[s] = str(v).strip() if v is not None else ""
+    def _udeladt(s):
+        return any(katfuld.get(s, "").startswith(u) for u in udelad) if udelad else False
 
     def create_primary_ok(skus):
         """Produkt-niveau create-filter: mindst ét SKU m. stock≥10 + pris>0 + aktiv kategori."""
         for s in skus:
-            if stock.get(s, 0) >= MIN_STOCK_PRIMARY and price.get(s, 0) > 0 and (not aktive or kat.get(s, "") in aktive):
+            if stock.get(s, 0) >= MIN_STOCK_PRIMARY and price.get(s, 0) > 0 and (not aktive or kat.get(s, "") in aktive) and not _udeladt(s):
                 return True
         return False
 
     def variant_ok(s):
-        return stock.get(s, 0) >= MIN_STOCK_VARIANT and price.get(s, 0) > 0
+        return stock.get(s, 0) >= MIN_STOCK_VARIANT and price.get(s, 0) > 0 and not _udeladt(s)
 
     # live-snapshot → sku2pid
     snap = load_live_snapshot(force=a.refresh)
