@@ -1264,3 +1264,57 @@
 {"mid": "M3032952", "title": "Sengeramme Uden Madras Viana Kunstlæder", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15252533739869", "handle": "sengeramme-med-sengegavl-kunstlaeder-2", "n_skus": 46, "dropped": 0, "at": "2026-10-02T10:01:12.246581+00:00"}
 {"mid": "M3033458", "title": "Sengeramme Viana Med LED Uden Madras", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15252552712541", "handle": "sengeramme-med-led-lys-kunstlaeder", "n_skus": 44, "dropped": 0, "at": "2026-10-02T10:01:33.212856+00:00"}
 {"mid": "M30493911", "title": "Have Privatliv Skærm Antracit 50 X 140 Cm Koldvalset Stål", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16608963002717", "handle": "have-privatliv-skaerm-antracit-50-x-140-cm-koldvalset-stal", "n_skus": 1, "dropped": 0, "at": "2026-10-03T09:22:41.039487+00:00"}
+{"mid": "M298619", "title": "TV-bord 120x39x58 Cm Grå", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:02:00.961565+00:00"}
+{"mid": "M3000928", "title": "Bogreol 98x30x98 Cm Grå Sonoma-eg", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:02:01.658932+00:00"}
+{"mid": "M3000953", "title": "Sofabord 53x43 Cm Rundt Massivt Mangotræ", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:02:01.911729+00:00"}
+{"mid": "M3001725", "title": "Hævet Plantekasse 200x50x50 Cm Massivt Teaktræ", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:02:02.280009+00:00"}
+{"mid": "M3001949", "title": "Sandfilterpumpe Med Timer 450 W 25 L", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:02:02.548854+00:00"}
+{"mid": "M3005015", "title": "Spisebordsstole 4 Stk. Plastik Sort", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:02:03.394507+00:00"}
+{"mid": "M3006916", "title": "TV-skabssæt 5 Dele Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15256210997597", "handle": "tv-skabssaet-5-dele-konstrueret-trae-betongra", "n_skus": 11, "dropped": 5, "at": "2026-10-04T10:02:13.223450+00:00"}
+{"mid": "M3006916", "title": "5-delt TV-skabssæt Vægmonteret", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15256442962269", "handle": "5-delt-tv-skabssaet-vaegmonteret", "n_skus": 4, "dropped": 2, "at": "2026-10-04T10:02:17.659431+00:00"}
+{"mid": "M3007558", "title": "Sengestel Til Udtræksseng 90x200 Cm Metal Grå", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:02:18.204604+00:00"}
+{"mid": "M3008420", "title": "Gyngesofa Til Haven 125 Cm Stål Og Plast Sort", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:02:18.860240+00:00"}
+{"mid": "M3009112", "title": "Spisebordssæt Til Haven 3 Dele Polyrattan", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15238562152797", "handle": "spisebordssaet-til-haven-3-dele-polyrattan-13", "n_skus": 2, "dropped": 0, "at": "2026-10-04T10:02:22.403335+00:00"}
+{"mid": "M3013576", "title": "Snefnug Julefigur 144 LED'er Varmt Hvidt Lys 59x59 Cm", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16610979152221", "handle": "snefnug-julefigur-144-leder-varmt-hvidt-lys-59x59-cm", "n_skus": 1, "dropped": 0, "at": "2026-10-04T10:02:26.702363+00:00"}
+{"mid": "M3015363", "title": "Badeværelsesskab 64,5x33,5x59 Cm Konstrueret Træ Grå Sonoma-eg", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:02:27.735769+00:00"}
+{"mid": "M3015747", "title": "Sengegavl Fløjl", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15251447775581", "handle": "sengegavl-floejl-4", "n_skus": 81, "dropped": 0, "at": "2026-10-04T10:02:55.352976+00:00"}
+{"mid": "M30172492", "title": "Kontinentalseng Med Madras Fløjl", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16083949322589", "handle": "kontinentalseng-med-madras-floejl-4", "n_skus": 129, "dropped": 0, "at": "2026-10-04T10:03:42.886074+00:00"}
+{"mid": "M30172501", "title": "Box Spring Seng Med Madras Sort 100 X 200 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:03:43.161333+00:00"}
+{"mid": "M30172511", "title": "Box Spring Seng Med Madras Sort 200 X 100 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:03:43.427337+00:00"}
+{"mid": "M30172601", "title": "Box Spring Seng Med Pude Med Hovedgærde Sort 200 X 100 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:03:43.922780+00:00"}
+{"mid": "M30172611", "title": "Box Spring Seng Med Madras Med Hovedgærde Stof", "action": "SKIP", "n_skus": 3, "at": "2026-10-04T10:03:44.641430+00:00"}
+{"mid": "M30172771", "title": "LED Box Spring Bed Med Madras Sort 100 X 200 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:03:45.705294+00:00"}
+{"mid": "M3028560", "title": "Blomsterstativ 110x25x73 Cm Massivt Fyrretræ", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:03:47.929075+00:00"}
+{"mid": "M3028685", "title": "Væghylde 60x20x4 Cm Behandlet Massivt Egetræ Lysebrun", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:03:48.215295+00:00"}
+{"mid": "M3029146", "title": "Sengebord 60x39x45 Cm", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15254728016221", "handle": "sengebord-60x39x45-cm-etraesfarve", "n_skus": 6, "dropped": 0, "at": "2026-10-04T10:03:52.996350+00:00"}
+{"mid": "M3030070", "title": "Daybed 90x190 Cm Stof Lysegrå", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:03:53.978320+00:00"}
+{"mid": "M3031688", "title": "LED-juletræ Med Spyd 220 LED'er 180 Cm Blåt Lys", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16610979545437", "handle": "led-juletrae-med-spyd-220-leder-180-cm-blat-lys", "n_skus": 1, "dropped": 0, "at": "2026-10-04T10:03:57.229947+00:00"}
+{"mid": "M3031862", "title": "Sofabord 100x49x40 Cm Konstrueret Træ Røget Egetræsfarve", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:03:57.582931+00:00"}
+{"mid": "M3032715", "title": "Gavlpude Viana Kunstlæder", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15251727778141", "handle": "gavlpude-kunstlaeder-1", "n_skus": 50, "dropped": 0, "at": "2026-10-04T10:04:19.462759+00:00"}
+{"mid": "M3032728", "title": "Bænk Med Naturlig Kant 105 Cm Massivt Akacietræ", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:04:19.688166+00:00"}
+{"mid": "M3032891", "title": "Rumdeler Paneler Polyrattan", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15256832082269", "handle": "rumdeler-paneler-polyrattan", "n_skus": 51, "dropped": 22, "at": "2026-10-04T10:04:48.802226+00:00"}
+{"mid": "M3036435", "title": "Havesofasæt 5 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:04:52.684167+00:00"}
+{"mid": "M3036437", "title": "Havesofasæt 7 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:04:53.088547+00:00"}
+{"mid": "M3036438", "title": "Havesofasæt 7 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:04:53.304617+00:00"}
+{"mid": "M3036438", "title": "Havesofasæt 8 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:04:53.520931+00:00"}
+{"mid": "M3036439", "title": "Havesofasæt 6 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:04:53.740291+00:00"}
+{"mid": "M3036517", "title": "Havesofasæt 6 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:04:53.991917+00:00"}
+{"mid": "M3036519", "title": "Havesofasæt 8 Dele Med Hynder Polyrattan", "action": "SKIP", "n_skus": 2, "at": "2026-10-04T10:04:54.433408+00:00"}
+{"mid": "M3038447", "title": "Lænestol Stof", "action": "SKIP", "n_skus": 2, "at": "2026-10-04T10:04:56.113531+00:00"}
+{"mid": "M3038479", "title": "Massagestol Kunstlæder", "action": "SKIP", "n_skus": 2, "at": "2026-10-04T10:04:56.555929+00:00"}
+{"mid": "M3042608", "title": "Elektrisk Massagestol Med Løftefunktion Cremefarvet", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16610979709277", "handle": "elektrisk-massagestol-med-loftefunktion-cremefarvet", "n_skus": 1, "dropped": 0, "at": "2026-10-04T10:05:01.196252+00:00"}
+{"mid": "M3042959", "title": "Køkkenhjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253327642973", "handle": "koekkenhjoerneskab-lucca-konstrueret-trae", "n_skus": 8, "dropped": 4, "at": "2026-10-04T10:05:08.440406+00:00"}
+{"mid": "M3042959", "title": "Køkken Væg Hjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253318140253", "handle": "koekken-vaeg-hjoerneskab-lucca-konstrueret-trae", "n_skus": 7, "dropped": 3, "at": "2026-10-04T10:05:14.678305+00:00"}
+{"mid": "M3042959", "title": "Køkkenskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253316469085", "handle": "koekkenskab-lucca-konstrueret-trae", "n_skus": 6, "dropped": 3, "at": "2026-10-04T10:05:20.280861+00:00"}
+{"mid": "M30454461", "title": "Hovedgærde Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15470189019485", "handle": "hovedgaerde-stof", "n_skus": 32, "dropped": 0, "at": "2026-10-04T10:05:35.468074+00:00"}
+{"mid": "M30454461", "title": "Hovedgærde Gråbrun Stof", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:05:35.683787+00:00"}
+{"mid": "M30456021", "title": "Platform Sengestel Velourstof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15469292749149", "handle": "platform-sengestel-velourstof", "n_skus": 42, "dropped": 5, "at": "2026-10-04T10:05:53.179680+00:00"}
+{"mid": "M30456071", "title": "LED Sengegavl Med LED-lysstrimler Velourstof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15560689582429", "handle": "led-sengegavl-med-led-lysstrimler-velourstof", "n_skus": 5, "dropped": 1, "at": "2026-10-04T10:05:57.473817+00:00"}
+{"mid": "M30499281", "title": "Hjørnesengramme Med Madras 2 Stk. Mørkegrøn 90 X 190 Cm Fløjl", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16610979873117", "handle": "hjornesengramme-med-madras-2-stk-morkegron-90-x-190-cm-flojl", "n_skus": 1, "dropped": 0, "at": "2026-10-04T10:06:01.703694+00:00"}
+{"mid": "M30499281", "title": "Hjørnesengramme Med Madras 2 Stk. Vinrød 90 X 200 Cm Fløjl", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:06:01.923620+00:00"}
+{"mid": "M37000007041", "title": "Badeværelsesskabsæt 3 Stk. Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16171073405277", "handle": "badevaerelsesskabsaet-3-dele-konstrueret-trae", "n_skus": 63, "dropped": 0, "at": "2026-10-04T10:06:23.211652+00:00"}
+{"mid": "M37000014621", "title": "Elektrisk Markiseramme Med LED Og Sensor 4 X 3,5 M Hvid", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:06:23.639766+00:00"}
+{"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Røget Eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:06:24.287210+00:00"}
+{"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Gammelt Træ 80 X 200 Cm", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:06:24.505278+00:00"}
+{"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Grå Sonoma 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:06:24.721400+00:00"}
+{"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Artisan-eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-10-04T10:06:24.940883+00:00"}
