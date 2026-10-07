@@ -47,8 +47,14 @@ def download_kayoom_csv():
             if not files:
                 ftp.quit()
                 raise RuntimeError("Ingen Kayoomstock-fil i /stocks")
-            # Filnavnet indeholder timestamp (Kayoomstock_YYYYMMDDHHMM) -> leksikografisk = nyeste
-            latest = sorted(files)[-1]
+            # Filnavnet indeholder timestamp (KayoomStock_YYYYMMDDHHMM). Kayoom blander
+            # store/små bogstaver ('Kayoomstock_' juni vs 'KayoomStock_' siden) -> sortér på
+            # TIMESTAMP-cifrene, ikke hele navnet (ellers vælges en gammel juni-fil for evigt).
+            import re as _re
+            def _ts(name):
+                m = _re.search(r'(\d{12})', name)
+                return m.group(1) if m else ''
+            latest = sorted(files, key=_ts)[-1]
             log(f"📄 Henter {latest}")
             buf = io.BytesIO()
             ftp.retrbinary(f"RETR {latest}", buf.write)
