@@ -1,4 +1,5 @@
 name: Eurofirany Inventory Sync
+# Lager (grænse: < 5 stk = udsolgt) + priser (gardiner bund 149, tæpper bund 299) – Omar 9/10
 
 on:
   # Eurofiranys integrationsfeed (fullSpecification.csv, nøgle i secret EUROFIRANY_FEED_KEY) – genereres live (no-cache).
@@ -11,6 +12,10 @@ on:
         description: 'Kun rapportér (ingen ændringer)'
         required: false
         default: 'false'
+
+permissions:
+  contents: read
+  issues: write
 
 concurrency:
   group: eurofirany-inventory-sync
@@ -42,6 +47,8 @@ jobs:
           SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
           EUROFIRANY_FEED_KEY: ${{ secrets.EUROFIRANY_FEED_KEY }}
           DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EF_MIN_STOCK: '5'
         run: |
           python scripts/sync_eurofirany_inventory.py
 
