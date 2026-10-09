@@ -1,9 +1,10 @@
 name: Meta Weekly Report
 
 on:
-  schedule:
-    # Mandag 06:00 UTC (08:00 dansk) — rapport for sidste 7/30 dage til hubben (/ads → Ugentlig Rapport)
-    - cron: '0 6 * * 1'
+  # Kun manuel (Gabriel 9/10-2026: skal ikke køre automatisk, når rapporten ikke bruges).
+  # Genaktivér ugentlig kørsel ved at tilføje:
+  #   schedule:
+  #     - cron: '0 6 * * 1'   # mandag 06:00 UTC (08:00 dansk)
   workflow_dispatch:
 
 concurrency:
