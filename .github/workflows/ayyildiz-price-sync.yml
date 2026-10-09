@@ -1,0 +1,51 @@
+name: Ayyildiz Price Sync
+# Ugentligt pris-tjek mod Ayyildiz' artikelliste (Omar 9/10). Pris = max(299, ceil9(2,5×(netto+12,50)×7,46)); > 25 % spring flages i issue.
+
+on:
+  schedule:
+    - cron: '23 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Kun rapportér (ingen ændringer)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: ayyildiz-price-sync
+  cancel-in-progress: true
+
+jobs:
+  price-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: 📦 Install
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt openpyxl
+      - name: 💶 Ayyildiz pris-tjek
+        env:
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/sync_ayyildiz_prices.py
+      - name: 🔔 Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo,
+              title: '❌ Ayyildiz Price Sync Failed',
+              body: `Se [kørslen](${context.payload.repository.html_url}/actions/runs/${context.runId}).`,
+              labels: ['ayyildiz', 'bug', 'automated'] })
