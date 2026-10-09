@@ -107,7 +107,7 @@ def main():
     log("Supabase: førsteparts-attribution")
     fp = {}
     for d, key in ((7, "7d"), (30, "30d")):
-        since = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=d)).isoformat()
+        since = (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=d)).strftime("%Y-%m-%dT%H:%M:%S")
         rows = sb_get(f"order_attribution?select=channel,revenue,cancelled&order_created_at=gte.{since}&limit=5000")
         agg = defaultdict(lambda: [0, 0.0])
         for r in rows:
