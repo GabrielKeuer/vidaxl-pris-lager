@@ -1,0 +1,39 @@
+name: Meta Bestseller Sets
+
+on:
+  schedule:
+    # Mandag 05:00 UTC – genopbyg "Hub-bestsellere – top 300/500" produktsæt fra hubbens rangering (før ugerapporten 06:00)
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: meta-bestseller-sets
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: 📦 Rebuild bestseller product sets
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: python scripts/meta_build_bestsellers.py
+      - name: 🔔 Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: '❌ Meta Bestseller Sets failed',
+              body: `Meta bestseller product set rebuild failed at ${new Date().toISOString()}\n\n[workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId})`,
+              labels: ['meta', 'bug', 'automated']
+            })
