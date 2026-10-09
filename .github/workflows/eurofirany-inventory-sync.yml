@@ -1,9 +1,10 @@
 name: Eurofirany Inventory Sync
 
 on:
-  # Eurofiranys integrationsfeed (fullSpecification.csv, nøgle i secret EUROFIRANY_FEED_KEY). To kørsler dagligt.
+  # Eurofiranys integrationsfeed (fullSpecification.csv, nøgle i secret EUROFIRANY_FEED_KEY) – genereres live (no-cache).
+  # Hver time på minut 17 (Omar 9/10: 'hente en gang i timen, så det er up to date'); skævt minut = mindre GitHub-forsinkelse.
   schedule:
-    - cron: '30 5,15 * * *'
+    - cron: '17 * * * *'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -56,3 +57,4 @@ jobs:
               body: `Eurofirany inventory sync failed at ${new Date().toISOString()}\n\nCheck the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.`,
               labels: ['eurofirany', 'bug', 'automated']
             })
+
