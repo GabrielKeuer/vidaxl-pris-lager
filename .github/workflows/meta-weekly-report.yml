@@ -1,0 +1,42 @@
+name: Meta Weekly Report
+
+on:
+  schedule:
+    # Mandag 06:00 UTC (08:00 dansk) — rapport for sidste 7/30 dage til hubben (/ads → Ugentlig Rapport)
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: meta-weekly-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: 📊 Meta weekly report
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          META_AD_ACCOUNT_ID: ${{ secrets.META_AD_ACCOUNT_ID }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: python scripts/meta_weekly_report.py
+      - name: 🔔 Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner, repo: context.repo.repo,
+              title: '❌ Meta Weekly Report failed',
+              body: `Meta weekly report failed at ${new Date().toISOString()}\n\n[workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId})`,
+              labels: ['meta', 'bug', 'automated']
+            })
