@@ -1350,3 +1350,6 @@
 {"mid": "M3044988", "title": "Brændestativ Koldvalset Stål", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15256122098013", "handle": "braendestativ-koldvalset-stal-3", "n_skus": 6, "dropped": 0, "at": "2026-10-08T10:53:51.082272+00:00"}
 {"mid": "M30456061", "title": "LED Sengegavl Med LED-lysstrimler Med Hovedgærde Blå 90 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-10-08T10:53:51.434636+00:00"}
 {"mid": "M37000002031", "title": "Sengeramme Med Madras 2 Stk. Gyldenbrun Stof", "action": "SKIP", "n_skus": 1, "at": "2026-10-08T10:53:51.774219+00:00"}
+{"mid": "M3005473", "title": "Sengestel Til Udtræksseng 90x200 Cm Metal Grå", "action": "SKIP", "n_skus": 1, "at": "2026-10-09T10:50:28.657439+00:00"}
+{"mid": "M3009310", "title": "Sengestel Metal", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15251946242397", "handle": "sengestel-metal-12", "n_skus": 3, "dropped": 0, "at": "2026-10-09T10:50:33.827199+00:00"}
+{"mid": "M3009997", "title": "Sengestel Metal", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15251947323741", "handle": "sengestel-metal-14", "n_skus": 5, "dropped": 0, "at": "2026-10-09T10:50:39.008357+00:00"}
