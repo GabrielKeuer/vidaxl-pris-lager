@@ -3,7 +3,8 @@
 Ayyildiz Price Sync (ugentlig – Omar 9/10: 'Måske bare en ugentlig tjek')
 Henter Ayyildiz' offentlige artikelliste (2026-Artikelliste-DE.xlsx; kolonne 'Stückpreis Netto' = netto EUR, 'EAN-Nr.' = barcode) og
 sammenligner med Shopify-varianter (vendor Ayyildiz). Ændres kost (netto+12,50 EUR fragt)×7,46 med > 1 kr, eller er prisen under bund,
-regnes pris om med importens regel: max(299, ceil9(2,5 × (netto + 12,50) × 7,46)); cost opdateres, førpris følger samme rabat-%.
+regnes pris om med importens regel max(299, ceil9(2,5 × (netto + 12,50) × 7,46)) og DEREFTER prissænkningen fra 10/10-2026
+(Omar: −15 %): max(299, ceil9(gammel × 0,85)) – samme regel som scripts/ayyildiz/prissaenk-15.js; cost opdateres, førpris følger samme rabat-%.
 - Spring > 25 % rettes IKKE – samles i ét GitHub-issue (label ayyildiz-pris). Værn: > 20 % af varianterne på én gang = afbryd.
 - Rører ALDRIG lager (ejes af ayyildiz-inventory-sync). DRY_RUN=true: kun rapport.
 """
@@ -18,6 +19,7 @@ DRY_RUN = os.environ.get('DRY_RUN', '').lower() in ('1', 'true', 'yes')
 GRAPHQL_URL = f"https://{SHOPIFY_STORE_URL}/admin/api/2025-07/graphql.json"
 GH_TOKEN = os.environ.get('GITHUB_TOKEN'); GH_REPO = os.environ.get('GITHUB_REPOSITORY')
 KURS, FRAGT_EUR, MARKUP, BUND = 7.46, 12.5, 2.5, 299
+PRISSAENK = 0.85  # 10/10-2026: alle Ayyildiz-priser −15 % (prissaenk-15.js) – fjernes/ændres hvis prisniveauet ændres igen
 MAX_PRICE_JUMP, MAX_PRICE_SHARE, MIN_ROWS = 0.25, 0.20, 3000
 stats = {'rows': 0, 'variants': 0, 'ikke_i_liste': 0, 'cost_drift': 0, 'changes': 0, 'flagged': 0, 'updated': 0, 'errors': 0}
 
@@ -31,7 +33,7 @@ def ceil9(x):
     return p
 
 
-def ny_pris(netto): return max(BUND, ceil9(MARKUP * (netto + FRAGT_EUR) * KURS))
+def ny_pris(netto): return max(BUND, ceil9(max(BUND, ceil9(MARKUP * (netto + FRAGT_EUR) * KURS)) * PRISSAENK))
 
 
 def gql(q, v=None):
