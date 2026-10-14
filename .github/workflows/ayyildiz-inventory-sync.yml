@@ -1,9 +1,11 @@
 name: Ayyildiz Inventory Sync
 
 on:
-  # Ayyildiz opdaterer Bestand_aktuell.csv dagligt (offentlig URL). To kørsler dagligt.
+  # Ayyildiz opdaterer Bestand_aktuell.csv flere gange dagligt (offentlig URL). HVER TIME fra 14/10-2026
+  # (Omar: 'sæt lagersync til at køre hver time' efter oversalg af Joy 240x340 – sync-vindue 6-10 t var for stort).
+  # Skævt minut, fordi GitHub forsinker kørsler på hele timer kraftigt.
   schedule:
-    - cron: '0 6,16 * * *'
+    - cron: '41 * * * *'
   workflow_dispatch:
     inputs:
       dry_run:
