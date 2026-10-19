@@ -1524,3 +1524,7 @@
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Gammelt Træ 80 X 200 Cm", "action": "SKIP", "n_skus": 1, "at": "2026-10-18T08:21:55.020993+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Grå Sonoma 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-10-18T08:21:55.318038+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Artisan-eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-10-18T08:21:55.592388+00:00"}
+{"mid": "M30172471", "title": "Box Spring Seng Med Madras Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15626156638557", "handle": "box-spring-seng-med-madras-stof-5", "n_skus": 10, "dropped": 0, "at": "2026-10-19T09:13:34.818250+00:00"}
+{"mid": "M30172471", "title": "Box Spring Seng Med Hovedgærde Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15629717209437", "handle": "box-spring-seng-med-hovedgaerde-stof-4", "n_skus": 42, "dropped": 0, "at": "2026-10-19T09:13:54.736362+00:00"}
+{"mid": "M30456061", "title": "LED Sengegavl Med LED-lysstrimler Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15515142521181", "handle": "led-sengegavl-med-led-lysstrimler-stof-2", "n_skus": 12, "dropped": 0, "at": "2026-10-19T09:14:03.137960+00:00"}
+{"mid": "M30456061", "title": "LED Sengegavl Med LED-lysstrimler Med Hovedgærde Blå 90 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-10-19T09:14:03.435268+00:00"}
