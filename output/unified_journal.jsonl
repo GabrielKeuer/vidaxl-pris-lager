@@ -1528,3 +1528,4 @@
 {"mid": "M30172471", "title": "Box Spring Seng Med Hovedgærde Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15629717209437", "handle": "box-spring-seng-med-hovedgaerde-stof-4", "n_skus": 42, "dropped": 0, "at": "2026-10-19T09:13:54.736362+00:00"}
 {"mid": "M30456061", "title": "LED Sengegavl Med LED-lysstrimler Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15515142521181", "handle": "led-sengegavl-med-led-lysstrimler-stof-2", "n_skus": 12, "dropped": 0, "at": "2026-10-19T09:14:03.137960+00:00"}
 {"mid": "M30456061", "title": "LED Sengegavl Med LED-lysstrimler Med Hovedgærde Blå 90 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-10-19T09:14:03.435268+00:00"}
+{"mid": "M30065411", "title": "Elektrisk Markise", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16643588063581", "handle": "elektrisk-markise", "n_skus": 4, "dropped": 0, "at": "2026-10-20T08:48:29.238726+00:00"}
