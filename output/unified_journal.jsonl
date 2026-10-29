@@ -1646,3 +1646,10 @@
 {"mid": "M30143911", "title": "Lamelbund Brun Solid Bøg", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15566726857053", "handle": "lamelbund-brun-solid-boeg", "n_skus": 8, "dropped": 0, "at": "2026-10-28T09:57:43.674008+00:00"}
 {"mid": "M30282871", "title": "Electric Awning , Og Hvidstribet", "action": "SKIP", "n_skus": 1, "at": "2026-10-28T09:57:44.012028+00:00"}
 {"mid": "M30282871", "title": "Electric Awning , Og Striber", "action": "SKIP", "n_skus": 3, "at": "2026-10-28T09:57:44.693255+00:00"}
+{"mid": "M2915231", "title": "Balkon Afskærmning Polyester Og Stål", "action": "SKIP", "n_skus": 1, "at": "2026-10-29T10:21:52.915807+00:00"}
+{"mid": "M2915231", "title": "Balcony Privacy Screen Rektangulær 240 X 160 Cm Polyester Brun", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16674309439837", "handle": "balcony-privacy-screen-rektangulaer-240-x-160-cm-polyester-brun", "n_skus": 1, "dropped": 0, "at": "2026-10-29T10:21:55.908536+00:00"}
+{"mid": "M30072071", "title": "Elektrisk Markise Med LED Og Sensor", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16351290098013", "handle": "markise-m-led-vindsensor-automatisk-3", "n_skus": 26, "dropped": 0, "at": "2026-10-29T10:22:07.178408+00:00"}
+{"mid": "M30282871", "title": "Electric Awning , Og Hvidstribet", "action": "SKIP", "n_skus": 1, "at": "2026-10-29T10:22:07.476386+00:00"}
+{"mid": "M30282871", "title": "Electric Awning , Og Striber", "action": "SKIP", "n_skus": 2, "at": "2026-10-29T10:22:07.940236+00:00"}
+{"mid": "M3049065", "title": "Manuel Markise 4,5 X 3 M Gul Og Hvidstribet 100% Polyester", "action": "SKIP", "n_skus": 1, "at": "2026-10-29T10:22:08.326777+00:00"}
+{"mid": "M37000022971", "title": "Elektrisk Udtrækkelig Markise", "action": "SKIP", "n_skus": 2, "at": "2026-10-29T10:22:08.830297+00:00"}
