@@ -1653,3 +1653,7 @@
 {"mid": "M30282871", "title": "Electric Awning , Og Striber", "action": "SKIP", "n_skus": 2, "at": "2026-10-29T10:22:07.940236+00:00"}
 {"mid": "M3049065", "title": "Manuel Markise 4,5 X 3 M Gul Og Hvidstribet 100% Polyester", "action": "SKIP", "n_skus": 1, "at": "2026-10-29T10:22:08.326777+00:00"}
 {"mid": "M37000022971", "title": "Elektrisk Udtrækkelig Markise", "action": "SKIP", "n_skus": 2, "at": "2026-10-29T10:22:08.830297+00:00"}
+{"mid": "M30282871", "title": "Electric Awning , Og Hvidstribet", "action": "SKIP", "n_skus": 1, "at": "2026-10-30T10:23:22.241404+00:00"}
+{"mid": "M30282871", "title": "Electric Awning , , Og -stribet", "action": "SKIP", "n_skus": 2, "at": "2026-10-30T10:23:22.814489+00:00"}
+{"mid": "M3034056", "title": "TV Vægenheder Med LED 5 Stk. 80 X 30 X 40 Cm Artisan Egetræ", "action": "SKIP", "n_skus": 1, "at": "2026-10-30T10:23:23.131908+00:00"}
+{"mid": "M30446311", "title": "Voile Gardin 2 Stk. Polyester", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16162402763101", "handle": "voile-gardin-med-gardiner-2-dele-175-x-140-cm-polyester", "n_skus": 45, "dropped": 0, "at": "2026-10-30T10:23:44.926813+00:00"}
