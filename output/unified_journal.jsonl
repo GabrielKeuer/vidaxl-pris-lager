@@ -1657,3 +1657,9 @@
 {"mid": "M30282871", "title": "Electric Awning , , Og -stribet", "action": "SKIP", "n_skus": 2, "at": "2026-10-30T10:23:22.814489+00:00"}
 {"mid": "M3034056", "title": "TV Vægenheder Med LED 5 Stk. 80 X 30 X 40 Cm Artisan Egetræ", "action": "SKIP", "n_skus": 1, "at": "2026-10-30T10:23:23.131908+00:00"}
 {"mid": "M30446311", "title": "Voile Gardin 2 Stk. Polyester", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16162402763101", "handle": "voile-gardin-med-gardiner-2-dele-175-x-140-cm-polyester", "n_skus": 45, "dropped": 0, "at": "2026-10-30T10:23:44.926813+00:00"}
+{"mid": "M30143541", "title": "Elektrisk Markise 4 X 3 M Blå Og Hvid Stribet 100% Polyester", "action": "SKIP", "n_skus": 1, "at": "2026-10-31T09:57:15.461951+00:00"}
+{"mid": "M30282871", "title": "Electric Awning , Og Hvidstribet", "action": "SKIP", "n_skus": 1, "at": "2026-10-31T09:57:17.370581+00:00"}
+{"mid": "M30282871", "title": "Electric Awning , , Og -stribet", "action": "SKIP", "n_skus": 2, "at": "2026-10-31T09:57:17.957941+00:00"}
+{"mid": "M3042959", "title": "Køkkenhjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253327642973", "handle": "koekkenhjoerneskab-lucca-konstrueret-trae", "n_skus": 8, "dropped": 4, "at": "2026-10-31T09:57:28.635677+00:00"}
+{"mid": "M3042959", "title": "Køkken Væg Hjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253318140253", "handle": "koekken-vaeg-hjoerneskab-lucca-konstrueret-trae", "n_skus": 7, "dropped": 3, "at": "2026-10-31T09:57:36.425261+00:00"}
+{"mid": "M3042959", "title": "Køkkenskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253316469085", "handle": "koekkenskab-lucca-konstrueret-trae", "n_skus": 6, "dropped": 3, "at": "2026-10-31T09:57:43.581163+00:00"}
