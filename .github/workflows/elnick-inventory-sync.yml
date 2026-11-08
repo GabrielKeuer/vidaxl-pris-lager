@@ -1,0 +1,61 @@
+name: Elnick Inventory Sync
+# Lager fra Marlotte (GET /api/b2b/v1/stock, secret ELNICK_API_KEY). Under 3 stk. = udsolgt (Omar 8/11-2026).
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Kun rapportér (ingen ændringer)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: elnick-inventory-sync
+  cancel-in-progress: true
+
+jobs:
+  sync-elnick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 📦 Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 🔄 Sync Elnick inventory
+        env:
+          SHOPIFY_STORE_URL: ${{ secrets.SHOPIFY_STORE_URL }}
+          SHOPIFY_ACCESS_TOKEN: ${{ secrets.SHOPIFY_ACCESS_TOKEN }}
+          ELNICK_API_KEY: ${{ secrets.ELNICK_API_KEY }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+          ELNICK_MIN_STOCK: '3'
+        run: |
+          python scripts/sync_elnick_inventory.py
+
+      - name: 🔔 Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '❌ Elnick Inventory Sync Failed',
+              body: `Elnick inventory sync failed at ${new Date().toISOString()}\n\nCheck the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.`,
+              labels: ['elnick', 'bug', 'automated']
+            })
