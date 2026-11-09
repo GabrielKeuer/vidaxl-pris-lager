@@ -24,6 +24,14 @@ MAX_TO_ZERO_SHARE = 0.5
 BATCH = 100
 
 
+def beskriv_fejl(e):
+    """Fejltype + HTTP-kode + start af svaret. Aldrig URL eller headers."""
+    svar = getattr(e, 'response', None)
+    if svar is None:
+        return type(e).__name__
+    return f"{type(e).__name__} {svar.status_code}: {svar.text[:150]!r}"
+
+
 def log(msg):
     print(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {msg}", flush=True)
 
@@ -44,9 +52,9 @@ def hent_lager():
         except (requests.RequestException, ValueError) as e:
             last = e
             if forsog < 3:
-                log(f"⚠️  Forsøg {forsog}/3 fejlede ({type(e).__name__}), prøver igen om {60 * forsog}s")
+                log(f"⚠️  Forsøg {forsog}/3 fejlede ({beskriv_fejl(e)}), prøver igen om {60 * forsog}s")
                 time.sleep(60 * forsog)
-    log(f"❌ Kunne ikke hente lager: {type(last).__name__}")
+    log(f"❌ Kunne ikke hente lager: {beskriv_fejl(last)}")
     sys.exit(1)
 
 
