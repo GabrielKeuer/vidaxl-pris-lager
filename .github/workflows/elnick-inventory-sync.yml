@@ -2,6 +2,8 @@ name: Elnick Inventory Sync
 # Lager fra Marlotte (GET /api/b2b/v1/stock, secret ELNICK_API_KEY). Under 3 stk. = udsolgt (Omar 8/11-2026).
 
 on:
+  schedule:
+    - cron: '53 * * * *'
   workflow_dispatch:
     inputs:
       dry_run:
