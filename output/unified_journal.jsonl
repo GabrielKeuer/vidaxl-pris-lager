@@ -1841,3 +1841,16 @@
 {"mid": "M3048849", "title": "Adirondack-havebænk 126 Cm Massivt Akacietræ", "action": "SKIP", "n_skus": 1, "at": "2026-11-10T03:36:58.411813+00:00"}
 {"mid": "M3048849", "title": "Adirondack-havebænk Med Hynder 126 Cm Massivt Akacietræ", "action": "SKIP", "n_skus": 1, "at": "2026-11-10T03:36:58.729473+00:00"}
 {"mid": "M30320911", "title": "Gæstehåndklæder 50 Stk. Sort 30 X 50 Cm 600 100% Bomuld", "action": "SKIP", "n_skus": 1, "at": "2026-11-11T03:36:26.310228+00:00"}
+{"mid": "M30009571", "title": "Manuel Markise , Og Striber", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16696929780061", "handle": "manuel-markise-og-striber-3", "n_skus": 2, "dropped": 0, "at": "2026-11-12T03:36:10.418741+00:00"}
+{"mid": "M30065401", "title": "Manuel Aluminiumsmarkise Med Solcelle Og LED", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16304640000349", "handle": "udtraekkelig-markise-stof-og-aluminium", "n_skus": 45, "dropped": 0, "at": "2026-11-12T03:36:32.820700+00:00"}
+{"mid": "M30282871", "title": "Electric Awning 3 X 2,5 M Orange Og Brune Vandrette Striber", "action": "SKIP", "n_skus": 1, "at": "2026-11-12T03:36:33.175365+00:00"}
+{"mid": "M30282871", "title": "Electric Awning 3 X 2,5 M Gul, Orange Og Hvidstribet", "action": "SKIP", "n_skus": 1, "at": "2026-11-12T03:36:33.424276+00:00"}
+{"mid": "M30282871", "title": "Electric Awning , , Og -stribet", "action": "SKIP", "n_skus": 2, "at": "2026-11-12T03:36:33.908634+00:00"}
+{"mid": "M30282871", "title": "Electric Awning 100% Polyester", "action": "SKIP", "n_skus": 5, "at": "2026-11-12T03:36:35.196696+00:00"}
+{"mid": "M3042613", "title": "Liggestol Stof Skygrå", "action": "SKIP", "n_skus": 1, "at": "2026-11-12T03:36:35.671501+00:00"}
+{"mid": "M30450211", "title": "Markise 100% Polyester", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16696930271581", "handle": "markise-100-polyester", "n_skus": 22, "dropped": 0, "at": "2026-11-12T03:36:44.613491+00:00"}
+{"mid": "M30450211", "title": "Markise Og Striber", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16696930304349", "handle": "markise-og-striber", "n_skus": 11, "dropped": 0, "at": "2026-11-12T03:36:50.102707+00:00"}
+{"mid": "M30450211", "title": "Markise Og Stribet 100% Polyester", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16696930337117", "handle": "markise-og-stribet-100-polyester", "n_skus": 4, "dropped": 0, "at": "2026-11-12T03:36:54.173871+00:00"}
+{"mid": "M30450211", "title": "Markise Og Hvidstribet 100% Polyester", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16696930369885", "handle": "markise-og-hvidstribet-100-polyester", "n_skus": 3, "dropped": 0, "at": "2026-11-12T03:36:57.151106+00:00"}
+{"mid": "M30450211", "title": "Markise Og Vandrette Striber", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16696930402653", "handle": "markise-og-vandrette-striber", "n_skus": 3, "dropped": 0, "at": "2026-11-12T03:37:00.548708+00:00"}
+{"mid": "M30493811", "title": "Elektrisk Markise Vandrette Striber", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16696930435421", "handle": "elektrisk-markise-vandrette-striber", "n_skus": 2, "dropped": 0, "at": "2026-11-12T03:37:03.261727+00:00"}
