@@ -1939,3 +1939,6 @@
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Gammelt Træ 80 X 200 Cm", "action": "SKIP", "n_skus": 1, "at": "2026-11-15T03:39:32.806375+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Grå Sonoma 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-11-15T03:39:33.100221+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Artisan-eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-11-15T03:39:33.413314+00:00"}
+{"mid": "M3042959", "title": "Køkkenhjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253327642973", "handle": "koekkenhjoerneskab-lucca-konstrueret-trae", "n_skus": 8, "dropped": 4, "at": "2026-11-16T03:41:03.321725+00:00"}
+{"mid": "M3042959", "title": "Køkken Væg Hjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253318140253", "handle": "koekken-vaeg-hjoerneskab-lucca-konstrueret-trae", "n_skus": 7, "dropped": 3, "at": "2026-11-16T03:41:10.271530+00:00"}
+{"mid": "M3042959", "title": "Køkkenskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253316469085", "handle": "koekkenskab-lucca-konstrueret-trae", "n_skus": 6, "dropped": 3, "at": "2026-11-16T03:41:16.709519+00:00"}
