@@ -1,0 +1,52 @@
+name: Tæppetorvet Inventory Sync
+
+on:
+  # Tæppetorvet (taeppetorvet.dk): lager fra Ayyildiz' Bestand_aktuell.csv HVER TIME + lagermærker (tt-form/-str/-farve),
+  # som kollektionerne Runde, Løbere, størrelser og farver bygger på. Skævt minut, fordi GitHub forsinker kørsler på hele timer.
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Kun rapportér (ingen ændringer)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: taeppetorvet-inventory-sync
+  cancel-in-progress: true
+
+jobs:
+  sync-taeppetorvet:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: 📦 Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: 🔄 Lager + lagermærker
+        env:
+          TT_SHOPIFY_SHOP: ${{ secrets.TT_SHOPIFY_SHOP }}
+          TT_SHOPIFY_CLIENT_ID: ${{ secrets.TT_SHOPIFY_CLIENT_ID }}
+          TT_SHOPIFY_CLIENT_SECRET: ${{ secrets.TT_SHOPIFY_CLIENT_SECRET }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: python scripts/sync_taeppetorvet_inventory.py
+      - name: 🔔 Notify on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.create({ owner: context.repo.owner, repo: context.repo.repo,
+              title: '❌ Tæppetorvet Inventory Sync Failed',
+              body: `Se [kørslen](${context.payload.repository.html_url}/actions/runs/${context.runId}).`,
+              labels: ['taeppetorvet', 'bug', 'automated'] })
