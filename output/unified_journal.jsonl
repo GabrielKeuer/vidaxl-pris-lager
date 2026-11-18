@@ -1942,3 +1942,6 @@
 {"mid": "M3042959", "title": "Køkkenhjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253327642973", "handle": "koekkenhjoerneskab-lucca-konstrueret-trae", "n_skus": 8, "dropped": 4, "at": "2026-11-16T03:41:03.321725+00:00"}
 {"mid": "M3042959", "title": "Køkken Væg Hjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253318140253", "handle": "koekken-vaeg-hjoerneskab-lucca-konstrueret-trae", "n_skus": 7, "dropped": 3, "at": "2026-11-16T03:41:10.271530+00:00"}
 {"mid": "M3042959", "title": "Køkkenskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253316469085", "handle": "koekkenskab-lucca-konstrueret-trae", "n_skus": 6, "dropped": 3, "at": "2026-11-16T03:41:16.709519+00:00"}
+{"mid": "M3014351", "title": "Elektrisk Markise Med Vindsensor Og LED-kappe", "action": "SKIP", "n_skus": 3, "at": "2026-11-18T03:36:15.958665+00:00"}
+{"mid": "M30143541", "title": "Elektrisk Markise Med Kappe 4 X 3 M Blå Og Hvid Stribet", "action": "SKIP", "n_skus": 1, "at": "2026-11-18T03:36:16.165779+00:00"}
+{"mid": "M30282871", "title": "Electric Awning , , Og -stribet", "action": "SKIP", "n_skus": 2, "at": "2026-11-18T03:36:16.648214+00:00"}
