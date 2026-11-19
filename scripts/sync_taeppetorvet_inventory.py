@@ -15,7 +15,7 @@ import requests
 SHOP = os.environ.get('TT_SHOPIFY_SHOP', '').replace('https://', '').rstrip('/')
 DRY_RUN = os.environ.get('DRY_RUN', '').lower() in ('1', 'true', 'yes')
 FARVER = {'beige': ['Beige', 'Natur', 'Beige/Sort'], 'creme': ['Creme', 'Hvid'], 'graa': ['Grå', 'Lysegrå', 'Sølv', 'Antracit'],
-          'brun': ['Brun', 'Mokka', 'Taupe', 'Kobber', 'Terracotta'], 'groen': ['Grøn'], 'sort': ['Sort', 'Beige/Sort'],
+          'brun': ['Brun', 'Mokka', 'Taupe', 'Kobber', 'Terracotta'], 'groen': ['Grøn'], 'sort': ['Sort'],
           'rosa': ['Rosa', 'Pink'], 'blaa': ['Blå', 'Marineblå', 'Turkis']}
 FORM = {'Rund': 'rund', 'Løber': 'loeber', 'Rektangulær': 'rektangulaer'}
 
