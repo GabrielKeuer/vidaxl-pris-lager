@@ -1968,3 +1968,87 @@
 {"mid": "M3042959", "title": "Køkkenskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253316469085", "handle": "koekkenskab-lucca-konstrueret-trae", "n_skus": 6, "dropped": 3, "at": "2026-11-21T03:39:14.686279+00:00"}
 {"mid": "M30454731", "title": "Bogreol Seng Med Hylde Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15560689779037", "handle": "bogreol-seng-med-hylde-konstrueret-trae", "n_skus": 4, "dropped": 0, "at": "2026-11-21T03:39:22.986070+00:00"}
 {"mid": "M30456061", "title": "LED Sengegavl Med LED-lysstrimler Med Hovedgærde Blå 90 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-11-21T03:39:23.250101+00:00"}
+{"mid": "M298619", "title": "TV Cabinet SCHAGEN Grå 120x39x58 Cm", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:36:44.987140+00:00"}
+{"mid": "M3000242", "title": "Spisebordsstole 2 Stk. Kunstlæder Brun", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:36:45.487053+00:00"}
+{"mid": "M3000243", "title": "Spisebordsstole Bøjet Træ Og Kunstlæder", "action": "SKIP", "n_skus": 4, "at": "2026-11-22T03:36:46.565214+00:00"}
+{"mid": "M3001949", "title": "Sandfilterpumpe Med Timer 450 W 25 L", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:36:47.108112+00:00"}
+{"mid": "M3006916", "title": "TV-skabssæt 5 Dele Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15256210997597", "handle": "tv-skabssaet-5-dele-konstrueret-trae-betongra", "n_skus": 11, "dropped": 5, "at": "2026-11-22T03:36:58.671286+00:00"}
+{"mid": "M3006916", "title": "5-delt TV-skabssæt Vægmonteret", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15256442962269", "handle": "5-delt-tv-skabssaet-vaegmonteret", "n_skus": 4, "dropped": 2, "at": "2026-11-22T03:37:03.847930+00:00"}
+{"mid": "M3008420", "title": "Gyngesofa Til Haven 125 Cm Stål Og Plast Sort", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:04.698453+00:00"}
+{"mid": "M3014348", "title": "Bølge Markise 3,5 X 2,5 M Blå Og Hvid Stribet", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:07.276725+00:00"}
+{"mid": "M3014348", "title": "Bølge Markise 3,5 X 2,5 M Gul Og Hvidstribet", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:07.532146+00:00"}
+{"mid": "M3014351", "title": "Elektrisk Markise Med Vindsensor Og LED-kappe", "action": "SKIP", "n_skus": 3, "at": "2026-11-22T03:37:08.531808+00:00"}
+{"mid": "M30143531", "title": "Kappemarkise Med Solcelle-LED", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:08.800206+00:00"}
+{"mid": "M30143541", "title": "Elektrisk Markise Med Kappe 4 X 3 M Blå Og Hvid Stribet", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:09.061416+00:00"}
+{"mid": "M3016087", "title": "Sengegavl Med LED-lys 83x16x78/88 Cm Stof Mørkeblå", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:10.381972+00:00"}
+{"mid": "M3016193", "title": "Kontorstol Med Massagefunktion Kunstlæder Sort", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716777881949", "handle": "kontorstol-med-massagefunktion-kunstlaeder-sort", "n_skus": 1, "dropped": 0, "at": "2026-11-22T03:37:13.134219+00:00"}
+{"mid": "M3016894", "title": "Dynebetræk Sæt 155 X 220 Cm + 80 X 80 Cm Bomuld White And Brown", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:13.732323+00:00"}
+{"mid": "M3016894", "title": "2 Stk. 200 X 200 Cm + 50 X 75 Cm Pink", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:14.220467+00:00"}
+{"mid": "M30172501", "title": "Box Spring Seng Med Madras Sort 100 X 200 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:14.787316+00:00"}
+{"mid": "M30172511", "title": "Box Spring Seng Med Madras Sort 200 X 100 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:15.070804+00:00"}
+{"mid": "M30172601", "title": "Box Spring Seng Med Pude Med Hovedgærde Sort 200 X 100 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:15.517990+00:00"}
+{"mid": "M30172771", "title": "LED Box Spring Bed Med Madras Sort 100 X 200 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:16.691697+00:00"}
+{"mid": "M3017852", "title": "Adirondack-gyngestol Massivt Akacietræ", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:17.579408+00:00"}
+{"mid": "M3017855", "title": "Adirondack-loungesæt Til Haven 2 Dele Massivt Akacietræ", "action": "SKIP", "n_skus": 3, "at": "2026-11-22T03:37:18.321228+00:00"}
+{"mid": "M30282871", "title": "Electric Awning , Og Striber", "action": "SKIP", "n_skus": 2, "at": "2026-11-22T03:37:19.088388+00:00"}
+{"mid": "M3028547", "title": "TV-bord Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15256377164125", "handle": "tv-bord-160x30x50-cm-konstrueret-trae", "n_skus": 2, "dropped": 0, "at": "2026-11-22T03:37:22.198254+00:00"}
+{"mid": "M3028560", "title": "Blomsterstativ 110x25x73 Cm Massivt Fyrretræ", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:22.449545+00:00"}
+{"mid": "M3030070", "title": "Daybed 90x190 Cm Stof Lysegrå", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:23.586734+00:00"}
+{"mid": "M3030869", "title": "Lænestol Med Fodstøtte Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15465646358877", "handle": "laenestol-med-fodstotte-stof-5", "n_skus": 6, "dropped": 0, "at": "2026-11-22T03:37:30.292427+00:00"}
+{"mid": "M3032088", "title": "Håndklædesæt 8 Stk. Frogn 360 Gsm 100% Bomuld", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716777914717", "handle": "handklaedesaet-8-stk-frogn-360-gsm-100-bomuld", "n_skus": 7, "dropped": 0, "at": "2026-11-22T03:37:35.472679+00:00"}
+{"mid": "M3032089", "title": "Håndklædesæt 6 Stk. Frogn 360 Gsm 100% Bomuld", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716777947485", "handle": "handklaedesaet-6-stk-frogn-360-gsm-100-bomuld", "n_skus": 8, "dropped": 0, "at": "2026-11-22T03:37:40.388425+00:00"}
+{"mid": "M3032090", "title": "Håndklædesæt 12 Stk. Frogn 360 Gsm 100% Bomuld", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716777980253", "handle": "handklaedesaet-12-stk-frogn-360-gsm-100-bomuld", "n_skus": 2, "dropped": 0, "at": "2026-11-22T03:37:43.516693+00:00"}
+{"mid": "M30320911", "title": "Gæstehåndklæder 50 Stk. Sort 30 X 30 Cm 600 100% Bomuld", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:43.788836+00:00"}
+{"mid": "M30320911", "title": "Gæstehåndklæder 50 Stk. Sort 30 X 50 Cm 600 100% Bomuld", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:44.245264+00:00"}
+{"mid": "M30320911", "title": "Gæstehåndklæder 50 Stk. Sort 50 X 100 Cm 600 100% Bomuld", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:44.483782+00:00"}
+{"mid": "M30320911", "title": "Gæstehåndklæder 25 Stk. Sort 70 X 140 Cm 600 100% Bomuld", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716778013021", "handle": "gaestehandklaeder-25-stk-sort-70-x-140-cm-600-100-bomuld", "n_skus": 1, "dropped": 0, "at": "2026-11-22T03:37:47.243579+00:00"}
+{"mid": "M30320911", "title": "Gæstehåndklæder 25 Stk. Sort 100 X 150 Cm 600 100% Bomuld", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716778045789", "handle": "gaestehandklaeder-25-stk-sort-100-x-150-cm-600-100-bomuld", "n_skus": 1, "dropped": 0, "at": "2026-11-22T03:37:49.598217+00:00"}
+{"mid": "M30320911", "title": "Gæstehåndklæder 25 Stk. Sort 80 X 200 Cm 600 100% Bomuld", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:49.858134+00:00"}
+{"mid": "M30320911", "title": "Gæstehåndklæder 25 Stk. Sort 100 X 200 Cm 600 100% Bomuld", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716778078557", "handle": "gaestehandklaeder-25-stk-sort-100-x-200-cm-600-100-bomuld", "n_skus": 1, "dropped": 0, "at": "2026-11-22T03:37:52.439002+00:00"}
+{"mid": "M3032092", "title": "Håndklædesæt I Høj Kvalitet 8 Stk. Solund 600 Gsm", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716778111325", "handle": "handklaedesaet-i-hoj-kvalitet-8-stk-solund-600-gsm", "n_skus": 5, "dropped": 0, "at": "2026-11-22T03:37:55.994826+00:00"}
+{"mid": "M3032658", "title": "Liggestol Stof Skygrå", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:56.666242+00:00"}
+{"mid": "M3032728", "title": "Bænk Med Naturlig Kant 105 Cm Massivt Akacietræ", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:37:57.228612+00:00"}
+{"mid": "M3032891", "title": "Rumdeler Paneler Polyrattan", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15256832082269", "handle": "rumdeler-paneler-polyrattan", "n_skus": 49, "dropped": 20, "at": "2026-11-22T03:38:31.116189+00:00"}
+{"mid": "M3033816", "title": "Chaiselong Med Massage Og Pude Fløjl", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15254112960861", "handle": "chaiselong-med-massage-og-pude-flojl-1", "n_skus": 8, "dropped": 0, "at": "2026-11-22T03:38:38.556520+00:00"}
+{"mid": "M3034056", "title": "TV Vægenheder Med LED 5 Stk. 80 X 30 X 40 Cm Artisan Egetræ", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:38:39.209384+00:00"}
+{"mid": "M3036435", "title": "Havesofasæt 5 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:38:41.121250+00:00"}
+{"mid": "M3036437", "title": "Havesofasæt 7 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:38:41.391879+00:00"}
+{"mid": "M3036438", "title": "Havesofasæt 7 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:38:41.638527+00:00"}
+{"mid": "M3036438", "title": "Havesofasæt 8 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:38:41.898811+00:00"}
+{"mid": "M3036439", "title": "Havesofasæt 6 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:38:42.151206+00:00"}
+{"mid": "M3036517", "title": "Havesofasæt 6 Dele Med Hynder Polyrattan Beige", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:38:42.451527+00:00"}
+{"mid": "M3036519", "title": "Patio Sofa Set 7-personers Blanding Af Beige Og Lys Grå", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:38:42.931762+00:00"}
+{"mid": "M3036519", "title": "Patio Sofa Set 6-personers Blanding Af Beige Og Lys Grå", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:38:43.168302+00:00"}
+{"mid": "M3038447", "title": "Lænestol Stof", "action": "SKIP", "n_skus": 2, "at": "2026-11-22T03:38:44.894172+00:00"}
+{"mid": "M3038479", "title": "Massagestol Kunstlæder", "action": "SKIP", "n_skus": 2, "at": "2026-11-22T03:38:45.432763+00:00"}
+{"mid": "M3042077", "title": "Væghylde Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15251399770461", "handle": "vaeghylder-konstrueret-trae", "n_skus": 10, "dropped": 0, "at": "2026-11-22T03:38:53.196060+00:00"}
+{"mid": "M3042613", "title": "Liggestol Stof Skygrå", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:38:54.037725+00:00"}
+{"mid": "M3042959", "title": "Køkkenhjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253327642973", "handle": "koekkenhjoerneskab-lucca-konstrueret-trae", "n_skus": 8, "dropped": 4, "at": "2026-11-22T03:39:02.802953+00:00"}
+{"mid": "M3042959", "title": "Køkken Væg Hjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253318140253", "handle": "koekken-vaeg-hjoerneskab-lucca-konstrueret-trae", "n_skus": 7, "dropped": 3, "at": "2026-11-22T03:39:10.927807+00:00"}
+{"mid": "M3042959", "title": "Køkkenskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253316469085", "handle": "koekkenskab-lucca-konstrueret-trae", "n_skus": 6, "dropped": 3, "at": "2026-11-22T03:39:17.730389+00:00"}
+{"mid": "M30456021", "title": "Platform Sengestel Velourstof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15469292749149", "handle": "platform-sengestel-velourstof", "n_skus": 43, "dropped": 5, "at": "2026-11-22T03:39:42.312560+00:00"}
+{"mid": "M30456061", "title": "LED Sengegavl Med LED-lysstrimler Med Hovedgærde Blå 90 Cm Stof", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:39:42.569733+00:00"}
+{"mid": "M30456071", "title": "LED Sengegavl Med LED-lysstrimler Velourstof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15560689582429", "handle": "led-sengegavl-med-led-lysstrimler-velourstof", "n_skus": 5, "dropped": 1, "at": "2026-11-22T03:39:47.153904+00:00"}
+{"mid": "M30476501", "title": "Havesofa Sæt 6 Stk. Sort Og Cream 55 X 55 X 37 Cm Polyrattan", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:39:47.865663+00:00"}
+{"mid": "M30476971", "title": "Ensemble De Canapé De Jardin 7 Stk. Sort Og Cream", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:39:48.106136+00:00"}
+{"mid": "M30477971", "title": "Havesofa Sæt 6 Stk. Polyrattan", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:39:48.358647+00:00"}
+{"mid": "M30483051", "title": "Havesofa Sæt 8 Stk. 7-personers", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16056284021085", "handle": "havesofa-saet-med-pude-med-opbevaring-8-dele-og-cream", "n_skus": 10, "dropped": 0, "at": "2026-11-22T03:39:54.794800+00:00"}
+{"mid": "M3048849", "title": "Adirondack-havebænk 126 Cm Massivt Akacietræ", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:39:55.921681+00:00"}
+{"mid": "M3048849", "title": "Adirondack-havebænk Med Hynder 126 Cm Massivt Akacietræ", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:39:56.181987+00:00"}
+{"mid": "M3049065", "title": "Markise Med Fuldkassette 4,5 X 3 M Gul Og Hvidstribet", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:39:56.527635+00:00"}
+{"mid": "M30499281", "title": "Hjørnesengramme Med Madras 2 Stk. Vinrød 90 X 200 Cm Fløjl", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:39:57.345623+00:00"}
+{"mid": "M37000002031", "title": "Sengeramme Med Madras 2 Stk. Gyldenbrun Stof", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:39:57.749464+00:00"}
+{"mid": "M37000005941", "title": "Badeværelsesmøbel Sæt Konstrueret Træ", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716778209629", "handle": "badevaerelsesmobel-saet-konstrueret-trae", "n_skus": 4, "dropped": 0, "at": "2026-11-22T03:40:01.283573+00:00"}
+{"mid": "M37000005941", "title": "Badeværelsesmøbel Sæt", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716778242397", "handle": "badevaerelsesmobel-saet", "n_skus": 14, "dropped": 0, "at": "2026-11-22T03:40:08.629707+00:00"}
+{"mid": "M3700000713", "title": "Badeværelsesskabsæt 2 Stk. 79,5 X 41 X 80 Cm", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716778275165", "handle": "badevaerelsesskabsaet-2-stk-79-5-x-41-x-80-cm", "n_skus": 8, "dropped": 0, "at": "2026-11-22T03:40:13.528130+00:00"}
+{"mid": "M3700000715", "title": "Badeværelsesskabsæt 2 Stk. 79,5 X 41 X 79,5 Cm", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716778307933", "handle": "badevaerelsesskabsaet-2-stk-79-5-x-41-x-79-5-cm", "n_skus": 8, "dropped": 0, "at": "2026-11-22T03:40:18.384522+00:00"}
+{"mid": "M3700000718", "title": "Badeværelsesskabsæt 2 Stk. 79,5 X 44,5 X 80 Cm", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16716778340701", "handle": "badevaerelsesskabsaet-2-stk-79-5-x-44-5-x-80-cm", "n_skus": 8, "dropped": 0, "at": "2026-11-22T03:40:24.068294+00:00"}
+{"mid": "M37000022971", "title": "Elektrisk LED-markise Med Vindføler", "action": "SKIP", "n_skus": 2, "at": "2026-11-22T03:40:25.418826+00:00"}
+{"mid": "M37000022981", "title": "Elektrisk Solcellemarkise 3,5 X 2,5 M", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:40:25.895794+00:00"}
+{"mid": "M37000022981", "title": "Elektrisk Solcellemarkise 3,5 X 2,5 M Gule Og Orange Striber", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:40:26.142284+00:00"}
+{"mid": "M37000022981", "title": "Elektrisk Solcellemarkise 4 X 3 M Bordeaux", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:40:26.604169+00:00"}
+{"mid": "M37000022991", "title": "Halvkassette-markise Med Solcelledrevet LED-belysning", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/16096342606173", "handle": "manuel-markise-ramme-med-led-lys", "n_skus": 9, "dropped": 0, "at": "2026-11-22T03:40:39.671595+00:00"}
+{"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Røget Eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:40:39.990046+00:00"}
+{"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Gammelt Træ 80 X 200 Cm", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:40:40.459469+00:00"}
+{"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Grå Sonoma 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:40:40.700324+00:00"}
+{"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Artisan-eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:40:40.951854+00:00"}
