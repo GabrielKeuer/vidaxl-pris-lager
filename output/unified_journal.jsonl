@@ -2052,3 +2052,6 @@
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Gammelt Træ 80 X 200 Cm", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:40:40.459469+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Grå Sonoma 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:40:40.700324+00:00"}
 {"mid": "M37000026071", "title": "Sengestel Med Hovedgærde Artisan-eg 80 X 200 Cm Konstrueret Træ", "action": "SKIP", "n_skus": 1, "at": "2026-11-22T03:40:40.951854+00:00"}
+{"mid": "M3013141", "title": "Adirondack-stole 2 Stk. Massivt Akacietræ", "action": "SKIP", "n_skus": 1, "at": "2026-11-23T03:38:57.651658+00:00"}
+{"mid": "M3013141", "title": "Adirondack-stole Med Fodstøtter 2 Stk. Massivt Akacietræ", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16718521041245", "handle": "adirondack-stole-med-fodstotter-2-stk-massivt-akacietrae", "n_skus": 1, "dropped": 0, "at": "2026-11-23T03:39:00.464610+00:00"}
+{"mid": "M3032969", "title": "Seng Med Madras Hanko Velour", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15252580827485", "handle": "seng-med-madras-velour-2", "n_skus": 54, "dropped": 0, "at": "2026-11-23T03:39:23.218655+00:00"}
