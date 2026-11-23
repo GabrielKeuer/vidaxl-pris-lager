@@ -63,7 +63,8 @@ def maerker(token):
                 if m:
                     ny.add('tt-str-' + m.group(1))
                 for k, l in FARVER.items():
-                    if o.get('Farve') in l:
+                    # 'ej-farve-<farve>' på produktet = tæppet ser ikke sådan ud på billedet og holdes af den farveside (23/11-2026)
+                    if o.get('Farve') in l and ('ej-farve-' + k) not in p['tags']:
                         ny.add('tt-farve-' + k)
             gl = [t for t in p['tags'] if t.startswith('tt-')]
             til, fra = sorted(t for t in ny if t not in gl), sorted(t for t in gl if t not in ny)
@@ -103,3 +104,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
