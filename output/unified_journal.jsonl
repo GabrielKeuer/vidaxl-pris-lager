@@ -2055,3 +2055,9 @@
 {"mid": "M3013141", "title": "Adirondack-stole 2 Stk. Massivt Akacietræ", "action": "SKIP", "n_skus": 1, "at": "2026-11-23T03:38:57.651658+00:00"}
 {"mid": "M3013141", "title": "Adirondack-stole Med Fodstøtter 2 Stk. Massivt Akacietræ", "action": "CREATE", "ok": true, "product_id": "gid://shopify/Product/16718521041245", "handle": "adirondack-stole-med-fodstotter-2-stk-massivt-akacietrae", "n_skus": 1, "dropped": 0, "at": "2026-11-23T03:39:00.464610+00:00"}
 {"mid": "M3032969", "title": "Seng Med Madras Hanko Velour", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15252580827485", "handle": "seng-med-madras-velour-2", "n_skus": 54, "dropped": 0, "at": "2026-11-23T03:39:23.218655+00:00"}
+{"mid": "M3002104", "title": "Barstol Kunstlæder", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15254094315869", "handle": "barstol-kunstlaeder-sort-1", "n_skus": 2, "dropped": 0, "at": "2026-11-24T03:37:00.776504+00:00"}
+{"mid": "M3002107", "title": "Drejelig Kontorstol Kunstlæder Brun", "action": "SKIP", "n_skus": 1, "at": "2026-11-24T03:37:01.037863+00:00"}
+{"mid": "M3002150", "title": "Drejelige Spisebordsstole Kunstlæder", "action": "SKIP", "n_skus": 2, "at": "2026-11-24T03:37:01.551800+00:00"}
+{"mid": "M3002153", "title": "Drejelig Spisebordsstol Bøjet Træ Og Kunstlæder", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15254306554205", "handle": "drejelig-spisebordsstol-bojet-trae-og-kunstlaeder-sort-3", "n_skus": 3, "dropped": 0, "at": "2026-11-24T03:37:05.028896+00:00"}
+{"mid": "M30143531", "title": "Kappemarkise Med Solcelle-LED", "action": "SKIP", "n_skus": 1, "at": "2026-11-24T03:37:05.334652+00:00"}
+{"mid": "M3030861", "title": "Lænestol Med Fodstøtte Stof", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15465644622173", "handle": "laenestol-med-fodstotte-stof-3", "n_skus": 8, "dropped": 0, "at": "2026-11-24T03:37:12.159563+00:00"}
