@@ -2064,3 +2064,7 @@
 {"mid": "M30282871", "title": "Electric Awning , Og Striber", "action": "SKIP", "n_skus": 2, "at": "2026-11-25T03:38:04.329811+00:00"}
 {"mid": "M30449721", "title": "Dagsengramme Pulverlakeret Stål", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15565154124125", "handle": "dagsengramme-pulverlakeret-staal", "n_skus": 6, "dropped": 0, "at": "2026-11-25T03:38:08.929888+00:00"}
 {"mid": "M37000012161", "title": "Sommer Dyne 200 X 140 Cm 200 Gsm Microfiber Grøn Og Antracit", "action": "SKIP", "n_skus": 1, "at": "2026-11-25T03:38:09.385993+00:00"}
+{"mid": "M3007204", "title": "Markise Pulverlakeret Aluminium", "action": "SKIP", "n_skus": 1, "at": "2026-11-26T03:36:26.237810+00:00"}
+{"mid": "M3042959", "title": "Køkkenhjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253327642973", "handle": "koekkenhjoerneskab-lucca-konstrueret-trae", "n_skus": 8, "dropped": 4, "at": "2026-11-26T03:36:33.374429+00:00"}
+{"mid": "M3042959", "title": "Køkken Væg Hjørneskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253318140253", "handle": "koekken-vaeg-hjoerneskab-lucca-konstrueret-trae", "n_skus": 7, "dropped": 3, "at": "2026-11-26T03:36:39.238927+00:00"}
+{"mid": "M3042959", "title": "Køkkenskab Lucca Konstrueret Træ", "action": "MERGE", "ok": true, "product_id": "gid://shopify/Product/15253316469085", "handle": "koekkenskab-lucca-konstrueret-trae", "n_skus": 6, "dropped": 3, "at": "2026-11-26T03:36:44.378815+00:00"}
